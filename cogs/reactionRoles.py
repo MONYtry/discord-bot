@@ -7,6 +7,7 @@ from config import (REACTION_ROLES_IDS,
                     NO_RIGHTS_MESSAGE)
 
 
+
 class RoleView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -16,6 +17,10 @@ class DropDown(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
     
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("Automoderation ist bereit")
+
     # Erstellt Command
     @discord.app_commands.command(name="senddropdown", description="Sendet ein Auswahlmenü für Rollen")
     async def senddropdown(self, interaction: discord.Interaction):

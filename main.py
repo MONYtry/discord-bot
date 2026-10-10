@@ -25,8 +25,9 @@ class MyBot(commands.Bot):
         await self.load_extension("cogs.helper")
         await self.load_extension("cogs.embed")
         await self.load_extension("cogs.reactionRoles")
+        await self.load_extension("cogs.automoderation")
 
-        # Slash-Commands regisitieren
+        # Slash-Commands registierieren
         guild = discord.Object(id=SERVER_ID)
 
         # Cleared die alten Commands
@@ -41,7 +42,6 @@ bot = MyBot(command_prefix="!", intents=intents)
 @bot.event
 async def on_ready():
     print(f"Bot ist online: {bot.user}")
-
 
 # Falls Token nicht gefunden wird
 if not TOKEN:
