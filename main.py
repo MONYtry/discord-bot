@@ -23,6 +23,8 @@ class MyBot(commands.Bot):
         await self.load_extension("cogs.admin")
         await self.load_extension("cogs.join")
         await self.load_extension("cogs.helper")
+        await self.load_extension("cogs.embed")
+
 
 
         # Slash-Commands regisitieren

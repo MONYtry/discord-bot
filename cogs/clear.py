@@ -1,6 +1,7 @@
 
 import discord
 from discord.ext import commands
+from config import EMBED_ALLOWED_ROLE_IDS
 
 class Clear(commands.Cog):
     def __init__(self, bot):
@@ -20,10 +21,11 @@ class Clear(commands.Cog):
         self,
         interaction: discord.Interaction,
         amount: discord.app_commands.Range[int, 1, 100]):
-        
-        # Wenn der Channel ungülitig ist
-        if not interaction.channel:
-            await interaction.response.send_message("Kein gültiger Channel.", ephemeral=True)
+
+        # Prüft ob der Nutzer eine Rolle hat welche Rechte dazu hat
+        has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
+        if not has_permission:
+            await interaction.response.send_message("Keine Rechte!", ephemeral=True)
             return
 
         # Sagt das eine Aufgabe gestartet wurde

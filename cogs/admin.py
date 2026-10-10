@@ -1,7 +1,7 @@
 
 import discord
 from discord.ext import commands
-from config import BOT_STATUS_CHANNEL_ID, SERVER_ID
+from config import BOT_STATUS_CHANNEL_ID, SERVER_ID, EMBED_ALLOWED_ROLE_IDS
 
 
 class Admin(commands.Cog):
@@ -16,10 +16,11 @@ class Admin(commands.Cog):
 
     # Regisiterung von Command
     @discord.app_commands.command(name="shutdown", description="Fährt den Bot herunter")
-
     async def shutdown(self, interaction: discord.Interaction):    
-        # Wenn der Nutzer kein Inhaber ist
-        if not await self.bot.is_owner(interaction.user):
+        # Geht jede Rolle durch 
+        has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
+        # Wenn der Nutzer keine Rechte hat
+        if not has_permission:
             await interaction.response.send_message("Du hast dazu keine Rechte!", ephemeral=True)
             return
         
