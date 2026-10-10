@@ -24,8 +24,7 @@ class MyBot(commands.Bot):
         await self.load_extension("cogs.join")
         await self.load_extension("cogs.helper")
         await self.load_extension("cogs.embed")
-
-
+        await self.load_extension("cogs.reactionRoles")
 
         # Slash-Commands regisitieren
         guild = discord.Object(id=SERVER_ID)

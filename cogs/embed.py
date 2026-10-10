@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from config import EMBED_ALLOWED_ROLE_IDS
+from config import EMBED_ALLOWED_ROLE_IDS, NO_RIGHTS_MESSAGE
 
 # Erstellt eine Class mit Discord UI & Titel
 class EmbedModal(discord.ui.Modal, title="Embed erstellen"):
@@ -25,7 +25,8 @@ class EmbedModal(discord.ui.Modal, title="Embed erstellen"):
         label="Fußzeile",
         placeholder="Gebe den Inhalt deiner Fusszeile an...",
         style=discord.TextStyle.paragraph,
-        max_length=100
+        max_length=100,
+        required=False
     )
 
     # Sobald abgeschickt wird
@@ -38,8 +39,15 @@ class EmbedModal(discord.ui.Modal, title="Embed erstellen"):
             description=self.beschreibung.value,
             color=discord.Color.red()
         )
+        
+        # Wenn keine Fußzeile angegeben wurde
+        if not self.footer.value:
+            footer_text = "Developer Academy Bot • Made with Love ❤️"
+        else:
+            footer_text = self.footer.value
+        
         # Fügt Fußzeile hinzu
-        embed.set_footer(text=self.footer)
+        embed.set_footer(text=footer_text)
         
         # Sendet Antwort Nachricht
         await interaction.response.send_message("✅ Dein Embed wurde erstellt!",ephemeral=True)
@@ -59,7 +67,7 @@ class Embed(commands.Cog):
         # Prüft ob der Nutzer eine Rolle hat welche Rechte dazu hat
         has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
         if not has_permission:
-            await interaction.response.send_message("Du hast dazu keine Rechte!", ephemeral=True)
+            await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
             return
         # Sendet den PopUp
         await interaction.response.send_modal(EmbedModal())

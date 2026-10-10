@@ -1,7 +1,7 @@
 
 import discord
 from discord.ext import commands
-from config import BOT_STATUS_CHANNEL_ID, SERVER_ID, EMBED_ALLOWED_ROLE_IDS
+from config import BOT_STATUS_CHANNEL_ID, SERVER_ID, EMBED_ALLOWED_ROLE_IDS,NO_RIGHTS_MESSAGE
 
 
 class Admin(commands.Cog):
@@ -19,9 +19,10 @@ class Admin(commands.Cog):
     async def shutdown(self, interaction: discord.Interaction):    
         # Geht jede Rolle durch 
         has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
+        
         # Wenn der Nutzer keine Rechte hat
         if not has_permission:
-            await interaction.response.send_message("Du hast dazu keine Rechte!", ephemeral=True)
+            await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
             return
         
         # Bot wird ausgeschalten
