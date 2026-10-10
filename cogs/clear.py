@@ -19,8 +19,8 @@ class Clear(commands.Cog):
     async def clear(
         self,
         interaction: discord.Interaction,
-        amount: discord.app_commands.Range[int, 1, 100]
-    ):
+        amount: discord.app_commands.Range[int, 1, 100]):
+        
         # Wenn der Channel ungülitig ist
         if not interaction.channel:
             await interaction.response.send_message("Kein gültiger Channel.", ephemeral=True)
@@ -34,7 +34,6 @@ class Clear(commands.Cog):
         
         # Sobald Aufgabe erledigt ist <- Nachricht senden
         await interaction.followup.send(f"🗑️ {len(deleted)} Nachrichten gelöscht!", ephemeral=True)
-
 
     async def clear_channel(self,channel, amount):
         if channel is not None:

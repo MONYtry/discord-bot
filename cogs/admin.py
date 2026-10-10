@@ -1,8 +1,7 @@
 
 import discord
 from discord.ext import commands
-
-STATUS_CHANNEL_ID = 1558243145836269568
+from config import BOT_STATUS_CHANNEL_ID, SERVER_ID
 
 
 class Admin(commands.Cog):
@@ -18,8 +17,7 @@ class Admin(commands.Cog):
     # Regisiterung von Command
     @discord.app_commands.command(name="shutdown", description="Fährt den Bot herunter")
 
-    async def shutdown(self, interaction: discord.Interaction):
-        
+    async def shutdown(self, interaction: discord.Interaction):    
         # Wenn der Nutzer kein Inhaber ist
         if not await self.bot.is_owner(interaction.user):
             await interaction.response.send_message("Du hast dazu keine Rechte!", ephemeral=True)
@@ -28,16 +26,23 @@ class Admin(commands.Cog):
         # Bot wird ausgeschalten
         await interaction.response.send_message("🔴 Bot geht offline.", ephemeral=True)
         
-        channel = self.bot.get_channel(STATUS_CHANNEL_ID)
+        channel = self.bot.get_channel(BOT_STATUS_CHANNEL_ID)
+        
         # Holt sich die Module anhand der Class-Namen
         status_cog = self.bot.get_cog("Status")
         clear_cog = self.bot.get_cog("Clear")
+        helper_cog = self.bot.get_cog("Helper")
 
         # Räumt den Channel auf danach kommt der Embed
         if channel is not None and status_cog is not None:
             status_cog.is_online = False
+
+            guild = self.bot.get_guild(SERVER_ID)
+            await helper_cog.get_member_count(guild)
+            
             await clear_cog.clear_channel(channel,10)
             await status_cog.send_status(channel)
+        
         # Stoppt den Bot
         await self.bot.close()
 
