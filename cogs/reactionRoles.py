@@ -6,8 +6,6 @@ from config import (REACTION_ROLES_IDS,
                     SEND_DROPDOWN_ROLE_IDS,
                     NO_RIGHTS_MESSAGE)
 
-
-
 class RoleView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)

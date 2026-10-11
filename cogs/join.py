@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
-from pathlib import Path
 from config import WELCOME_CHANNEL_ID
 
 
