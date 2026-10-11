@@ -2,8 +2,8 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
+from config import STATUS_CHANNEL_ID
 
-STATUS_CHANNEL_ID = 1558243145836269568
 class Status(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

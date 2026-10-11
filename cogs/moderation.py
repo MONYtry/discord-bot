@@ -2,8 +2,8 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from datetime import timedelta
+from config import TIMEOUT_LOG_CHANNEL
 
-ID = 1557488290511196211
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -50,9 +50,8 @@ class Moderation(commands.Cog):
         # Zeit wird berechnet
         dauer_zeit = time_units[timetype.value] * duration
 
-        channel = self.bot.get_channel(ID)
+        channel = self.bot.get_channel(TIMEOUT_LOG_CHANNEL)
         helper_cog = self.bot.get_cog("Helper")
-
 
         try:
             if user.is_timed_out():
@@ -62,7 +61,8 @@ class Moderation(commands.Cog):
                                     channel,
                                     "Member Timeout removed",
                                     f"🔨 **User timeout removed!**\n"
-                                    f"👤 User: {user.mention} (`{user.id}`)\n"
+                                    f"👤 User: {user.mention} (`{user.id}`)\n", 
+                                    discord.Color.green()
                                 )
                 print("User wurde ist schon getimeouted <- untimeout!")
                 return
@@ -80,11 +80,12 @@ class Moderation(commands.Cog):
             if helper_cog:
                 await helper_cog.send_embed(
                     channel,
-                    "Member was timedout",
+                    "Member was timeoutet",
                     f"🔨 **User timeoutet!**\n"
                     f"👤 User: {user.mention} (`{user.id}`)\n"
                     f"⏳ Dauer: {duration} {timetype.name}\n"
                     f"📝 Grund: {reason}"
+                    ,discord.Color.red()
                 )
 
 async def setup(bot):

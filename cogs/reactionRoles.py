@@ -4,7 +4,7 @@ from config import (REACTION_ROLES_IDS,
                     REMOVED_REACTION_ROLE_MESSAGE, 
                     ADDED_REACTION_ROLE_MESSAGE, 
                     SEND_DROPDOWN_ROLE_IDS,
-                    NO_RIGHTS_MESSAGE)
+                    NO_RIGHTS_MESSAGE, REACTION_ROLE_OPTIONS)
 
 class RoleView(discord.ui.View):
     def __init__(self):
@@ -37,18 +37,10 @@ class Reactionroles(discord.ui.Select):
     def __init__(self):
         # Erstellt Auswahlmöglichkeiten
         options = [
-            discord.SelectOption(label="HTML", emoji="🌐", value="html"),
-            discord.SelectOption(label="CSS", emoji="🎨", value="css"),
-            discord.SelectOption(label="JavaScript", emoji="💛", value="js"),
-            discord.SelectOption(label="Kotlin", emoji="🟣", value="kotlin"),
-            discord.SelectOption(label="Lua", emoji="🌙", value="lua"),
-            discord.SelectOption(label="Rust", emoji="🦀", value="rust"),
-            discord.SelectOption(label="Go", emoji="🐹", value="go"),
-            discord.SelectOption(label="C++", emoji="⚙️", value="c++"),
-            discord.SelectOption(label="C#", emoji="💜", value="c#"),
-            discord.SelectOption(label="React", emoji="⚛️", value="react"),
-            discord.SelectOption(label="Node.js", emoji="💚", value="node.js")
+            discord.SelectOption(label=data["label"], emoji=data["emoji"], value=key)
+            for key, data in REACTION_ROLE_OPTIONS.items()
         ]
+
         # Inistialisiert das Dropdown
         super().__init__(
             # Setzt Platzhalter

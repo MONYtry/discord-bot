@@ -1,6 +1,5 @@
 from discord.ext import commands
-
-BAN_CHANNEL_ID = 1557488286161834034
+from config import BAN_CHANNEL_ID
 
 class Log(commands.Cog):
     def __init__(self,bot):
