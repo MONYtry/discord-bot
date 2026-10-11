@@ -38,7 +38,6 @@ REACTION_ROLES_IDS = {
 }
 
 
-
 # Dictionary
 REACTION_ROLE_OPTIONS = {
     "html": {"label": "HTML", "emoji": "🌐"},
@@ -53,6 +52,15 @@ REACTION_ROLE_OPTIONS = {
     "react": {"label": "React", "emoji": "⚛️"},
     "node.js": {"label": "Node.js", "emoji": "💚"},
 }
+
+
+# Dictionary
+SUPPORT_CATEGORIES_OPTIONS = {
+    "bug": {"label": "BUG", "emoji": "🌐"},
+    "help": {"label": "HELP", "emoji": "🎨"},
+    "other": {"label": "OTHER", "emoji": "💛"}
+}
+
 
 
 

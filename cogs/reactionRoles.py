@@ -11,7 +11,7 @@ class RoleView(discord.ui.View):
         super().__init__(timeout=None)
         self.add_item(Reactionroles())
 
-class DropDown(commands.Cog):
+class DropDownReactionRoles(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
     
@@ -87,4 +87,4 @@ class Reactionroles(discord.ui.Select):
 
 
 async def setup(bot):
-    await bot.add_cog(DropDown(bot))
+    await bot.add_cog(DropDownReactionRoles(bot))
