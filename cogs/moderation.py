@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from datetime import timedelta
-from config import TIMEOUT_LOG_CHANNEL
+from config import TIMEOUT_LOG_CHANNEL, TIMEOUT_ALLOWED_ROLE_IDS, NO_RIGHTS_MESSAGE
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
@@ -43,6 +43,11 @@ class Moderation(commands.Cog):
         timetype: app_commands.Choice[str],
         reason: str = "Kein Grund angegeben"):
 
+        has_permission = any(role.id in TIMEOUT_ALLOWED_ROLE_IDS for role in interaction.user.roles)
+        # Wenn der Nutzer keine Rechte hat
+        if not has_permission:
+                    await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
+                    return
         time_units = {
             "minuten": timedelta(minutes=1),
             "stunden": timedelta(hours=1),

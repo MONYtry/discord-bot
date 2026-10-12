@@ -7,7 +7,8 @@ class SupportView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
         self.add_item(SupportCategories())
-
+        
+    
 class TicketView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -145,7 +146,21 @@ class DropDown(commands.Cog):
         # Cleart bestimmte Anzahl an Messages
         await channel.purge(limit=10)
         await helper_cog.logMessage("support.py","Ticket was succcsessfully sent!")
+        await helper_cog.send_embed(
+            channel,
+            "GETTING HELP - TUTORIAL",
+            "Need help? Follow these simple steps!\n\n"
+            "1. **Select a Category** – Choose the category that best describes your issue.\n"
+            "2. **Create a Ticket** – A private ticket channel will be created for you.\n"
+            "3. **Describe Your Issue** – Explain your problem in detail.\n"
+            "4. **Wait for Support** – Our team will respond as soon as possible.\n"
+            "5. **Close Your Ticket** – Click the 🔒 button when your issue is resolved.\n\n"
+            "⚠️ Please do not create multiple tickets for the same issue. Thank you!",
+            discord.Color.blue()
+        )        
         await channel.send(view=SupportView())
+        
+
 
 async def setup(bot):
     await bot.add_cog(DropDown(bot))
