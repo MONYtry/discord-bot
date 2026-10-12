@@ -8,11 +8,17 @@ class Admin(commands.Cog):
     # Wird direkt aufgerufen
     def __init__(self, bot):
         self.bot = bot
+        self.already_logged = False
 
         # Sobald das Modul geladen wird
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Admin-Modul bereit!")
+        if self.already_logged:
+            return
+                
+        self.already_logged = True
+        helper_cog = self.bot.get_cog("Helper")
+        await helper_cog.logMessage("Admin.py","Succcsessfully loaded")
 
     # Regisiterung von Command
     @discord.app_commands.command(name="shutdown", description="Fährt den Bot herunter")

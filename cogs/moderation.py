@@ -7,10 +7,16 @@ from config import TIMEOUT_LOG_CHANNEL
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.already_logged = False
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Moderation bereit")
+        if self.already_logged:
+            return
+                
+        self.already_logged = True
+        helper_cog = self.bot.get_cog("Helper")
+        await helper_cog.logMessage("moderation.py","Succcsessfully loaded")
     
     # Platzhalter
     @app_commands.describe(

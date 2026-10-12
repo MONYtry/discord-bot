@@ -7,25 +7,28 @@ from config import STATUS_CHANNEL_ID
 class Status(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.already_logged = False
         self.cleanup_done = False
         self.is_online = False
    
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Status-Modul bereit!")
+        if self.already_logged:
+            return
+                
+        self.already_logged = True
+        helper_cog = self.bot.get_cog("Helper")
+        await helper_cog.logMessage("status.py","Succcsessfully loaded")
+
         self.is_online = True
         if self.cleanup_done:
             return
         
         channel = self.bot.get_channel(STATUS_CHANNEL_ID)
         if channel is not None:
-            status_cog = self.bot.get_cog("clear")
-            if status_cog is not None:
-                await status_cog.clear_channel(channel,10)
-
             deleted = await channel.purge(limit=10)
-            print(f"Der Channel wurde geleert!")
+            await helper_cog.logMessage("status.py",f"Succcsessfully cleart {channel} with {len(deleted)} messages")
             self.cleanup_done = True
             # Sendet den Status in den angegebenen Parameter
             await self.send_status(channel)

@@ -6,10 +6,16 @@ from config import MESSAGE_LOG_CHANNEL
 class Automod(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
+        self.already_logged = False
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Automoderation ist bereit")
+        if self.already_logged:
+            return
+                
+        self.already_logged = True
+        helper_cog = self.bot.get_cog("Helper")
+        await helper_cog.logMessage("Automod.py","Succcsessfully loaded")
     
     @commands.Cog.listener()
     async def on_message_delete(self,message):
@@ -49,7 +55,7 @@ class Automod(commands.Cog):
         helper_cog = self.bot.get_cog("Helper")
         channel = self.bot.get_channel(MESSAGE_LOG_CHANNEL)
         if channel is not None:
-            await helper_cog.send_embed(channel,"Message was send",message.content,discord.Color.yellow())
+            await helper_cog.send_embed(channel,"Message was send", message.content,discord.Color.yellow())
 
 
 async def setup(bot):

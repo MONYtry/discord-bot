@@ -6,22 +6,24 @@ from config import EMBED_ALLOWED_ROLE_IDS,NO_RIGHTS_MESSAGE
 class Clear(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.already_logged = False
 
         # Sobald das Modul geladen wird
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Clear-Modul bereit!")
+        if self.already_logged:
+            return
+                
+        self.already_logged = True
+        helper_cog = self.bot.get_cog("Helper")
+        await helper_cog.logMessage("clear.py","Succcsessfully loaded")
 
     # Regisitiert den Command
     @discord.app_commands.command(name="clear", description="Löscht Nachrichten")
     
     # Fügt den Amount Platzhalter hinzu & auch Beschreibung
     @discord.app_commands.describe(amount="Anzahl der Nachrichten (1–100)")
-    async def clear(
-        self,
-        interaction: discord.Interaction,
-        amount: discord.app_commands.Range[int, 1, 100]):
-
+    async def clear(self, interaction: discord.Interaction, amount: discord.app_commands.Range[int, 1, 100]):
         # Prüft ob der Nutzer eine Rolle hat welche Rechte dazu hat
         has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
         if not has_permission:
@@ -43,7 +45,7 @@ class Clear(commands.Cog):
                 deleted = await channel.purge(limit=amount)
                 print(f"Es wurden {len(deleted)}-Nachrichten gelöscht!")
             except:
-                print("Fehler :|")
+                print("Fehler")
             
 async def setup(bot):
     await bot.add_cog(Clear(bot))

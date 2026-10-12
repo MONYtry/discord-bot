@@ -7,10 +7,16 @@ from config import WELCOME_CHANNEL_ID
 class Join(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.already_logged = False
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Welcome-Modul bereit!")
+        if self.already_logged:
+            return
+                
+        self.already_logged = True
+        helper_cog = self.bot.get_cog("Helper")
+        await helper_cog.logMessage("join.py","Succcsessfully loaded")
 
     @commands.Cog.listener()
     async def on_member_join(self, member):

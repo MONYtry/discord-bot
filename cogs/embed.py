@@ -59,7 +59,17 @@ class EmbedModal(discord.ui.Modal, title="Embed erstellen"):
 class Embed(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+        self.already_logged = False
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        if self.already_logged:
+            return
+
+        self.already_logged = True
+        helper_cog = self.bot.get_cog("Helper")
+        await helper_cog.logMessage("embed.py","Succcsessfully loaded") 
+
     # Erstellt Command 
     @discord.app_commands.command(name="sendembed", description="Öffnet ein Formular zum Erstellen eines Embeds")
     async def sendembed(self, interaction: discord.Interaction):

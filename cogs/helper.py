@@ -5,6 +5,7 @@ import datetime
 class Helper(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.already_logged = False
 
     # Gets the Membercount
     async def get_member_count(self, guild):
@@ -21,6 +22,13 @@ class Helper(commands.Cog):
         
         # Sends the Embed in the Channel
         await channel.send(embed=embed)
+
+
+    async def logError(self,fileName,message):
+        print(f"[{datetime.datetime.now()}] | [ERROR] at {fileName}, {message}")
+    
+    async def logMessage(self,fileName,message):
+        print(f"[{datetime.datetime.now()}] | [INFO] at {fileName}, {message}")
 
 async def setup(bot):
     await bot.add_cog(Helper(bot))
