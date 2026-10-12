@@ -5,7 +5,7 @@ from config import (WELCOME_CHANNEL_ID,
                     WELCOME_MESSAGE, 
                     JOIN_LEAVE_LOG_CHANNEL,
                     JOIN_LOG_MESSAGE, 
-                    JOIN_TITEL_LOG_MESSAGE,LEAVE_LOG_MESSAGE, LEAVE_TITEL_LOG_MESSAGE)
+                    JOIN_TITEL_LOG_MESSAGE,LEAVE_LOG_MESSAGE, LEAVE_TITEL_LOG_MESSAGE,WELCOME_THUMBNAIL_URL)
 
 
 class Join(commands.Cog):
@@ -79,7 +79,7 @@ class Join(commands.Cog):
         embed.set_footer(text=f"Developer Academy Bot • Made with Love ❤️ • #{member_count}")
 
         embed.set_thumbnail(url=member.display_avatar.url)
-        embed.set_image(url="https://cdn.discordapp.com/attachments/1534607507023069346/1558267347754819604/ChatGPT_Image_7._Okt._2026_22_52_37.png?ex=6acb79ce&is=6aca284e&hm=0de4a6795de0d0aac3dfdf51a42de9da2db6fba0124e976beaebab83c6182e6c&")
+        embed.set_image(url=WELCOME_THUMBNAIL_URL)
 
         await channel.send(embed=embed)
 

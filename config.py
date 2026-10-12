@@ -54,6 +54,12 @@ TICKET_EMBED_MESSAGE =  (
             "5. **Close Your Ticket** – Click the 🔒 button when your issue is resolved.\n\n"
             "⚠️ Please do not create multiple tickets for the same issue. Thank you!")
 
+
+# ----------- IMAGES-URL ----------- #
+SUPPORT_THUMBNAIL_URL = "https://cdn.discordapp.com/attachments/1534607507023069346/1559308964691181678/Festliches_SUPPORT-Logo_mit_Schneefall.png?ex=6ace9b23&is=6acd49a3&hm=966782c303b2587718e428254ce4924bdaad70a8df1377ad43aa94e538472bfe&"
+WELCOME_THUMBNAIL_URL = "https://cdn.discordapp.com/attachments/1534607507023069346/1559312111908167790/Winterliches_Willkommen_im_Voxel-Dorf.png?ex=6ace9e12&is=6acd4c92&hm=99c5bf9c7c3a086e708327f5661f7e7db8300e9e1fb3a1c5d61e04ecc959e866&"
+
+
 # ----------- ROLE-IDS ----------- #
 EMBED_ALLOWED_ROLE_IDS = [
     1558241441929760889  # Owner
