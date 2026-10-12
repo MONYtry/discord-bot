@@ -10,7 +10,7 @@ class Admin(commands.Cog):
         self.bot = bot
         self.already_logged = False
 
-        # Sobald das Modul geladen wird
+    # Sobald das Modul geladen wird
     @commands.Cog.listener()
     async def on_ready(self):
         if self.already_logged:

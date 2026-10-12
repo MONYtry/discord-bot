@@ -44,6 +44,7 @@ class Moderation(commands.Cog):
         reason: str = "Kein Grund angegeben"):
 
         has_permission = any(role.id in TIMEOUT_ALLOWED_ROLE_IDS for role in interaction.user.roles)
+        
         # Wenn der Nutzer keine Rechte hat
         if not has_permission:
                     await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
@@ -67,15 +68,13 @@ class Moderation(commands.Cog):
         try:
             if user.is_timed_out():
                 await user.timeout(None, reason="Timeout aufgegeben")
-                await interaction.response.send_message(f"Timeout von {user} wurde aufgehoben", ephemeral=True)
+                await interaction.response.send_message(f"Timeout von {user.mention} wurde aufgehoben", ephemeral=True)
                 await helper_cog.send_embed(
                                     channel,
                                     "Member Timeout removed",
                                     f"🔨 **User timeout removed!**\n"
                                     f"👤 User: {user.mention} (`{user.id}`)\n", 
-                                    discord.Color.green()
-                                )
-                print("User wurde ist schon getimeouted <- untimeout!")
+                                    discord.Color.green())
                 return
             
             await user.timeout(dauer_zeit, reason=reason)
@@ -84,7 +83,7 @@ class Moderation(commands.Cog):
             await interaction.response.send_message("❌ Bot fehlen die nötigen Rechte!", ephemeral=True)
             return
         
-        await interaction.response.send_message(f"{user} wurde getimeoutet für {duration} {timetype.name}", ephemeral=True)
+        await interaction.response.send_message(f"{user.mention} wurde getimeoutet für {duration} {timetype.name}", ephemeral=True)
 
         
         if channel:
@@ -96,7 +95,7 @@ class Moderation(commands.Cog):
                     f"👤 User: {user.mention} (`{user.id}`)\n"
                     f"⏳ Dauer: {duration} {timetype.name}\n"
                     f"📝 Grund: {reason}"
-                    ,discord.Color.red()
+                    ,discord.Color.red(), None
                 )
 
 async def setup(bot):

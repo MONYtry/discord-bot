@@ -28,7 +28,6 @@ class EmbedModal(discord.ui.Modal, title="Embed erstellen"):
         max_length=100,
         required=False
     )
-
     # Sobald abgeschickt wird
     async def on_submit(self, interaction: discord.Interaction):
         # Embed wird erstellt

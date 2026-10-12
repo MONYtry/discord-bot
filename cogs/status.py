@@ -30,6 +30,7 @@ class Status(commands.Cog):
             deleted = await channel.purge(limit=10)
             await helper_cog.logMessage("status.py",f"Succcsessfully cleart {channel} with {len(deleted)} messages")
             self.cleanup_done = True
+            
             # Sendet den Status in den angegebenen Parameter
             await self.send_status(channel)
 

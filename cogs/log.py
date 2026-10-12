@@ -24,7 +24,7 @@ class Log(commands.Cog):
                 channel,
                 "Member was banned",
                 f"🔨 **User gebannt!**\n"
-                f"👤 User: {user.mention} (`{user.id}`)")
+                f"👤 User: {user.mention} (`{user.id}`)", None)
             print(f"Log: Member was banned, 👤 User: {user}")
     
     

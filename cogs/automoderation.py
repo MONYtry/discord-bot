@@ -33,9 +33,14 @@ class Automod(commands.Cog):
 
         # Holt sich die Module anhand der Class-Namen
         helper_cog = self.bot.get_cog("Helper")
-        channel = self.bot.get_channel(MESSAGE_LOG_CHANNEL)
-        if channel is not None:
-            await helper_cog.send_embed(channel,"Message was deleted",message.content,discord.Color.red())
+        log_channel = self.bot.get_channel(MESSAGE_LOG_CHANNEL)
+        if log_channel is not None:
+            await helper_cog.send_embed(log_channel,"Message deleted",
+                                        f"👤 User: {message.author.mention} (ID: {message.author.id})\n"
+                                        f"📍 Channel: #{message.channel.mention}\n"
+                                        f"💬 Nachricht: {message.content}\n"
+                                        f"🕒 Zeit: {message.created_at.strftime('%d.%m.%Y %H:%M:%S')} UTC\n"
+                                        ,discord.Color.red(), message.author.avatar.url)
             
     @commands.Cog.listener()
     async def on_message(self,message):
@@ -44,6 +49,7 @@ class Automod(commands.Cog):
             return
         
         print(
+        # Schreibt x40 "="
         f"\n{'=' * 40}\n"
         f"👤 User: {message.author} (ID: {message.author.id})\n"
         f"📍 Channel: #{message.channel.name }\n"
@@ -53,10 +59,14 @@ class Automod(commands.Cog):
     )
         # Holt sich die Module anhand der Class-Namen
         helper_cog = self.bot.get_cog("Helper")
-        channel = self.bot.get_channel(MESSAGE_LOG_CHANNEL)
-        if channel is not None:
-            await helper_cog.send_embed(channel,"Message was send", message.content,discord.Color.yellow())
-
+        log_channel = self.bot.get_channel(MESSAGE_LOG_CHANNEL)
+        if log_channel is not None:
+            await helper_cog.send_embed(log_channel,"Message send",
+                                        f"👤 User: {message.author.mention} (ID: ||{message.author.id}||)\n"
+                                        f"📍 Channel: #{message.channel.mention}\n"
+                                        f"💬 Nachricht: {message.content}\n"
+                                        f"🕒 Zeit: {message.created_at.strftime('%d.%m.%Y %H:%M:%S')} UTC\n"
+                                        ,discord.Color.red(), message.author.avatar.url)
 
 async def setup(bot):
     await bot.add_cog(Automod(bot))

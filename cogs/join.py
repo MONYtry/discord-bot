@@ -1,7 +1,11 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
-from config import WELCOME_CHANNEL_ID
+from config import (WELCOME_CHANNEL_ID, 
+                    WELCOME_MESSAGE, 
+                    JOIN_LEAVE_LOG_CHANNEL,
+                    JOIN_LOG_MESSAGE, 
+                    JOIN_TITEL_LOG_MESSAGE,LEAVE_LOG_MESSAGE, LEAVE_TITEL_LOG_MESSAGE)
 
 
 class Join(commands.Cog):
@@ -21,34 +25,56 @@ class Join(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         channel = self.bot.get_channel(WELCOME_CHANNEL_ID)
+        log_channel = self.bot.get_channel(JOIN_LEAVE_LOG_CHANNEL)
 
+        helper_cog = self.bot.get_cog("Helper")
+
+        if log_channel is None:
+            print("Kanal nicht gefunden!")
+            return
+        
         if channel is None:
             print("Kanal nicht gefunden!")
             return
-
+        
+        join_message = JOIN_LOG_MESSAGE.format(member=member.mention)
+        await helper_cog.send_embed(log_channel,JOIN_TITEL_LOG_MESSAGE,join_message, discord.Color.green(), member.display_avatar.url)
+        
         # Embed senden
         await self.send_embed(channel, member)
 
-        print(f"Willkommensnachricht für {member} gesendet!")
 
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        channel = self.bot.get_channel(WELCOME_CHANNEL_ID)
+        log_channel = self.bot.get_channel(JOIN_LEAVE_LOG_CHANNEL)
+    
+        helper_cog = self.bot.get_cog("Helper")
+    
+        if log_channel is None:
+            print("Kanal nicht gefunden!")
+            return
+            
+        if channel is None:
+            print("Kanal nicht gefunden!")
+            return
+        
+        leave_message = LEAVE_LOG_MESSAGE.format(member=member.mention)
+        await helper_cog.send_embed(log_channel,LEAVE_TITEL_LOG_MESSAGE, leave_message, discord.Color.red(), member.display_avatar.url)
+    
     async def send_embed(self, channel, member):
         helper_cog = self.bot.get_cog("Helper")
         member_count = await helper_cog.get_member_count(member.guild)
 
+        description = WELCOME_MESSAGE.format(member=member.mention)
+
         embed = discord.Embed(
             title="🎉 Welcome to the Server!",
-            description=(
-                f"Hey {member.mention}, welcome to our community💖\n\n"
-                "We're happy to have you here! 🥳\n\n"
-                "📜 **Before you get started, please read the server rules carefully.**\n"
-                "They help keep our community friendly, safe, and fun for everyone.\n\n"
-                "💬 Feel free to chat with other members, join the conversations, "
-                "and have a great time!\n\n"
-                "✨ **Make yourself at home and enjoy your stay!**"
-            ),
+            description=description,
             timestamp=datetime.now().astimezone(),
             color=discord.Color.red()
         ) 
+
         
         embed.set_footer(text=f"Developer Academy Bot • Made with Love ❤️ • #{member_count}")
 

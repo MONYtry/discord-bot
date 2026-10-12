@@ -12,14 +12,16 @@ class Helper(commands.Cog):
         return guild.member_count
 
     # Embed Sending Method
-    async def send_embed(self, channel,titel,message,color):
+    async def send_embed(self, channel,titel,message,color,url=None):
         embed = discord.Embed(
             title=titel,
             description=message,
             timestamp=datetime.datetime.now().astimezone(),
             color=color
-        )
-        
+            )
+        if url is not None:
+            embed.set_thumbnail(url=url)
+
         # Sends the Embed in the Channel
         await channel.send(embed=embed)
 

@@ -1,14 +1,22 @@
 from discord.ext import commands
 import discord
-from config import SUPPORT_CATEGORIES_OPTIONS, SUPPORT_CHANNEL_ID
 import asyncio
+import datetime
+from config import (SUPPORT_CATEGORIES_OPTIONS, 
+                    SUPPORT_CHANNEL_ID, 
+                    SUPPORT_EMBED_TITEL, 
+                    SUPPORT_EMBED_MESSAGE,
+                    TICKET_EMBED_MESSAGE,
+                    TICKET_EMBED_TITEL,
+                    SUPPORT_CHANNEL_LOG_ID)
+
+
 
 class SupportView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
         self.add_item(SupportCategories())
         
-    
 class TicketView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -20,17 +28,26 @@ class TicketView(discord.ui.View):
         
         # Holt sich den Namen des Tickets
         channel_name = interaction.channel.name
-        
+
+        helper_cog = interaction.client.get_cog("Helper")
+
         # Holt sich die UserID anhand des Ticket-Name
         # z.B ticket-123-bug -> ticket 123 bug -> user_id = 123
         user_id = int(channel_name.split("-")[1])
-        
+        typ = str(channel_name.split("-")[2])
+
         # Erstellt member Object anhand der UserID
         member = interaction.guild.get_member(user_id)
         if member:
             print(f"Ticket erstellt von: {member.name}")
 
-        helper_cog = interaction.client.get_cog("Helper")
+        log_channel = interaction.client.get_channel(SUPPORT_CHANNEL_LOG_ID)
+        await helper_cog.send_embed(log_channel,"TICKET CLOSED",
+                            f"User: {member.mention} \n"
+                            f"Datum: {datetime.datetime.now()} \n"
+                            f"Typ: {typ.lower()} \n"
+                            f"Ticket: {channel_name}",discord.Color.red(), member.avatar.url)
+        
         await helper_cog.logMessage("support.py",
                                     f"Ticket was closed \n" 
                                     f"(Ticket creator:{member} | Close command sender: {interaction.user})")
@@ -66,6 +83,7 @@ class SupportCategories(discord.ui.Select):
         team_role = discord.utils.get(guild.roles, name="Python")
         if team_role is None:
             await helper_cog.logError("support.py","roles wasn't found!")
+            await helper_cog.send_embed()
             await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
             return
         
@@ -91,6 +109,8 @@ class SupportCategories(discord.ui.Select):
             await interaction.response.send_message(f"{member.mention} du hast bereits ein Ticket in dieser Kategorie erstellt: {ticket.mention}", ephemeral=True)
             return
         
+        
+        
         # Erstellt einen Text-Channel
         channel = await guild.create_text_channel(
             # Setzt den Namen des Channels
@@ -108,6 +128,15 @@ class SupportCategories(discord.ui.Select):
             }
         )
 
+        log_channel = interaction.client.get_channel(SUPPORT_CHANNEL_LOG_ID)
+        await helper_cog.send_embed(log_channel,"TICKET CREATED",
+                                               f"User: {member.mention} \n"
+                                               f"Datum: {datetime.datetime.now()} \n"
+                                               f"Typ: {data['label'].lower()}\n"
+                                               f"Ticket: {channel.mention}",
+                                               discord.Color.green(), member.avatar.url)
+        
+
         # Antwort in dem Ticket-Channel
         await interaction.response.send_message(f"Ticket erstellt: {channel.mention}", ephemeral=True)        
         await helper_cog.logMessage("support.py",f"Ticket was created (User:{member.name})")
@@ -115,14 +144,10 @@ class SupportCategories(discord.ui.Select):
         # Sendet einen Ping an die angegebene Rolle
         await channel.send(f"{team_role.mention}")
 
+        description = SUPPORT_EMBED_MESSAGE.format(member=member.mention)
+
         # Erstellung von Embed Objekt & sendung
-        await helper_cog.send_embed(
-            channel,
-            "Hilfe ist unterwegs!",
-            f"Hey {member.mention},\n" 
-            f"unser Team wird sich zeitnah melden, bitte habe Geduld!\n"
-            f"Wir wünschen dir eine angenehme Zeit und weiterhin viel Spaß!",
-            discord.Color.green())
+        await helper_cog.send_embed(channel, SUPPORT_EMBED_TITEL, description, discord.Color.green(), None)
         
         # Sendet Button
         await channel.send(view=TicketView())
@@ -146,21 +171,9 @@ class DropDown(commands.Cog):
         # Cleart bestimmte Anzahl an Messages
         await channel.purge(limit=10)
         await helper_cog.logMessage("support.py","Ticket was succcsessfully sent!")
-        await helper_cog.send_embed(
-            channel,
-            "GETTING HELP - TUTORIAL",
-            "Need help? Follow these simple steps!\n\n"
-            "1. **Select a Category** – Choose the category that best describes your issue.\n"
-            "2. **Create a Ticket** – A private ticket channel will be created for you.\n"
-            "3. **Describe Your Issue** – Explain your problem in detail.\n"
-            "4. **Wait for Support** – Our team will respond as soon as possible.\n"
-            "5. **Close Your Ticket** – Click the 🔒 button when your issue is resolved.\n\n"
-            "⚠️ Please do not create multiple tickets for the same issue. Thank you!",
-            discord.Color.blue()
-        )        
+        await helper_cog.send_embed(channel, TICKET_EMBED_TITEL, TICKET_EMBED_MESSAGE, discord.Color.blue(), None)        
         await channel.send(view=SupportView())
         
-
 
 async def setup(bot):
     await bot.add_cog(DropDown(bot))
