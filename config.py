@@ -112,3 +112,47 @@ SUPPORT_CATEGORIES_OPTIONS = {
 
 
 
+# Inhalt KI genererriert!
+FORBIDDEN_WORDS = [
+    # Beleidigungen
+    "idiot", "dummkopf", "depp", "trottel", "vollidiot",
+    "hurensohn", "hs", "huso", "missgeburt", "opfer",
+    "wixxer", "wichser", "arschloch", "arsch", "bastard",
+    "spast", "spasti", "mongo", "penner", "schwuchtel",
+    "fotze", "fick dich", "fickfehler", "drecksau",
+    "scheißkerl", "dreckskerl", "mistkerl", "pisskopf",
+    "nutte", 
+
+    # Englische Beleidigungen
+    "idiot", "moron", "dumbass", "jackass", "asshole",
+    "bastard", "motherfucker", "son of a bitch",
+    "fuck you", "fuck off", "piece of shit", "dickhead",
+    "dipshit", "shithead", "scumbag", "prick", "twat",
+
+    # Rassistische / diskriminierende Begriffe
+    "nigger", "negro", "coon", "kike", "chink",
+    "wetback", "spic", "raghead", "tranny",
+
+    # Deutsche vulgäre Ausdrücke
+    "scheiße", "scheisse", "scheiß", "scheiss",
+    "fick", "ficken", "gefickt", "verfickt",
+    "verpiss dich", "leck mich", "leck mich am arsch",
+    "halt die fresse", "maul halten", "fotzenkopf",
+    "schwanzlutscher", "arschgeburt", "drecksack",
+
+    # Englische vulgäre Ausdrücke
+    "fuck", "fucking", "fucked", "shit", "bullshit",
+    "bitch", "bitches", "whore", "slut", "cunt",
+    "dick", "cock", "pussy", "dick sucker",
+    "go to hell", "eat shit",
+
+    # Bedrohungen
+    "ich bring dich um", "ich töte dich",
+    "i will kill you", "kill yourself", "kys",
+    "bring dich um"
+
+    # Sonstige
+    "nude","nudes","sex","psy","pssy","ayri","dih",
+    "hitler", "hitla", "adolf", "88", "1945", "1933",
+    "911","9/11"
+]
