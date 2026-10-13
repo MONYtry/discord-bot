@@ -49,9 +49,11 @@ class Automod(commands.Cog):
         log_channel = self.bot.get_channel(MESSAGE_LOG_CHANNEL)
         
         if log_channel is not None:
-            if await self.autoModeration(message,helper_cog,log_channel):
+            if await self.checkForbiddenWords(message,helper_cog,log_channel):
                 return
-            print(
+            if await self.checkForbiddenLinks(message,helper_cog,log_channel):
+                return
+            await helper_cog.logMessage("automod.py",
                     # Schreibt x40 "="
                     f"\n{'=' * 40}\n"
                     f"👤 User: {message.author} (ID: {message.author.id})\n"
@@ -67,20 +69,21 @@ class Automod(commands.Cog):
                                         f"💬 Nachricht: {message.content}\n"
                                         f"🕒 Zeit: {message.created_at.strftime('%d.%m.%Y %H:%M:%S')} UTC\n"
                                         ,discord.Color.red(), message.author.avatar.url)
-        await self.autoModeration(message,helper_cog,log_channel)
-        await self.checkLink(message,helper_cog,log_channel)
+        await self.checkForbiddenWords(message,helper_cog,log_channel)
+        await self.checkForbiddenLinks(message,helper_cog,log_channel)
 
-    async def autoModeration(self,message,helper_cog,channel):
-        
+    async def checkForbiddenWords(self,message,helper_cog,channel):
+        # Hilfs Variablen
         content = message.content.lower()
+        # Leert den Array
         found_words = []
 
         for word in FORBIDDEN_WORDS:
             if word.lower() in content:
                 found_words.append(word)
-        
+        # Falls Wort gefunden wird
         if found_words:
-            print(
+            await helper_cog.logMessage("automod.py",
                         f"⚠️ Blacklist-Wörter erkannt: {found_words}\n"
                         f"👤 User: {message.author} ({message.author.id})\n"
                         f"📍 Channel: #{message.channel}\n"
@@ -89,28 +92,11 @@ class Automod(commands.Cog):
             # Löscht Nachricht
             await message.delete()
             
-            # Fehler vermeidung
-            try:
-                # Sendet User in den Timeout
-                await message.author.timeout(timedelta(minutes=5), reason="Unerwünschter Inhalt!")
-            except discord.Forbidden:
-                await helper_cog.logMessage("Automod.py",BOT_HAS_NO_RIGHTS)
-
-            await message.author.send(f"{message.author.mention}")
-            embed = discord.Embed(
-                                # Setzt den eben erstellten Titel
-                                title="🛡️ AUTO-MOD",
-                                # Setzt die eben erstellte Beschreibung 
-                                description="⚠️ Deine Nachricht wurde gelöscht!",
-                                color=discord.Color.red())
-
-            embed.add_field(name="Grund:",value=f"Unerwünschter Inhalt: {found_words}", inline=True)
-            embed.add_field(name="Hinweis:",value=f"Bitte Verhalte dich in Zukunft besser,\n damit weitere Schritte nicht nötig sind",inline=True)
-            embed.set_image(url=SUPPORT_THUMBNAIL_URL)
-            embed.set_thumbnail(url=message.author.avatar.url)
-            embed.set_footer(text="Developer Academy Bot • Made with Love ❤️")
-
-            await message.author.send(embed=embed)
+            # Timeoutet User
+            await self.timeout(message,helper_cog)
+            
+            # Sendet Privat Message
+            await self.handleModerationMessage(message,found_words)
 
             if channel is not None:
                 await helper_cog.send_embed(channel, "Bad word",  
@@ -121,22 +107,54 @@ class Automod(commands.Cog):
                                             ,discord.Color.red(),message.author.avatar.url)
             return True
         return False
+    
+    
 
+    async def checkForbiddenLinks(self, message, helper_cog, channel):
+            # Hilfs-Variable
+            content = message.content.lower()
+            # Falls in der URL eine Trusted URL steckt, abbruch
+            for url in TRUSTED_URL:
+                if url.lower() in content:
+                    return False
+    
+            # Wenn ein Link enthalten ist
+            if "https://" in content or "http://" in content:
+                # Löscht Nachricht
+                await message.delete()
+                # Sendet private Nachricht
+                await self.handleModerationMessage(message,message.content)
+                # Timeoutet User
+                await self.timeout(message,helper_cog)
+                # 
+                return True
+            return False
+    
+    async def handleModerationMessage(self,message,list):
+        await message.author.send(f"{message.author.mention}")
+        embed = discord.Embed(
+                                # Setzt den eben erstellten Titel
+                                title="🛡️ AUTO-MOD",
+                                # Setzt die eben erstellte Beschreibung 
+                                description="⚠️ Deine Nachricht wurde gelöscht!",
+                                color=discord.Color.red())
 
+        embed.add_field(name="Grund:",value=f"Unerwünschter Inhalt: {list}", inline=True)
+        embed.add_field(name="Hinweis:",value=f"Bitte Verhalte dich in Zukunft besser,\n damit weitere Schritte nicht nötig sind",inline=True)
+        embed.set_image(url=SUPPORT_THUMBNAIL_URL)
+        embed.set_thumbnail(url=message.author.avatar.url)
+        embed.set_footer(text="Developer Academy Bot • Made with Love ❤️")
 
-    async def checkLink(self, message, helper_cog, channel):
-        content = message.content.lower()
+        await message.author.send(embed=embed)
 
-        for url in TRUSTED_URL:
-            if url.lower() in content:
-                return False
-
-        # Wenn ein Link enthalten ist
-        if "https://" in content or "http://" in content:
-            await message.delete()
-            return True
-        return False
-
+    async def timeout(self,message,helper_cog):
+        # Fehler vermeidung
+        try:
+            # Sendet User in den Timeout
+            await message.author.timeout(timedelta(minutes=5), reason="Unerwünschter Inhalt!")
+        # Falls User höhere Rechte hat als Bot
+        except discord.Forbidden:
+            await helper_cog.logMessage("Automod.py",BOT_HAS_NO_RIGHTS)
             
 async def setup(bot):
     await bot.add_cog(Automod(bot))
