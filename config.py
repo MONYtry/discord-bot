@@ -48,8 +48,24 @@ SUPPORT_EMBED_MESSAGE = ("Hey {member},\n"
             "Wir wünschen dir eine angenehme Zeit und weiterhin viel Spaß!")
 SUPPORT_EMBED_TITEL = "Hilfe ist unterwegs!"
 
-TICKET_EMBED_TITEL =  "GETTING HELP - TUTORIAL"
-TICKET_EMBED_MESSAGE =  (
+TICKET_PREWVIEW_EMBED_TITEL = "HOW TO APPLY - TUTORIAL"
+
+TICKET_PREVIEW_MESSAGE = (
+    "Want to join our team? 🚀 Follow these steps!\n\n"
+    "1. **Choose a Category** – Select the team you want to join.\n"
+    "2. **Fill Out the Form** – Answer all questions honestly.\n"
+    "3. **Submit Your Application** – A private ticket will be created.\n"
+    "4. **Wait for a Response** – Our team will review your application.\n"
+    "5. **Be Patient** – Please avoid duplicate applications.\n\n"
+    "❤️ Good luck with your application!"
+)
+TICKET_EMBED_DESCRIPTION = (
+                        "Hey {member},\n"
+                        "vielen Dank für deine Bewerbung, wir bitten um Gedult,\n"
+                        "unser Team wird sich Zeitnah melden!")
+
+SUPPORT_PREVIEW_EMBED_TITEL =  "GETTING HELP - TUTORIAL"
+SUPPORT_PREVIEW_EMBED_MESSAGE =  (
             "Need help? Follow these simple steps!\n\n"
             "1. **Select a Category** – Choose the category that best describes your issue.\n"
             "2. **Create a Ticket** – A private ticket channel will be created for you.\n"
@@ -67,6 +83,11 @@ WELCOME_THUMBNAIL_URL = "https://cdn.discordapp.com/attachments/1534607507023069
 # ----------- ROLE-IDS ----------- #
 EMBED_ALLOWED_ROLE_IDS = [
     1558241441929760889  # Owner
+]
+
+APPLY_ALLOWED_ROLE_IDS = [
+    1558241441929760889,  # Owner
+    1559679252503470160
 ]
 
 TIMEOUT_ALLOWED_ROLE_IDS = [
@@ -214,6 +235,20 @@ APPLY_QUESTIONS = {
         ("Projekte", "An welchen Projekten hast du gearbeitet?"),
         ("Referenzen", "GitHub oder andere Projekte?")
     ],
+
+    "supporter": [
+            ("Name & Alter", "Wie heißt du und wie alt bist du?"),
+            ("Stärken & Schwächen", "Was sind deine Stärken und Schwächen?"),
+            ("Verhalten", "Wie verhältst du dich bei Fehlverhalten?"),
+            ("Erfahrung", "Hast du bereits Erfahrungen als Supporter?")
+        ],
+
+    "content": [
+            ("Name & Alter", "Wie heißt du und wie alt bist du?"),
+            ("Stärken & Schwächen", "Was sind deine Stärken und Schwächen?"),
+            ("Features", "Feature Ideen..."),
+            ("Wieso du", "Wieso sollten wir uns für dich Entscheiden?")
+        ],
 
     "builder": [
         ("Name & Alter", "Wie heißt du und wie alt bist du?"),

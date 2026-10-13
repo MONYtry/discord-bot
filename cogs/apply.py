@@ -4,11 +4,12 @@ import asyncio
 import datetime
 from config import (APPLY_CATEGORIES_OPTIONS, 
                     APPLY_CHANNEL_ID, 
-                    TICKET_EMBED_MESSAGE,
-                    TICKET_EMBED_TITEL,
+                    TICKET_PREWVIEW_EMBED_TITEL,
+                    TICKET_PREVIEW_MESSAGE,
                     SUPPORT_CHANNEL_LOG_ID,
                     SUPPORT_THUMBNAIL_URL,
-                    APPLY_QUESTIONS)
+                    APPLY_QUESTIONS,APPLY_ALLOWED_ROLE_IDS,
+                    TICKET_EMBED_DESCRIPTION)
 
 
 
@@ -74,24 +75,10 @@ class ApplyCategories(discord.ui.Select):
         )
 
 
-    async def callback(self, interaction: discord.Interaction):
-        # Hilfs-Variablen
-        guild = interaction.guild
-        member = interaction.user
-        helper_cog = interaction.client.get_cog("Helper")
-
-        # Rollen, die den Ticket-Channel sehen dürfen
-        team_role = discord.utils.get(guild.roles, name="Python")
-        if team_role is None:
-            await helper_cog.logError("apply.py","roles wasn't found!")
-            await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
-            return
-        
+    async def callback(self, interaction: discord.Interaction):        
         # Holt sich den aktuellen Value
         selected_value = self.values[0]
-        data = APPLY_CATEGORIES_OPTIONS[selected_value]
         await interaction.response.send_modal(Formular(selected_value))
-    
         
 
 class applyDropDown(commands.Cog):
@@ -114,15 +101,15 @@ class applyDropDown(commands.Cog):
         await channel.purge(limit=10)
         await helper_cog.logMessage("apply.py","Ticket was succcsessfully sent!")
         await helper_cog.send_embed(channel, 
-                                    TICKET_EMBED_TITEL, 
-                                    TICKET_EMBED_MESSAGE, 
+                                    TICKET_PREWVIEW_EMBED_TITEL, 
+                                    TICKET_PREVIEW_MESSAGE, 
                                     discord.Color.blue(),
                                     None,
                                     SUPPORT_THUMBNAIL_URL)  
         await channel.send(view=SupportView())
    
 # Erstellt eine Class mit Discord UI & Titel
-class Formular(discord.ui.Modal, title="Embed erstellen"):
+class Formular(discord.ui.Modal, title="Bewerbung"):
 
     def __init__(self, selected_value):
         super().__init__()
@@ -143,15 +130,13 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
         selected_value = self.selected_value
         data = APPLY_CATEGORIES_OPTIONS[selected_value]
 
+        description = TICKET_EMBED_DESCRIPTION.format(member=interaction.user.mention)
+        
         # Embed wird erstellt
         introEmbed = discord.Embed(
             # Setzt den eben erstellten Titel
-            title=interaction.user.name + " Bewerbung",
-            # Setzt die eben erstellte Beschreibung 
-            description = 
-                        f"Hey {interaction.user.mention},\n"
-                        f"vielen Dank für deine Bewerbung, wir bitten um Gedult,\n"
-                        f"unser Team wird sich Zeitnah melden!",
+            title="Info-Bewerbung",
+            description = description,
             color=discord.Color.blue()
         )
 
@@ -185,8 +170,12 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
         helper_cog = interaction.client.get_cog("Helper")
 
         # Rollen, die den Ticket-Channel sehen dürfen
-        team_role = discord.utils.get(guild.roles, name = "Python")
-        if team_role is None:
+        # Geht durch alle Rollen in dem Discord-Server, falls Rollen.id passt <- Hinzufügen
+        team_roles = [
+            role for role in guild.roles
+                if role.id in APPLY_ALLOWED_ROLE_IDS]
+        
+        if team_roles is None:
             await helper_cog.logError("apply.py","roles wasn't found!")
             await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
             return
@@ -209,22 +198,27 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
             await interaction.response.send_message(f"{member.mention} du hast bereits ein Ticket in dieser Kategorie erstellt: {ticket.mention}", ephemeral=True)
             return
         
+        # Erstellt Rechte
+        overwrites = {
+                        # Überschreibt die Rechte des @Everyones (Niemand sieht diesen Channel)
+                        guild.default_role: discord.PermissionOverwrite(view_channel=False),
+                        # Nun sieht member diesen Channel
+                        member: discord.PermissionOverwrite(view_channel=True,send_messages=True),
+                    }
+        
+        # Überschreibt Rechte für Team-Rollen
+        for role in team_roles:
+            overwrites[role] = discord.PermissionOverwrite(view_channel=True,send_messages=True)
+
         # Erstellt einen Text-Channel
         channel = await guild.create_text_channel(
             # Setzt den Namen des Channels
             name = TICKET_NAME,
             # Setzt die Category
             category = category,
-            
-            # Überschreibt Rechte
-            overwrites = {
-                # Überschreibt die Rechte des @Everyones (Niemand sieht diesen Channel)
-                guild.default_role: discord.PermissionOverwrite(view_channel=False),
-                # Nun sieht member diesen Channel
-                member: discord.PermissionOverwrite(view_channel=True,send_messages=True),
-                team_role: discord.PermissionOverwrite(view_channel=True,send_messages=True),
-            }
-        )
+            overwrites=overwrites)
+        
+
 
         log_channel = interaction.client.get_channel(SUPPORT_CHANNEL_LOG_ID)
         await helper_cog.send_embed(log_channel,"TICKET CREATED",
@@ -239,7 +233,8 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
         await helper_cog.logMessage("apply.py",f"Ticket was created (User:{member.name})")
 
         # Sendet einen Ping an die angegebene Rolle
-        await channel.send(f"{team_role.mention}")
+        # .join hilft um ein einer Zeile zu bleiben
+        await channel.send("".join(role.mention for role in team_roles))
 
         await channel.send(embed=introEmbed)
         await channel.send(embed=embed)

@@ -6,8 +6,8 @@ from config import (SUPPORT_CATEGORIES_OPTIONS,
                     SUPPORT_CHANNEL_ID, 
                     SUPPORT_EMBED_TITEL, 
                     SUPPORT_EMBED_MESSAGE,
-                    TICKET_EMBED_MESSAGE,
-                    TICKET_EMBED_TITEL,
+                    SUPPORT_PREVIEW_EMBED_MESSAGE,
+                    SUPPORT_PREVIEW_EMBED_TITEL,
                     SUPPORT_CHANNEL_LOG_ID,
                     SUPPORT_THUMBNAIL_URL)
 
@@ -173,7 +173,7 @@ class DropDown(commands.Cog):
         # Cleart bestimmte Anzahl an Messages
         await channel.purge(limit=10)
         await helper_cog.logMessage("support.py","Ticket was succcsessfully sent!")
-        await helper_cog.send_embed(channel, TICKET_EMBED_TITEL, TICKET_EMBED_MESSAGE, discord.Color.blue(),None,SUPPORT_THUMBNAIL_URL)        
+        await helper_cog.send_embed(channel, SUPPORT_PREVIEW_EMBED_TITEL, SUPPORT_PREVIEW_EMBED_MESSAGE, discord.Color.blue(),None,SUPPORT_THUMBNAIL_URL)        
         await channel.send(view=SupportView())
        
 
