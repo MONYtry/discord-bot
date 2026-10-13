@@ -127,34 +127,33 @@ SUPPORT_CATEGORIES_OPTIONS = {
 APPLY_CATEGORIES_OPTIONS = {
     "developer": {
         "label": "DEVELOPER",
-        "emoji": "🌐"
+        "emoji": "🧑‍💻"
     },
     
     "supporter": {
             "label": "SUPPORTER",
-            "emoji": "🌐"
+            "emoji": "📨"
     },
 
     "builder": {
         "label": "BUILDER",
-        "emoji": "🌐"
+        "emoji": "⛏️"
     },
     
     "designer": {
         "label": "DESIGNER",
-        "emoji": "🌐"
+        "emoji": "🧊"
     },
     
     "creator": {
         "label": "CREATOR",
-        "emoji": "🌐"
+        "emoji": "🎥"
     },
     
     "content": {
         "label": "CONTENT",
-        "emoji": "🌐"
-    },
-
+        "emoji": "💡"
+    }
 }
 
 

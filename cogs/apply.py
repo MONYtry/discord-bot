@@ -120,7 +120,7 @@ class applyDropDown(commands.Cog):
                                     None,
                                     SUPPORT_THUMBNAIL_URL)  
         await channel.send(view=SupportView())
-        
+   
 # Erstellt eine Class mit Discord UI & Titel
 class Formular(discord.ui.Modal, title="Embed erstellen"):
 
@@ -157,9 +157,8 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
 
         introEmbed.set_footer(text = "Developer Academy Bot • Made with Love ❤️")
 
-                
         embed = discord.Embed(
-            title="📨 Neue Developer-Bewerbung",
+            title=f"📨 Neue {data['label']}-Bewerbung",
             description=(
                 f"Eine neue Bewerbung von {interaction.user.mention} "
                 "ist eingegangen.\n"
@@ -234,7 +233,6 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
                                                f"Typ: {data['label'].lower()}\n"
                                                f"Ticket: {channel.mention}",
                                                discord.Color.green(), member.avatar.url)
-        
 
         # Antwort in dem Ticket-Channel
         await interaction.response.send_message(f"Ticket erstellt: {channel.mention}", ephemeral=True)        
