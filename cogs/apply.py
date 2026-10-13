@@ -4,8 +4,6 @@ import asyncio
 import datetime
 from config import (APPLY_CATEGORIES_OPTIONS, 
                     APPLY_CHANNEL_ID, 
-                    SUPPORT_EMBED_TITEL, 
-                    SUPPORT_EMBED_MESSAGE,
                     TICKET_EMBED_MESSAGE,
                     TICKET_EMBED_TITEL,
                     SUPPORT_CHANNEL_LOG_ID,
@@ -18,7 +16,6 @@ class SupportView(discord.ui.View):
         super().__init__(timeout=None)
         self.add_item(ApplyCategories())
 
-################### TICKET SCHLIEßEN ###################
 class TicketView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -50,7 +47,7 @@ class TicketView(discord.ui.View):
                             f"Typ: {typ.lower()} \n"
                             f"Ticket: {channel_name}",discord.Color.red(), member.avatar.url)
         
-        await helper_cog.logMessage("support.py",
+        await helper_cog.logMessage("apply.py",
                                     f"Ticket was closed \n" 
                                     f"(Ticket creator:{member} | Close command sender: {interaction.user})")
         # Wartet 3 Sekunden
@@ -76,7 +73,6 @@ class ApplyCategories(discord.ui.Select):
         )
 
 
-################################ ERSTELLLT TICKET ################################
     async def callback(self, interaction: discord.Interaction):
         # Hilfs-Variablen
         guild = interaction.guild
@@ -86,7 +82,7 @@ class ApplyCategories(discord.ui.Select):
         # Rollen, die den Ticket-Channel sehen dürfen
         team_role = discord.utils.get(guild.roles, name="Python")
         if team_role is None:
-            await helper_cog.logError("support.py","roles wasn't found!")
+            await helper_cog.logError("apply.py","roles wasn't found!")
             await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
             return
         
@@ -115,7 +111,7 @@ class applyDropDown(commands.Cog):
         
         # Cleart bestimmte Anzahl an Messages
         await channel.purge(limit=10)
-        await helper_cog.logMessage("support.py","Ticket was succcsessfully sent!")
+        await helper_cog.logMessage("apply.py","Ticket was succcsessfully sent!")
         await helper_cog.send_embed(channel, 
                                     TICKET_EMBED_TITEL, 
                                     TICKET_EMBED_MESSAGE, 
@@ -131,41 +127,87 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
         super().__init__()
         self.selected_value = selected_value
 
-    aboutMe = discord.ui.TextInput(
-        label="Alter und Name",
-        placeholder="Gib deinen Name und Alter an...",
-        style=discord.TextStyle.paragraph,
-        max_length=100,
-        required=True
-    )
+        self.add_item(discord.ui.TextInput(
+            label="Name & Alter",
+            placeholder="Wie heißt du und wie alt bist du?",
+            style=discord.TextStyle.paragraph,
+            max_length=500,
+            required=True
+        ))
 
-    strenghtAndWekness = discord.ui.TextInput(
-        label="Stärken und Schwächen",
-        placeholder="Gib x3 Stärken und x3 Schwächen an...",
-        style=discord.TextStyle.paragraph,
-        max_length=100,
-        required=True
-    )
+        self.add_item(discord.ui.TextInput(
+            label="Stärken & Schwächen",
+            placeholder="Wer bist du? Was machst du gerne?",
+            style=discord.TextStyle.paragraph,
+            max_length=500,
+            required=True
+        ))
 
-    whyUs = discord.ui.TextInput(
-        label="Wieso genau Wir?",
-        placeholder="Weshalb hast du dich für Uns entscheiden...",
-        style=discord.TextStyle.paragraph,
-        max_length=300,
-        required=True
-    ) 
 
-    expierience = discord.ui.TextInput(
-        label="Erfahrungen",
-        placeholder="Hast du schon Erfahrungen gemacht...",
-        style=discord.TextStyle.paragraph,
-        max_length=500,
-        required=True
-    )
+        if selected_value == "developer":
+            self.add_item(discord.ui.TextInput(
+                label="Programmiererfahrung",
+                placeholder="Welche Sprachen nutzt du?",
+                style=discord.TextStyle.paragraph,
+                max_length=500,
+                required=True
+            ))
+            self.add_item(discord.ui.TextInput(
+                    label="Projekte",
+                    placeholder="An welchen Projekten hast du gerarbeitet?",
+                    style=discord.TextStyle.paragraph,
+                    max_length=500,
+                    required=True
+            ))
+            self.add_item(discord.ui.TextInput(
+                    label="Referenzen",
+                    placeholder="Hast du Referenzen wie z.B. GitHub oder Projekte",
+                    style=discord.TextStyle.paragraph,
+                    max_length=500,
+                    required=True
+            ))
+
+        elif selected_value == "builder":
+            self.add_item(discord.ui.TextInput(
+                    label="Referenzen",
+                    placeholder="Hast du Referenzen wie z.B. Bilder, Screenshots oder Maps",
+                    style=discord.TextStyle.paragraph,
+                    max_length=500,
+                    required=True
+            ))
+        elif selected_value == "creator":
+            self.add_item(discord.ui.TextInput(
+                    label="Platform",
+                    placeholder="Welche Platform nutzt du",
+                    style=discord.TextStyle.paragraph,
+                    max_length=500,
+                    required=True
+            ))
+            self.add_item(discord.ui.TextInput(
+                    label="Aktivität",
+                    placeholder="Wie aktiv bist du?",
+                    style=discord.TextStyle.paragraph,
+                    max_length=500,
+                    required=True
+            ))
+            self.add_item(discord.ui.TextInput(
+                    label="Sonstige",
+                    placeholder="Sonstige infomationen...",
+                    style=discord.TextStyle.paragraph,
+                    max_length=500,
+                    required=True
+            ))
+
+
 
     
     # Sobald abgeschickt wird
     async def on_submit(self, interaction: discord.Interaction):
+            
+        # Holt sich den aktuellen Value
+        selected_value = self.selected_value
+        data = APPLY_CATEGORIES_OPTIONS[selected_value]
+
         # Embed wird erstellt
         introEmbed = discord.Embed(
             # Setzt den eben erstellten Titel
@@ -177,20 +219,27 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
                         f"unser Team wird sich Zeitnah melden!",
             color=discord.Color.blue()
         )
+
         introEmbed.set_footer(text = "Developer Academy Bot • Made with Love ❤️")
 
-        embed = discord.Embed(
-                    # Setzt den eben erstellten Titel
-                    title = interaction.user.name + " Bewerbung",
-                    # Setzt die eben erstellte Beschreibung 
-                    description = 
-                                f"Über {interaction.user.mention} : {self.aboutMe} \n"
-                                f"Stärken | Schwächen: {self.strenghtAndWekness} \n"
-                                f"Erfahrungen: {self.expierience} \n"
-                                f"Wieso wir: {self.whyUs} \n",
-                    color = discord.Color.blue())
                 
-        embed.set_footer(text = "Developer Academy Bot • Made with Love ❤️")
+        embed = discord.Embed(
+            title="📨 Neue Developer-Bewerbung",
+            description=(
+                f"Eine neue Bewerbung von {interaction.user.mention} "
+                "ist eingegangen.\n"
+                "━━━━━━━━━━━━━━━━━━━━"
+            ),
+            color=discord.Color.blurple(),
+            timestamp=datetime.datetime.now(datetime.timezone.utc)
+        )
+
+        for item in self.children:
+            if isinstance(item,discord.ui.TextInput):
+                embed.add_field(name=item.label, value=item.value or "Keine Antwort", inline=False)
+        
+        embed.set_thumbnail(url=interaction.user.display_avatar.url)
+        embed.set_footer(text="Developer Academy • Bewerbungsmanagement",icon_url=interaction.client.user.display_avatar.url)
         
         # Hilfs-Variablen
         guild = interaction.guild
@@ -200,13 +249,9 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
         # Rollen, die den Ticket-Channel sehen dürfen
         team_role = discord.utils.get(guild.roles, name = "Python")
         if team_role is None:
-            await helper_cog.logError("support.py","roles wasn't found!")
+            await helper_cog.logError("apply.py","roles wasn't found!")
             await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
             return
-        
-        # Holt sich den aktuellen Value
-        selected_value = self.selected_value
-        data = APPLY_CATEGORIES_OPTIONS[selected_value]
         
         # Hilfs Variable
         TICKET_NAME = f"ticket-{member.id}-{data['label']}"
@@ -216,7 +261,7 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
         
         # Falls Kategorie nicht gefunden wurde
         if category is None:
-            await helper_cog.logError("support.py","Category wasn't found!")
+            await helper_cog.logError("apply.py","Category wasn't found!")
             await interaction.response.send_message("Kategorie nicht gefunden!", ephemeral=True)
             return
         
@@ -254,7 +299,7 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
 
         # Antwort in dem Ticket-Channel
         await interaction.response.send_message(f"Ticket erstellt: {channel.mention}", ephemeral=True)        
-        await helper_cog.logMessage("support.py",f"Ticket was created (User:{member.name})")
+        await helper_cog.logMessage("apply.py",f"Ticket was created (User:{member.name})")
 
         # Sendet einen Ping an die angegebene Rolle
         await channel.send(f"{team_role.mention}")
