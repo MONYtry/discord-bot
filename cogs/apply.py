@@ -7,7 +7,8 @@ from config import (APPLY_CATEGORIES_OPTIONS,
                     TICKET_EMBED_MESSAGE,
                     TICKET_EMBED_TITEL,
                     SUPPORT_CHANNEL_LOG_ID,
-                    SUPPORT_THUMBNAIL_URL)
+                    SUPPORT_THUMBNAIL_URL,
+                    APPLY_QUESTIONS)
 
 
 
@@ -117,7 +118,7 @@ class applyDropDown(commands.Cog):
                                     TICKET_EMBED_MESSAGE, 
                                     discord.Color.blue(),
                                     None,
-                                    SUPPORT_THUMBNAIL_URL)        
+                                    SUPPORT_THUMBNAIL_URL)  
         await channel.send(view=SupportView())
         
 # Erstellt eine Class mit Discord UI & Titel
@@ -126,80 +127,14 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
     def __init__(self, selected_value):
         super().__init__()
         self.selected_value = selected_value
-
-        self.add_item(discord.ui.TextInput(
-            label="Name & Alter",
-            placeholder="Wie heißt du und wie alt bist du?",
-            style=discord.TextStyle.paragraph,
-            max_length=500,
-            required=True
-        ))
-
-        self.add_item(discord.ui.TextInput(
-            label="Stärken & Schwächen",
-            placeholder="Wer bist du? Was machst du gerne?",
-            style=discord.TextStyle.paragraph,
-            max_length=500,
-            required=True
-        ))
-
-
-        if selected_value == "developer":
+        
+        for label, placeholder in APPLY_QUESTIONS[selected_value]:
             self.add_item(discord.ui.TextInput(
-                label="Programmiererfahrung",
-                placeholder="Welche Sprachen nutzt du?",
+                label=label,
+                placeholder=placeholder,
                 style=discord.TextStyle.paragraph,
                 max_length=500,
-                required=True
-            ))
-            self.add_item(discord.ui.TextInput(
-                    label="Projekte",
-                    placeholder="An welchen Projekten hast du gerarbeitet?",
-                    style=discord.TextStyle.paragraph,
-                    max_length=500,
-                    required=True
-            ))
-            self.add_item(discord.ui.TextInput(
-                    label="Referenzen",
-                    placeholder="Hast du Referenzen wie z.B. GitHub oder Projekte",
-                    style=discord.TextStyle.paragraph,
-                    max_length=500,
-                    required=True
-            ))
-
-        elif selected_value == "builder":
-            self.add_item(discord.ui.TextInput(
-                    label="Referenzen",
-                    placeholder="Hast du Referenzen wie z.B. Bilder, Screenshots oder Maps",
-                    style=discord.TextStyle.paragraph,
-                    max_length=500,
-                    required=True
-            ))
-        elif selected_value == "creator":
-            self.add_item(discord.ui.TextInput(
-                    label="Platform",
-                    placeholder="Welche Platform nutzt du",
-                    style=discord.TextStyle.paragraph,
-                    max_length=500,
-                    required=True
-            ))
-            self.add_item(discord.ui.TextInput(
-                    label="Aktivität",
-                    placeholder="Wie aktiv bist du?",
-                    style=discord.TextStyle.paragraph,
-                    max_length=500,
-                    required=True
-            ))
-            self.add_item(discord.ui.TextInput(
-                    label="Sonstige",
-                    placeholder="Sonstige infomationen...",
-                    style=discord.TextStyle.paragraph,
-                    max_length=500,
-                    required=True
-            ))
-
-
-
+                required=True))
     
     # Sobald abgeschickt wird
     async def on_submit(self, interaction: discord.Interaction):
@@ -234,12 +169,16 @@ class Formular(discord.ui.Modal, title="Embed erstellen"):
             timestamp=datetime.datetime.now(datetime.timezone.utc)
         )
 
+        # Geht durch alle Children
         for item in self.children:
+            # Wenn es ein discord.UI ist 
             if isinstance(item,discord.ui.TextInput):
+                # Fügt Embed add_Field hinzu 
                 embed.add_field(name=item.label, value=item.value or "Keine Antwort", inline=False)
         
         embed.set_thumbnail(url=interaction.user.display_avatar.url)
-        embed.set_footer(text="Developer Academy • Bewerbungsmanagement",icon_url=interaction.client.user.display_avatar.url)
+        embed.set_footer(text="Developer Academy • Bewerbungsmanagement",
+                         icon_url=interaction.client.user.display_avatar.url)
         
         # Hilfs-Variablen
         guild = interaction.guild

@@ -205,3 +205,28 @@ FORBIDDEN_WORDS = [
     "hitler", "hitla", "adolf", "88", "1945", "1933",
     "911","9/11"
 ]
+
+
+APPLY_QUESTIONS = {
+    "developer": [
+        ("Name & Alter", "Wie heißt du und wie alt bist du?"),
+        ("Stärken & Schwächen", "Was sind deine Stärken und Schwächen?"),
+        ("Programmiererfahrung", "Welche Sprachen nutzt du?"),
+        ("Projekte", "An welchen Projekten hast du gearbeitet?"),
+        ("Referenzen", "GitHub oder andere Projekte?")
+    ],
+
+    "builder": [
+        ("Name & Alter", "Wie heißt du und wie alt bist du?"),
+        ("Stärken & Schwächen", "Was sind deine Stärken und Schwächen?"),
+        ("Referenzen", "Bilder, Screenshots oder Maps?")
+    ],
+
+    "creator": [
+        ("Name & Alter", "Wie heißt du und wie alt bist du?"),
+        ("Stärken & Schwächen", "Was sind deine Stärken und Schwächen?"),
+        ("Plattform", "Welche Plattform nutzt du?"),
+        ("Aktivität", "Wie aktiv bist du?"),
+        ("Sonstige Informationen", "Was sollten wir noch wissen?")
+    ]
+}
