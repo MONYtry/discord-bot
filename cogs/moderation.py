@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from datetime import timedelta
-from config import TIMEOUT_LOG_CHANNEL, TIMEOUT_ALLOWED_ROLE_IDS, NO_RIGHTS_MESSAGE
+from config import TIMEOUT_LOG_CHANNEL, TIMEOUT_ALLOWED_ROLE_IDS, NO_RIGHTS_MESSAGE,SUPPORT_THUMBNAIL_URL
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
@@ -74,7 +74,7 @@ class Moderation(commands.Cog):
                                     "Member Timeout removed",
                                     f"🔨 **User timeout removed!**\n"
                                     f"👤 User: {user.mention} (`{user.id}`)\n", 
-                                    discord.Color.green())
+                                    discord.Color.green(),user.avatar.url,SUPPORT_THUMBNAIL_URL)
                 return
             
             await user.timeout(dauer_zeit, reason=reason)
@@ -95,7 +95,7 @@ class Moderation(commands.Cog):
                     f"👤 User: {user.mention} (`{user.id}`)\n"
                     f"⏳ Dauer: {duration} {timetype.name}\n"
                     f"📝 Grund: {reason}"
-                    ,discord.Color.red(), None
+                    ,discord.Color.red(), user.avatar.url,SUPPORT_THUMBNAIL_URL
                 )
 
 async def setup(bot):

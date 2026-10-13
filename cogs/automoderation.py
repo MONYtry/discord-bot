@@ -1,7 +1,11 @@
 from discord.ext import commands
 import discord
-from config import MESSAGE_LOG_CHANNEL,SUPPORT_THUMBNAIL_URL,FORBIDDEN_WORDS
-
+from config import (MESSAGE_LOG_CHANNEL,
+                    SUPPORT_THUMBNAIL_URL,
+                    FORBIDDEN_WORDS, 
+                    BOT_HAS_NO_RIGHTS,
+                    TRUSTED_URL)
+from datetime import timedelta
 
 class Automod(commands.Cog):
     def __init__(self,bot):
@@ -64,7 +68,7 @@ class Automod(commands.Cog):
                                         f"🕒 Zeit: {message.created_at.strftime('%d.%m.%Y %H:%M:%S')} UTC\n"
                                         ,discord.Color.red(), message.author.avatar.url)
         await self.autoModeration(message,helper_cog,log_channel)
-
+        await self.checkLink(message,helper_cog,log_channel)
 
     async def autoModeration(self,message,helper_cog,channel):
         
@@ -79,10 +83,18 @@ class Automod(commands.Cog):
             print(
                         f"⚠️ Blacklist-Wörter erkannt: {found_words}\n"
                         f"👤 User: {message.author} ({message.author.id})\n"
-                        f"💬 Nachricht: {message.content}"
-                        )
+                        f"📍 Channel: #{message.channel}\n"
+                        f"💬 Nachricht: {message.content}")
+            
             # Löscht Nachricht
             await message.delete()
+            
+            # Fehler vermeidung
+            try:
+                # Sendet User in den Timeout
+                await message.author.timeout(timedelta(minutes=5), reason="Unerwünschter Inhalt!")
+            except discord.Forbidden:
+                await helper_cog.logMessage("Automod.py",BOT_HAS_NO_RIGHTS)
 
             await message.author.send(f"{message.author.mention}")
             embed = discord.Embed(
@@ -90,9 +102,9 @@ class Automod(commands.Cog):
                                 title="🛡️ AUTO-MOD",
                                 # Setzt die eben erstellte Beschreibung 
                                 description="⚠️ Deine Nachricht wurde gelöscht!",
-                                color=discord.Color.red()
-                            )
-            embed.add_field(name="Grund:",value=f"Unerwünschter Inhalt: {found_words}",inline=True)
+                                color=discord.Color.red())
+
+            embed.add_field(name="Grund:",value=f"Unerwünschter Inhalt: {found_words}", inline=True)
             embed.add_field(name="Hinweis:",value=f"Bitte Verhalte dich in Zukunft besser,\n damit weitere Schritte nicht nötig sind",inline=True)
             embed.set_image(url=SUPPORT_THUMBNAIL_URL)
             embed.set_thumbnail(url=message.author.avatar.url)
@@ -110,6 +122,21 @@ class Automod(commands.Cog):
             return True
         return False
 
-                    
+
+
+    async def checkLink(self, message, helper_cog, channel):
+        content = message.content.lower()
+
+        for url in TRUSTED_URL:
+            if url.lower() in content:
+                return False
+
+        # Wenn ein Link enthalten ist
+        if "https://" in content or "http://" in content:
+            await message.delete()
+            return True
+        return False
+
+            
 async def setup(bot):
     await bot.add_cog(Automod(bot))

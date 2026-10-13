@@ -26,6 +26,9 @@ LEAVE_TITEL_LOG_MESSAGE = "Member leaved"
 JOIN_LOG_MESSAGE = "{member} just joined the Discord"
 LEAVE_LOG_MESSAGE = "{member} just leaved the Discord"
 
+# BOT MESSAGES
+BOT_HAS_NO_RIGHTS = "Bot hat dazu keine Rechte!"
+
 # WELCOME MESSAGE
 WELCOME_MESSAGE = (
                 "Hey {member}, welcome to our community💖\n\n"
@@ -111,7 +114,9 @@ SUPPORT_CATEGORIES_OPTIONS = {
 
 
 
-
+TRUSTED_URL = [
+    "youtube.com"
+    ]
 # Inhalt KI genererriert!
 FORBIDDEN_WORDS = [
     # Beleidigungen
