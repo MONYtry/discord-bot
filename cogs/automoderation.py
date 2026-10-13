@@ -53,6 +53,7 @@ class Automod(commands.Cog):
                 return
             if await self.checkForbiddenLinks(message,helper_cog,log_channel):
                 return
+            
             await helper_cog.logMessage("automod.py",
                     # Schreibt x40 "="
                     f"\n{'=' * 40}\n"

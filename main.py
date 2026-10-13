@@ -26,6 +26,8 @@ class MyBot(commands.Bot):
         await self.load_extension("cogs.embed")
         await self.load_extension("cogs.log")
         await self.load_extension("cogs.support")
+        await self.load_extension("cogs.apply")
+
         await self.load_extension("cogs.moderation")
         await self.load_extension("cogs.reactionroles")
         await self.load_extension("cogs.automoderation")

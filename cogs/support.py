@@ -74,6 +74,8 @@ class SupportCategories(discord.ui.Select):
             max_values=1
         )
 
+
+################################ ERSTELLLT TICKET ################################
     async def callback(self, interaction: discord.Interaction):
         # Hilfs-Variablen
         guild = interaction.guild
@@ -92,6 +94,7 @@ class SupportCategories(discord.ui.Select):
         selected_value = self.values[0]
         data = SUPPORT_CATEGORIES_OPTIONS[selected_value]
         
+        
         # Hilfs Variable
         TICKET_NAME = f"ticket-{member.id}-{data['label']}"
         
@@ -109,8 +112,6 @@ class SupportCategories(discord.ui.Select):
         if ticket is not None:
             await interaction.response.send_message(f"{member.mention} du hast bereits ein Ticket in dieser Kategorie erstellt: {ticket.mention}", ephemeral=True)
             return
-        
-        
         
         # Erstellt einen Text-Channel
         channel = await guild.create_text_channel(
@@ -174,7 +175,7 @@ class DropDown(commands.Cog):
         await helper_cog.logMessage("support.py","Ticket was succcsessfully sent!")
         await helper_cog.send_embed(channel, TICKET_EMBED_TITEL, TICKET_EMBED_MESSAGE, discord.Color.blue(),None,SUPPORT_THUMBNAIL_URL)        
         await channel.send(view=SupportView())
-        
+       
 
 async def setup(bot):
     await bot.add_cog(DropDown(bot))

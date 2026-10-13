@@ -8,6 +8,7 @@ BOT_STATUS_CHANNEL_ID = 1558243145836269568
 STATUS_CHANNEL_ID = 1558243145836269568
 BAN_CHANNEL_ID = 1557488286161834034
 SUPPORT_CHANNEL_ID = 1557488329279144096
+APPLY_CHANNEL_ID = 1559641553373372527
 
 # LOGGING - CHANNELS
 TIMEOUT_LOG_CHANNEL = 1557488290511196211
@@ -107,11 +108,54 @@ REACTION_ROLE_OPTIONS = {
 
 # Dictionary
 SUPPORT_CATEGORIES_OPTIONS = {
-    "bug": {"label": "BUG", "emoji": "🌐"},
-    "help": {"label": "HELP", "emoji": "🎨"},
-    "other": {"label": "OTHER", "emoji": "💛"}
+    "bug": {
+        "label": "BUG", 
+        "emoji": "🌐"
+    },
+    
+    "help": {
+        "label": "HELP", 
+        "emoji": "🎨"
+    },
+    
+    "other": {
+        "label": "OTHER", 
+        "emoji": "💛"
+    }
 }
 
+APPLY_CATEGORIES_OPTIONS = {
+    "developer": {
+        "label": "DEVELOPER",
+        "emoji": "🌐"
+    },
+    
+    "supporter": {
+            "label": "SUPPORTER",
+            "emoji": "🌐"
+    },
+
+    "builder": {
+        "label": "BUILDER",
+        "emoji": "🌐"
+    },
+    
+    "designer": {
+        "label": "DESIGNER",
+        "emoji": "🌐"
+    },
+    
+    "creator": {
+        "label": "CREATOR",
+        "emoji": "🌐"
+    },
+    
+    "content": {
+        "label": "CONTENT",
+        "emoji": "🌐"
+    },
+
+}
 
 
 TRUSTED_URL = [
