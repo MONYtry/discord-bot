@@ -4,6 +4,9 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 from config import SERVER_ID
+from api.main import app,set_bot
+import asyncio
+import uvicorn
 
 # Läd geheimnisse
 load_dotenv()
@@ -51,4 +54,26 @@ async def on_ready():
 if not TOKEN:
     raise RuntimeError("DISCORD_TOKEN fehlt in der .env-Datei!")
 
-bot.run(TOKEN)
+async def start_service():
+
+    # Bot wird in die API übergeben
+    set_bot(bot)
+    
+    # Konfiguriert Server 
+    config = uvicorn.Config(
+        app,
+        host="127.0.0.1",
+        port=8000
+    )
+
+    # Server wird an uvicorn übergeben
+    server = uvicorn.Server(config)
+
+    # Discord-Bot und Server gleichzeitig Starten
+    await asyncio.gather(
+        bot.start(TOKEN),
+        server.serve()
+    )
+# Damit nicht der gesamte Bot instant gestartet wird
+if __name__ == "__main__":
+    asyncio.run(start_service())

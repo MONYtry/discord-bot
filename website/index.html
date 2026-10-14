@@ -1,0 +1,56 @@
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js" defer></script>
+</head>
+
+<body>
+    <main class="dashboard">
+        <header class="hero">
+            <span class="eyebrow">ADMINISTRATION</span>
+            <h1>Dashboard.</h1>
+            <p>Alles im Blick. Alles unter Kontrolle.</p>
+        </header>
+
+        <section class="stats-grid">
+            <div class="card stat-card">
+                <span class="card-label">Module</span>
+                <p id="module-count">Wird geladen...</p>
+            </div>
+            <div class="card stat-card">
+                <span class="card-label">Nutzer</span>
+                <p id="member-count">Wird geladen...</p>
+            </div>
+            <div class="card stat-card">
+                <span class="card-label">Server</span>
+                <p id="guild-count">Wird geladen...</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Bot-Status</h2>
+            <div class="card status-grid">
+                <p id="bot-online">Status: Lädt...</p>
+                <p id="username">Username: Lädt...</p>
+                <p id="ping">Ping: Lädt...</p>
+                <p id="uptime">Uptime: Lädt...</p>
+                <p id="api_status">API: Lädt...</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Verbundene Server</h2>
+            <div class="card guild-card">
+                <p id="guilds">Server werden geladen...</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div id="commands-container"></div>
+        </section>
+
+        <footer>Admin Dashboard · Built with care.</footer>
+    </main>
+</body>
+
+</html>

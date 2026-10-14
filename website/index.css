@@ -1,0 +1,115 @@
+ body {
+    background-color: #111111;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 30px;
+}
+
+h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+p {
+    color: #cccccc;
+}
+
+.stats-grid {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: #1c1c1e;
+    border: 1px solid #333333;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.stat-card {
+    flex: 1;
+    min-width: 180px;
+}
+
+.stat-card p {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.section {
+    margin-top: 40px;
+}
+
+.status-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 30px;
+}
+
+.status-grid p {
+    min-width: 200px;
+}
+
+.guild-card {
+    overflow-wrap: anywhere;
+}
+
+#commands-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.command-list-title {
+    color: white;
+}
+
+.command-box {
+    background-color: #1c1c1e;
+    border: 1px solid #333333;
+    border-radius: 15px;
+    padding: 15px 20px;
+    transition: 0.2s;
+}
+
+.command-box:hover {
+    background-color: #292929;
+    border-color: #555555;
+}
+
+.command-title {
+    color: #2997ff;
+    margin: 0;
+}
+
+.command-description {
+    color: #aaaaaa;
+    margin-bottom: 0;
+}
+
+footer {
+    color: #666666;
+    text-align: center;
+    margin-top: 50px;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 20px;
+    }
+
+    .stats-grid {
+        flex-direction: column;
+    }
+
+    .status-grid {
+        flex-direction: column;
+    }
+}
+
