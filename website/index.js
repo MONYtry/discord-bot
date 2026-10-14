@@ -24,6 +24,16 @@ async function getStatsData() {
 
         const display_cogCount = document.getElementById("module-count");
         display_cogCount.textContent = "Module: " + result.cog_count;
+        
+        const display_openTickets = document.getElementById("openTickets");
+        display_openTickets.textContent = result.open_tickets;
+        
+        const display_totalclosedTickets = document.getElementById("closedTickets");
+        display_totalclosedTickets.textContent = "Total closed Tickets: " + result.total_closed_tickets;
+
+        const display_totalTickets = document.getElementById("totalTickets");
+        display_totalTickets.textContent = "Total Tickets: " + result.total_tickets;
+
     }
     catch (error) {
         console.log(error);

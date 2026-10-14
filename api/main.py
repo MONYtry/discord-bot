@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import time
 from fastapi.middleware.cors import CORSMiddleware
+from api.database import get_open_tickets,get_total_tickets,get_total_closed_tickets
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware,
@@ -15,9 +16,6 @@ def set_bot(discord_bot):
     global bot,start_time
     bot = discord_bot
     start_time = time.time()
-
-
-
 
 # STARTING COMMAND:
 # python -m uvicorn api.main:app --reload
@@ -93,7 +91,10 @@ def stats():
     return {
         "guild_count": len(bot.guilds),
         "user_count": getMembersCount(),
-        "cog_count": len(bot.extensions)
+        "cog_count": len(bot.extensions),
+        "open_tickets": get_open_tickets(),
+        "total_tickets": get_total_tickets(),
+        "total_closed_tickets": get_total_closed_tickets()
     }
 
 @app.get("/guilds")

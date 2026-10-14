@@ -11,6 +11,7 @@ from config import (APPLY_CATEGORIES_OPTIONS,
                     APPLY_QUESTIONS,APPLY_ALLOWED_ROLE_IDS,
                     TICKET_EMBED_DESCRIPTION)
 
+from api.database import create_ticket, close_ticket
 
 
 class SupportView(discord.ui.View):
@@ -54,9 +55,9 @@ class TicketView(discord.ui.View):
                                     f"(Ticket creator:{member} | Close command sender: {interaction.user})")
         # Wartet 3 Sekunden
         await asyncio.sleep(3)
+        close_ticket(interaction.channel.id)
         # Löscht den Channel
         await interaction.channel.delete()
-        
 
 class ApplyCategories(discord.ui.Select):
     def __init__(self):
@@ -125,7 +126,6 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
     
     # Sobald abgeschickt wird
     async def on_submit(self, interaction: discord.Interaction):
-            
         # Holt sich den aktuellen Value
         selected_value = self.selected_value
         data = APPLY_CATEGORIES_OPTIONS[selected_value]
@@ -218,6 +218,8 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
             category = category,
             overwrites=overwrites)
         
+        # Datenbank 
+        create_ticket(channel.id,guild.id,member.id,data["label"])
 
 
         log_channel = interaction.client.get_channel(SUPPORT_CHANNEL_LOG_ID)
