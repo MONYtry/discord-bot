@@ -11,20 +11,20 @@ from config import (APPLY_CATEGORIES_OPTIONS,
                     APPLY_QUESTIONS,APPLY_ALLOWED_ROLE_IDS,
                     TICKET_EMBED_DESCRIPTION)
 
-from api.database import create_ticket, close_ticket
+from api.database import open_ticket,close_ticket
 
 
 class SupportView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
         self.add_item(ApplyCategories())
-
+        
 class TicketView(discord.ui.View):
     def __init__(self):
-        super().__init__(timeout=None)
-    
+        super().__init__(timeout=None)    
+        
     #  Erstellt Button
-    @discord.ui.button(label="Ticket schließen", style=discord.ButtonStyle.danger, emoji="🔒")
+    @discord.ui.button(label="Ticket schließen", style=discord.ButtonStyle.danger, emoji="🔒", custom_id="ticket:close")
     async def close_ticket(self,interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message("Ticket wird in demnächst gelöscht!", ephemeral=True)
         
@@ -55,7 +55,7 @@ class TicketView(discord.ui.View):
                                     f"(Ticket creator:{member} | Close command sender: {interaction.user})")
         # Wartet 3 Sekunden
         await asyncio.sleep(3)
-        close_ticket(interaction.channel.id)
+        close_ticket(interaction.channel.id,0)
         # Löscht den Channel
         await interaction.channel.delete()
 
@@ -219,7 +219,7 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
             overwrites=overwrites)
         
         # Datenbank 
-        create_ticket(channel.id,guild.id,member.id,data["label"])
+        open_ticket(channel.id,1,guild.id)
 
 
         log_channel = interaction.client.get_channel(SUPPORT_CHANNEL_LOG_ID)
@@ -246,3 +246,4 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
 
 async def setup(bot):
     await bot.add_cog(applyDropDown(bot))
+    bot.add_view(TicketView())

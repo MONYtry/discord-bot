@@ -2,109 +2,94 @@ import sqlite3
 import os
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tickets.db")
-DB_PATH = os.path.abspath(DB_PATH)
 
-
-def init_db():
+def load_dataBase():
     with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS tickets (
-                channel_id INTEGER PRIMARY KEY,
-                guild_id INTEGER NOT NULL,
-                user_id INTEGER NOT NULL,
-                category TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                closed_at TIMESTAMP
-            )
-        """)
-
+        # Erstellt eine Tabelle
+        # Spalten = {id,total_tickets}
         conn.execute("""
             CREATE TABLE IF NOT EXISTS stats (
-                id INTEGER PRIMARY KEY CHECK (id = 99),
-                total_tickets INTEGER DEFAULT 0,
-                total_closed_tickets INTEGER DEFAULT 0
-            )
+            id INTEGER PRIMARY KEY, 
+            total_tickets INTEGER, 
+            open_tickets INTEGER,
+            closed_tickets INTEGER)
         """)
 
-        # Fehlende Spalte in der alten Datenbank ergänzen
-        columns = [
-            row[1]
-            for row in conn.execute("PRAGMA table_info(stats)")
-        ]
-
-        if "total_closed_tickets" not in columns:
-            conn.execute("""
-                ALTER TABLE stats
-                ADD COLUMN total_closed_tickets INTEGER DEFAULT 0
-            """)
-
+        # Setzt Werte, falls diese bereits geladen sind <- Skip
         conn.execute("""
-            INSERT OR IGNORE INTO stats
-                (id, total_tickets, total_closed_tickets)
-            VALUES (99, 0, 0)
+            INSERT OR IGNORE INTO stats (
+            id,
+            total_tickets,
+            open_tickets, 
+            closed_tickets)
+
+            VALUES(1,0,0,0)
         """)
 
+        # Erstellt eine Tabelle falls sie noch nicht Exisiert
+        # Hauptteil = channel_id
+        # status = standard 1
+        # guild_id = integer
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS tickets (
+            channel_id INTEGER PRIMARY KEY,
+            status INTEGER NOT NULL DEFAULT 1,
+            guild_id INTEGER)
+        """)
 
-def create_ticket(channel_id, guild_id, user_id, category):
+def open_ticket(channel_id, status, guild_id):
     with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            INSERT INTO tickets
-                (channel_id, guild_id, user_id, category)
-            VALUES (?, ?, ?, ?)
-        """, (channel_id, guild_id, user_id, category))
-
+        # SET setzt werte (die rechnung ist selbst erklärend)
+        # WHERE id = 1 <- Nutzt ID = 1 (Erkennung)
         conn.execute("""
             UPDATE stats
-            SET total_tickets = total_tickets + 1
-            WHERE id = 99
+            SET total_tickets = total_tickets + 1, open_tickets = open_tickets + 1
+            WHERE id = 1
         """)
+        # INSERT INTO = legt in die Tabelle Werte mit Parameter
+        # Fragezeichen sind Placeholder welche durch Parameter erstetzt werden 
+        # (Reihenfolge ist entscheident)
+        conn.execute("""
+            INSERT INTO tickets(channel_id,status,guild_id)
+            VALUES(?,?,?)
+        """, (channel_id,status,guild_id))
 
-
-def close_ticket(channel_id):
+def close_ticket(channel_id,status):
     with sqlite3.connect(DB_PATH) as conn:
-        cursor = conn.execute("""
+        conn.execute("""
+        UPDATE stats
+        SET open_tickets = open_tickets - 1, closed_tickets = closed_tickets + 1
+        WHERE id = 1
+        """)
+        
+        conn.execute("""
             UPDATE tickets
-            SET closed_at = CURRENT_TIMESTAMP
-            WHERE channel_id = ? AND closed_at IS NULL
-        """, (channel_id,))
-
-        if cursor.rowcount > 0:
-            conn.execute("""
-                UPDATE stats
-                SET total_closed_tickets = total_closed_tickets + 1
-                WHERE id = 99
-            """)
-
-
-def get_total_closed_tickets():
-    with sqlite3.connect(DB_PATH) as conn:
-        result = conn.execute("""
-            SELECT total_closed_tickets
-            FROM stats
-            WHERE id = 99
-        """).fetchone()
-
-        return result[0] if result else 0
-
-
-def get_total_tickets():
-    with sqlite3.connect(DB_PATH) as conn:
-        result = conn.execute("""
-            SELECT total_tickets
-            FROM stats
-            WHERE id = 99
-        """).fetchone()
-
-        return result[0] if result else 0
-
+            SET status = ?
+            WHERE channel_id = ?
+        """, (channel_id,status))
 
 def get_open_tickets():
     with sqlite3.connect(DB_PATH) as conn:
+        # SELECT = Variable / Wert
+        # FROM = Tabelle
         return conn.execute("""
-            SELECT COUNT(*)
-            FROM tickets
-            WHERE closed_at IS NULL
+            SELECT open_tickets
+            FROM stats
         """).fetchone()[0]
 
+def get_closed_tickets():
+    with sqlite3.connect(DB_PATH) as conn:
+        return conn.execute("""
+            SELECT closed_tickets
+            FROM stats
+        """).fetchone()[0]
+    
+#.fetchone()[index] = Holt Wert aus der Zeile (index)
+def get_total_tickets():
+    with sqlite3.connect(DB_PATH) as conn:
+        return conn.execute("""
+        SELECT total_tickets
+        FROM stats
+        """).fetchone()[0]
 
-init_db()
+load_dataBase()

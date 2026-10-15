@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import time
 from fastapi.middleware.cors import CORSMiddleware
-from api.database import get_open_tickets,get_total_tickets,get_total_closed_tickets
+from api.database import get_total_tickets,get_open_tickets,get_closed_tickets
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware,
@@ -94,7 +94,7 @@ def stats():
         "cog_count": len(bot.extensions),
         "open_tickets": get_open_tickets(),
         "total_tickets": get_total_tickets(),
-        "total_closed_tickets": get_total_closed_tickets()
+        "total_closed_tickets": get_closed_tickets()
     }
 
 @app.get("/guilds")

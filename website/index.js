@@ -29,11 +29,10 @@ async function getStatsData() {
         display_openTickets.textContent = result.open_tickets;
         
         const display_totalclosedTickets = document.getElementById("closedTickets");
-        display_totalclosedTickets.textContent = "Total closed Tickets: " + result.total_closed_tickets;
+        display_totalclosedTickets.textContent = result.total_closed_tickets;
 
         const display_totalTickets = document.getElementById("totalTickets");
-        display_totalTickets.textContent = "Total Tickets: " + result.total_tickets;
-
+        display_totalTickets.textContent = result.total_tickets;
     }
     catch (error) {
         console.log(error);
