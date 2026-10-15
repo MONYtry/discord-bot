@@ -34,15 +34,12 @@ class MyBot(commands.Bot):
         await self.load_extension("cogs.reactionroles")
         await self.load_extension("cogs.automoderation")
 
-        # Slash-Commands registierieren
-        guild = discord.Object(id=SERVER_ID)
+        # Geht durch jeden Server auf dem der Bot ist
+        for guild in self.guilds:
+            self.tree.copy_global_to(guild=guild)
+            synced = await self.tree.sync(guild=guild)
+            print(f"✅ {len(synced)} Commands für {guild.name} synchronisiert")
 
-        # Cleared die alten Commands
-        #self.tree.clear_commands(guild=None)
-        
-        self.tree.copy_global_to(guild=guild)
-        synced = await self.tree.sync(guild=guild)
-        print(f"✅ {len(synced)} Slash-Commands synchronisiert!")
 
 bot = MyBot(command_prefix="!", intents=intents)
 
