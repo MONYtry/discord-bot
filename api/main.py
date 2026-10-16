@@ -158,41 +158,57 @@ def commands():
         "command_count": len(command_list),
         "commands": command_list
     }
-
 @app.get("/auth/login")
-async def auth_login(request: Request):
+# Wir nutzen Request um Infos über die Anfrage zu erlangen
+async def auth_logging(request: Request):
+    # Falls Nutzer bereits Eingeloggt ist
     if await auth_status(request):
+        # Sendet Nutzer zurück auf die Hauptseite
         return RedirectResponse("http://127.0.0.1:5500/website/landingPage/ladingPage.html",status_code=303)
-        
-
-    # Erstellt einen 32-Stelligen String 
-    state = secrets.token_urlsafe(32)
-    request.session["oauth_state"] = state
     
-    # Erstellt benötigte Parameter
-    parameter = {
+    # Erstellt einen 16-Byte langen String (Token)
+    status = secrets.token_urlsafe(16)
+    # Setzt den Token in die Session
+    request.session["oauth_state"] = status
+    
+    # Erstellt Hilfs-Dictianary
+    dictionary = {
         "client_id": CLIENT_ID,
         "redirect_uri": REDIRECT_URI,
         "response_type": "code",
         "scope": "identify guilds",
-        "state": state,
+        "state": status
     }
-
+    # Nutzt URLLibrary 
+    # Wir Importieren es hier damit es nur in der function nutzbar ist (performance)
     from urllib.parse import urlencode
-    # Erstellt finale URL
-    discord_url = ("https://discord.com/oauth2/authorize?" + urlencode(parameter))
+
+    # Erstellt eine URL mit dem oben erstellen Dictianary
+    # urlencode hilft uns aus dem Dictianary ein String zu bauen den wir für die URL nutzen
+    discord_url = ("https://discord.com/oauth2/authorize?" + urlencode(dictionary))
+    
+    # Sendet Nutzer auf die Seite
     return RedirectResponse(discord_url)
 
 @app.get("/auth/callback")
+# Nutzt request : Request <- Enthält Infos der HTTP Anfrage
+# Erstellt Parameter 
 async def auth_callback(request: Request, code: str | None = None, state: str | None = None):
-    # Prüft ob Discord den erwarteten Sicherheitswert zurückgibt
+    # Löscht den oauth_state aus der Session
     except_state = request.session.pop("oauth_state", None)
 
-    # Falls etwas schief läuft
+    # Falls einer der Parameter nicht passt
     if not code or not state or state != except_state:
         return HTMLResponse("Login Fehlgeschlagen: Ungülitiger state.", status_code=400)
-    
+
+    # Erstellung von einem HTTP Client
     async with httpx.AsyncClient() as client:
+        # post() sendet eine POST Anfrage
+        # CLIENT_ID identifiziert den Bot
+        # CLIENT_SECRET geheimer Schlüssel des Bots
+        # grant_type gibt an das ein Autorisierungscode verwendet wird
+        # code ist der von Discord erstellte Code
+        # REDIRECT_URI ist der Link zu der Redirect Website
         token_response = await client.post(
             "https://discord.com/api/oauth2/token", 
             data={
@@ -204,39 +220,45 @@ async def auth_callback(request: Request, code: str | None = None, state: str | 
             },
         )
 
-        # Falls Discord nicht richtig Antwortet
+        # Falls Antwort nicht passt
         if token_response.status_code != 200:
             return HTMLResponse("Discord-Token konnte nicht abgerufen werden.",status_code=400,)
         
-        # Macht aus token_response eine normae Variable
+        # Wandelt eine JSON Antwort in ein Dictionary um 
         token_data = token_response.json()
-        # Holt sich accsess token
+
+        # accesses_token = Holt sich den Token aus der Antwort ["access_token"]
         accesses_token = token_data["access_token"]
         
-        # Baut Server Response
+        # Discord Server des Nutzers laden
+        # Authorization wird genutzt damit Discord versteht welcher User die Anfrage stellt
         guild_response = await client.get(
             "https://discord.com/api/users/@me/guilds",
             headers= {
                 "Authorization": f"Bearer {accesses_token}"
             },
         )
-        
-        # Falls blockiert wurde
+
+        # Falls Antwort nicht passt
         if guild_response.status_code != 200:
-            return HTMLResponse("Discord-Server konnten nicht geladen werden.", status_code=400,)
-        guilds = guild_response.json()
+            return HTMLResponse("Discord-Server konnten nicht geladen werden.", status_code=400)
         
-        # Baut User Response
+        # Wandelt eine JSON Antwort in ein Dictionary um 
+        guilds = guild_response.json()
+
+        # Holt sich das Profiel des Users
         user_response = await client.get(
             "https://discord.com/api/users/@me",
             headers={
                 "Authorization": f"Bearer {accesses_token}"
             },
         )
-        # Falls blockiert wird
+
+        # Falls Antwort nicht passt
         if user_response.status_code != 200:
-            return HTMLResponse("Discord-Token konnte nicht abgerufen werden.",status_code=400,)
+            return HTMLResponse("Discord-Token konnte nicht abgerufen werden.",status_code=400)
         
+        # Mach aus Response eine JSON        
         user = user_response.json()
 
 
@@ -256,32 +278,20 @@ async def auth_callback(request: Request, code: str | None = None, state: str | 
                     aviliable_guilds.append(user_guild)
 
 
-        # Gibt alles zurück
+        # Erstellt wieder Zufälligen 32-Bit String
         session_id = secrets.token_urlsafe(32)
-
+        # Speichert den Discord Accsess Token 
         oauth_tokens[session_id] = accesses_token
+        # Speichert es in der Session des Nutzers
         request.session["session_id"] = session_id
 
         return RedirectResponse("http://127.0.0.1:5500/website/landingPage/ladingPage.html",status_code=303)
-        return {
-        "message": "Discord-Login erfolgreich!",
-        "user_id": user["id"],
-        "username": user["username"],
-        "guilds": [
-            {
-                "id": guild["id"],
-                "name": guild["name"],
-                "icon": guild["icon"],
-                "permissions": guild["permissions"],
-            }
-            for guild in aviliable_guilds
-        ]
-    }
+    
 @app.get("/auth/status")
 async def auth_status(requests: Request):
     # Holt sich die gespeicherte Session ID
     session_id = requests.session.get("session_id")
-    # Holt sich den gespeicherten Token
+    # Holt sich den gespeicherten Token anhand der Session_ID
     token = oauth_tokens.get(session_id)
     
     # Falls kein Token gefunden wurde
