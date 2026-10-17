@@ -1,4 +1,6 @@
 const statsURL = "http://127.0.0.1:8000/stats";
+const API = "http://127.0.0.1:8000";
+
 async function getData(){
     try{
         const response = await fetch(statsURL);
@@ -20,48 +22,41 @@ async function getData(){
     }
 }
 
-
-async function loadGuilds() {
-    const display_loggingState = document.getElementById("loginState");
-    display_loggingState.textContent = "❌ Not logged in";
-
-    const response = await fetch("http://127.0.0.1:8000/api/guilds",
-        {
-            credentials: "include"
-        }
-    )
-
-    if (response.status == 401)
-    {
-        console.log("Bitte melde dich zu erst mit Discord an!")
-        return;
-    }
-
+async function loadProfile() {
+    const response = await fetch(API + "/auth/me", {
+        credentials: "include"
+    });
+    
     if (!response.ok)
     {
-        console.log("Server konnte nicht gefunden werden");
+        console.log("Du bist nicht Angemeldet, bitte melde dich zuerst an!");
         return;
     }
+    const user = await response.json();
     
-    const guilds = await response.json();
-    
+    const name = document.createElement("p");
+    name.textContent = "Name:" + user.global_name;
 
-    const display_guilds = document.getElementById("guilds");
-    display_guilds.textContent = "";
+    const id = document.createElement("p");
+    id.textContent = "Discord-ID:" + user.id;
 
-    display_loggingState.textContent = "✅ Logged in";
+    document.getElementById("profile").append(name, id);
 
-    for (var i = 0; i < guilds.length; i++) {
-        display_guilds.textContent += guilds[i].name + ",";
+    if (user.avatar) {
+        const avatar = document.createElement("img");
+        avatar.width = 80;
+        avatar.alt = "Discord-Avatar";
+        avatar.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+        document.getElementById("profile").append(avatar);
     }
 }
 
-async function getAuthStatus(){
-    const response = await fetch("http://127.0.0.1:8000/auth/status");
-    const finalAntwort = await response.json();
-    
+async function logout() {
+    await fetch(API + "/auth/logout"), { method: "POST", credentials: "include" };
+    console.log("Erfolgreich abgemeldet!");
 }
 
-loadGuilds();
+
+loadProfile();
 getData();
   
