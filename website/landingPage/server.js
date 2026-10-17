@@ -41,14 +41,64 @@ async function loadServer() {
 
         document.getElementById("serverName").textContent = guild.name;
 
+        const serverAvatar = document.getElementById("serverAvatar");
+        if (guild.icon) {
+            serverAvatar.src = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128`;
+            serverAvatar.style.display = "block";
+        }
+        else {
+            // Server hat kein eigenes Icon
+            serverAvatar.src = "https://cdn.discordapp.com/embed/avatars/0.png";
+            serverAvatar.style.display = "block";
+        }
+        
+        getSettings();
+
     } catch (error) {
         console.error("Fehler beim Laden des Servers:", error);
         document.getElementById("serverName").textContent =
             "Fehler beim Laden des Servers!";
     }
+
 }
 
-loadServer();
+async function getSettings()
+{
+    try{
+        if (!serverId)
+        {
+            alert("Keine Server-ID gefunden!");
+            return;
+        }
+
+        const response = await fetch(API + "/servers/" + serverId + "/settings",
+            {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+        const antwort = await response.json();
+
+
+        document.getElementById("inputDing").value = antwort.apply_channel_id;
+
+        document.getElementById("statusInput").value = antwort.statusInput;
+
+        document.getElementById("welcomeChannelInput").value = antwort.welcomeChannelInput;
+
+        document.getElementById("join_leave_log_channel_input").value = antwort.join_leave_log_channel_id;
+
+        document.getElementById("banChannelIdInput").value = antwort.ban_channel_id;
+        document.getElementById("apply_channel_Input").value = antwort.apply_channel_id_Input;
+    }
+    catch (error)
+    {
+        print("Es ist ein Fehler aufgetreten!" , error)
+    }
+}
 
 
 async function saveSettings() {
@@ -107,7 +157,6 @@ async function saveSettings() {
     {
         alert("Einstellungen gespeichert!");
     }
-
     else 
     {
         const error = await response.text();

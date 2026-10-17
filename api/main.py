@@ -16,6 +16,9 @@ from api.database import (
     set_bot_status_channel_id,
     get_bot_status_channel_id,
     get_apply_channel_id,
+    get_leave_join_log_channel,
+    get_welcome_channel,
+    get_ban_log_channel
 )
 import httpx
 from fastapi import FastAPI, Request, HTTPException
@@ -398,3 +401,25 @@ def save_setting(guild_id, setting, value):
             """,
             (str(guild_id), value)
         )
+
+
+@app.get("/servers/{guild_id}/settings")
+async def getSettings(guild_id: str, request: Request):
+    if not request.session.get("discord_user"):
+        raise HTTPException(status_code=401, detail="Nicht eingeloggt")
+    
+    status_channel_id = get_bot_status_channel_id(guild_id)
+    welcome_channel_id = get_welcome_channel(guild_id)
+    join_leave_channel_id = get_leave_join_log_channel(guild_id)
+    ban_log_channel_id = get_ban_log_channel(guild_id)
+    apply_channel_id = get_apply_channel_id(guild_id)
+    
+    return {
+        "tickets_enabled": None,
+        "apply_channel_id": None,
+        "statusInput": status_channel_id,
+        "welcomeChannelInput": welcome_channel_id,
+        "join_leave_log_channel_id": join_leave_channel_id,
+        "ban_channel_id": ban_log_channel_id,
+        "apply_channel_id_Input": apply_channel_id
+    }

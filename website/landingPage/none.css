@@ -13,6 +13,12 @@ body {
         radial-gradient(ellipse at bottom right, #172554 0%, transparent 45%),
         #0b0b14;
 }
+
+#serverAvatar {
+    display: block;
+    margin: 0 auto;
+}
+
 .avatar-img{
     background-color: #192e75;
     
