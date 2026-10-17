@@ -67,6 +67,7 @@ async function loadGuilds() {
     const guilds = await response.json();
 
     const profile = document.getElementById("profile");
+    
     // Geht durch alle Server
     for (const guild of guilds) {
         const card = document.createElement("div");

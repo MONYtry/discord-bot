@@ -51,7 +51,7 @@ async function loadServer() {
             serverAvatar.src = "https://cdn.discordapp.com/embed/avatars/0.png";
             serverAvatar.style.display = "block";
         }
-        
+
         getSettings();
 
     } catch (error) {
@@ -83,7 +83,6 @@ async function getSettings()
         const antwort = await response.json();
 
 
-        document.getElementById("inputDing").value = antwort.apply_channel_id;
 
         document.getElementById("statusInput").value = antwort.statusInput;
 
@@ -96,7 +95,7 @@ async function getSettings()
     }
     catch (error)
     {
-        print("Es ist ein Fehler aufgetreten!" , error)
+        console.log("Es ist ein Fehler aufgetreten!" , error)
     }
 }
 

@@ -4,59 +4,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Server konfigurieren - MONY</title>
-    <link rel="stylesheet" href="none.css">
+    <link rel="stylesheet" href="server.css">
 </head>
 
 <body>
-    <main class="container">
-        <h1 class="title">Server Dashboard</h1>
-        <h2 id="serverName">Server wird geladen...</h2>
+    <div class="main">
+        <h1 class="title" style="text-align: center;">Server Dashboard</h1>
+        <h2 id="serverName"  style="text-align: center;">Server wird geladen...</h2>
         <img id="serverAvatar">
 
         <div class="stat-card">
-            <h3>⚙️ Bot Einstellungen</h3>
-            <p>Hier kommen später deine Konfigurationen hin.</p>
+            <h3 style="text-align: center;">⚙️ Bot Einstellungen</h3>
+            <p style="text-align: center;">Aktuell steht es noch unter Wartungsarbeiten.</p>
+        </div>
+    </div>
+    
+    <button class="btn" onclick="history.back()">Zurück</button>
+
+    <div class="stat-card-list">
+        <div class="stat-card">
+            <h2>🎫 Welcome-Channel</h3>
+            <p>Setze den Channel der genutzt wird um Welcome-messages zu senden</p>
+            <input id="welcomeChannelInput">
+        </div>
+        <div class="stat-card">
+            <h3> Join Leave Log-Channel</h3>
+            <p>Setze den Channel der genutzt wird um Welcome-messages zu senden</p>
+            <input id="join_leave_log_channel_input">
         </div>
 
-        <button class="btn" onclick="history.back()">Zurück</button>
-    </main>
-    
-    <div class="stat-card">
-        <h3>🎫 Welcome-Channel</h3>
-        <p>Setze den Channel der genutzt wird um Welcome-messages zu senden</p>
-        <input id="welcomeChannelInput">
-    </div>
-    <div class="stat-card">
-        <h3> Join Leave Log-Channel</h3>
-        <p>Setze den Channel der genutzt wird um Welcome-messages zu senden</p>
-        <input id="join_leave_log_channel_input">
+        <div class="stat-card">
+            <h3>🎫 BAN LOG-Channel</h3>
+            <p>Setze den Channel der genutzt wird um Bewerbungen zu senden</p>
+            <input id="banChannelIdInput">
+        </div>
+        
+        <div class="stat-card">
+            <h3>🎫 Status-Channel</h3>
+            <p>Setze den Channel der genutzt wird um den Status zu senden</p>
+            <input id="statusInput">
+        </div>
+
+        <div class="stat-card">
+            <h3>🎫 Bewerbungs-Channel</h3>
+            <p>Setze den Channel der genutzt wird um den Bewerbungen zu senden</p>
+            <input id="apply_channel_Input">
+        </div>
+        
+        <div class="stat-card">
+            <h3>🎫 Ticket-System</h3>
+            <p>Aktiviere oder deaktiviere das Ticket-System.</p>
+            <p>Status: </p>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <h3>🎫 BAN LOG-Channel</h3>
-        <p>Setze den Channel der genutzt wird um Bewerbungen zu senden</p>
-        <input id="banChannelIdInput">
-    </div>
-    
-    <div class="stat-card">
-        <h3>🎫 Status-Channel</h3>
-        <p>Setze den Channel der genutzt wird um den Status zu senden</p>
-        <input id="statusInput">
-    </div>
-
-    <div class="stat-card">
-        <h3>🎫 Bewerbungs-Channel</h3>
-        <p>Setze den Channel der genutzt wird um den Bewerbungen zu senden</p>
-        <input id="apply_channel_Input">
-    </div>
-    
-    <div class="stat-card">
-        <h3>🎫 Ticket-System</h3>
-        <p>Aktiviere oder deaktiviere das Ticket-System.</p>
-        <p>Status: </p>
-    </div>
-
-    <button class="btn primary" onclick="saveSettings()">Speichern</button>
+    <button class="btn primary" onclick="saveSettings()" id="test">Speichern</button>
 
     <script src="server.js"></script>
 </body>

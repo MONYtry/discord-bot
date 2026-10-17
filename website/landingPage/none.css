@@ -14,10 +14,25 @@ body {
         #0b0b14;
 }
 
+.server-card {
+    background-color: #373737;
+    
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #434343;
+    transition: 0.2s ease;
+}
+.server-card:hover {
+    background-color: #818cf8;
+    text-decoration: underline;
+    cursor: pointer;
+    transform: scale(1.05);
+}
 #serverAvatar {
     display: block;
     margin: 0 auto;
 }
+
 
 .avatar-img{
     background-color: #192e75;
@@ -61,11 +76,10 @@ body {
     margin: 18px 0 45px;
 }
 
-.stats {
+.stat-card-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
-    margin-bottom: 35px;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 20px;
 }
 
 .stat-card {
@@ -79,7 +93,7 @@ body {
 }
 
 .stat-card:hover {
-    transform: translateY(-6px);
+    transform: scale(1.05);
     border-color: #a78bfa;
 }
 
@@ -132,7 +146,7 @@ body {
 }
 
 .btn:hover {
-    transform: translateY(-2px);
+    transform: scale(1.05);
     background: #303047;
 }
 
@@ -157,14 +171,4 @@ footer a {
     color: #c084fc;
     text-decoration: none;
     font-weight: bold;
-}
-
-@media (max-width: 550px) {
-    .stats {
-        grid-template-columns: 1fr;
-    }
-
-    .container {
-        padding-top: 45px;
-    }
 }
