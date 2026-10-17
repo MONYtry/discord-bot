@@ -4,7 +4,7 @@ import time
 from fastapi.middleware.cors import CORSMiddleware
 from api.database import get_total_tickets,get_open_tickets,get_closed_tickets
 import httpx
-from fastapi import Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 import os
@@ -30,7 +30,7 @@ app.add_middleware(
 
 app.add_middleware(CORSMiddleware,
                    allow_origins=["http://127.0.0.1:5500"],
-                   allow_methods=["GET"],
+                   allow_methods=["GET", "POST"],
                    allow_headers=["*"],
                    allow_credentials=True)
 
@@ -38,6 +38,7 @@ bot = None
 start_time = None
 oauth_tokens = {}
 
+saved_tokens = []
 
 
 def set_bot(discord_bot):
@@ -175,7 +176,7 @@ async def auth_logging():
         "client_id": CLIENT_ID,
         "redirect_uri": REDIRECT_URI,
         "response_type": "code",
-        "scope": "identify",
+        "scope": "identify guilds",
     }
     from urllib.parse import urlencode
 
@@ -207,6 +208,7 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
 
         # Holt sich den Accsess Token aus der Antwort
         accsess_token = token_data["access_token"]
+        saved_tokens.append(accsess_token)
 
         user_response = await client.get(
             "https://discord.com/api/v10/users/@me",
@@ -223,7 +225,8 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         request.session["discord_user"] = {
             "id": user_data["id"],
             "username": user_data["username"],
-            "avatar": user_data.get("avatar")
+            "avatar": user_data.get("avatar"),
+            "saved_token": accsess_token
         }
         # Schickt Nutzer zurück auf die Startseite 
         return RedirectResponse(url="http://127.0.0.1:5500/website/landingPage/ladingPage.html")
@@ -235,11 +238,43 @@ async def get_current_user(request: Request):
     user = request.session.get("discord_user")
     # Falls keine Session gefunden wurde
     if user is None:
-        print("Nutzer wurde nicht gefunden")
+        raise HTTPException(
+            status_code=401,
+            detail="Nicht angemeldet"
+        )
+
     # Gibt die Nutzer-Daten zurück
     return user
 
-@app.get("/auth/logout")
+
+
+@app.get("/auth/guilds")
+async def getUserGuilds(request: Request):
+    # Holt sich den User
+    user = request.session.get("discord_user")
+    # Falls er keinen User findet 
+    if not user:
+        raise HTTPException(status_code=401, detail="Nicht angemeldet")
+    # Holt sich den savedToken aus der Session
+    access_token = user.get("saved_token")
+
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Access Token fehlt")
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            "https://discord.com/api/v10/users/@me/guilds",
+            headers={
+                "Authorization": f"Bearer {access_token}"
+            }
+        )
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=502, detail=f"Discord API Fehler: {response.status_code}")
+
+    return response.json()
+
+@app.post("/auth/logout")
 async def get_current_user(request: Request):
     # Löscht alles aus der Session
     request.session.clear()

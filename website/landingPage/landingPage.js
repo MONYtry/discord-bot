@@ -33,7 +33,7 @@ async function loadProfile() {
         return;
     }
     const user = await response.json();
-    
+    loadGuilds();
     const name = document.createElement("p");
     name.textContent = "Name:" + user.global_name;
 
@@ -51,9 +51,36 @@ async function loadProfile() {
     }
 }
 
+
+async function loadGuilds() {
+    const response = await fetch(API + "/auth/guilds", {
+        credentials: "include"
+    });
+
+    if (!response.ok) {
+        console.log("Du bist nicht angemeldet oder die Server konnten nicht geladen werden.");
+        return;
+    }
+
+    const guilds = await response.json();
+
+    const profile = document.getElementById("profile");
+    
+    for (var i = 0; i < guilds.length; i++)
+    {
+        const name = document.createElement("p");
+        name.textContent = "Server: " + guilds[i].name;
+        profile.append(name);
+    }
+}
+
+
+
 async function logout() {
-    await fetch(API + "/auth/logout"), { method: "POST", credentials: "include" };
+    await fetch(API + "/auth/logout", { method: "POST", credentials: "include" });
+    
     console.log("Erfolgreich abgemeldet!");
+    document.getElementById("profile").replaceChildren();
 }
 
 
