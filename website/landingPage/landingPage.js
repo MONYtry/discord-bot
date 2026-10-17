@@ -34,6 +34,7 @@ async function loadProfile() {
     }
     const user = await response.json();
     loadGuilds();
+    
     const name = document.createElement("p");
     name.textContent = "Name:" + user.global_name;
 

@@ -1,23 +1,52 @@
+
 <head>
-    <title>Landing Page</title>
+    <title>MONY - Discord Bot</title>
     <link rel="stylesheet" href="none.css">
 </head>
 
 <body>
-    <h1>MONY - Discord Bot</h1>
-    <h2>Servers</h2>
-    <p id="used_by_servers">No data fetched...</p>
-    
-    <h2>Users</h2>
-    <p id="used_by_users">No data fetched...</p>
-    <div id="guilds"> </div>
-    <p id="loginState">Currently not logged in</p>
-    <div id="profile"></div>
-    <a href="http://127.0.0.1:8000/auth/login">Add Bot</a>
-    <button onclick="logout()">Abmelden</button>
-    <button onclick="loadProfile()">Profil laden</button>
+    <main class="container">
+        <h1 class="title">MONY <span>Discord Bot</span></h1>
 
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-icon">🌐</div>
+                <h2>Servers</h2>
+                <p id="used_by_servers">No data fetched...</p>
+            </div>
 
-    <footer>Made by <a href="https://github.com/monytry">MONY</a></footer>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <h2>Users</h2>
+                <p id="used_by_users">No data fetched...</p>
+            </div>
+        </div>
+
+        <div id="guilds"></div>
+
+        <p id="loginState"></p>
+        <div id="profile"></div>
+
+        <div class="actions">
+            <a class="btn primary"
+               href="http://127.0.0.1:8000/auth/login">
+                Add Bot
+            </a>
+
+            <button class="btn" onclick="logout()">
+                Abmelden
+            </button>
+
+            <button class="btn" onclick="loadProfile()">
+                Profil laden
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        Made with 💜 by
+        <a href="https://github.com/monytry">MONY</a>
+    </footer>
+
     <script src="landingPage.js" defer></script>
 </body>

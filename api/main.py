@@ -268,11 +268,20 @@ async def getUserGuilds(request: Request):
                 "Authorization": f"Bearer {access_token}"
             }
         )
+    all_guilds = []
+    user_guilds = response.json()
+
+    # Geht durch alle Server wo der Bot ist
+    for guild in user_guilds:
+        guild_id = int(guild["id"])
+        if bot.get_guild(guild_id) is not None:
+            if guild["owner"]:
+                all_guilds.append(guild)
 
     if response.status_code != 200:
         raise HTTPException(status_code=502, detail=f"Discord API Fehler: {response.status_code}")
 
-    return response.json()
+    return all_guilds
 
 @app.post("/auth/logout")
 async def get_current_user(request: Request):
