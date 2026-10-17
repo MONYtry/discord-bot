@@ -1,6 +1,5 @@
 from discord.ext import commands
-from config import BAN_CHANNEL_ID
-
+from api.database import get_ban_log_channel
 class Log(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
@@ -17,7 +16,10 @@ class Log(commands.Cog):
         
     @commands.Cog.listener()
     async def on_member_ban(self,guild,user):
-        channel = self.bot.get_channel(BAN_CHANNEL_ID)
+        channel_id = get_ban_log_channel(guild.id)
+        channel = self.bot.get_channel(channel_id)
+        print(channel_id)
+        print(channel)
         if channel is not None:
             helper_cog = self.bot.get_cog("Helper")
             await helper_cog.send_embed(

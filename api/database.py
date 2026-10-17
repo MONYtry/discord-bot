@@ -46,7 +46,9 @@ def load_dataBase():
             tickets_enabled INTEGER NOT NULL DEFAULT 0,
             apply_channel_id INTEGER,
             BOT_STATUS_CHANNEL_ID INTEGER,
-            WELCOME_CHANNEL_ID INTEGER)
+            WELCOME_CHANNEL_ID INTEGER,
+            JOIN_LEAVE_LOG_CHANNEL_ID INTEGER,
+            BAN_CHANNEL_ID INTEGER)
         """)
 
 def open_ticket(channel_id, status, guild_id):
@@ -150,6 +152,49 @@ def get_welcome_channel(guild_id):
             FROM server_settings
             WHERE guild_id = ?
         """, (str(guild_id),)).fetchone()[0]
+
+
+def set_leave_join_log_channel(guild_id, JOIN_LEAVE_LOG_CHANNEL_ID):
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+            INSERT INTO server_settings(
+            guild_id,
+            JOIN_LEAVE_LOG_CHANNEL_ID)
+            VALUES (?,?)
+            ON CONFLICT(guild_id)
+            DO UPDATE SET
+                JOIN_LEAVE_LOG_CHANNEL_ID = excluded.JOIN_LEAVE_LOG_CHANNEL_ID
+        """, (str(guild_id), int(JOIN_LEAVE_LOG_CHANNEL_ID) if JOIN_LEAVE_LOG_CHANNEL_ID else None))
+
+def get_leave_join_log_channel(guild_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        return conn.execute("""
+            SELECT JOIN_LEAVE_LOG_CHANNEL_ID
+            FROM server_settings
+            WHERE guild_id = ?
+        """, (str(guild_id),)).fetchone()[0]
+
+def set_ban_log_channel(guild_id, BAN_CHANNEL_ID):
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+            INSERT INTO server_settings(
+            guild_id,
+            BAN_CHANNEL_ID)
+            VALUES (?,?)
+            ON CONFLICT(guild_id)
+            DO UPDATE SET
+                BAN_CHANNEL_ID = excluded.BAN_CHANNEL_ID
+        """, (str(guild_id), int(BAN_CHANNEL_ID) if BAN_CHANNEL_ID else None))
+        
+def get_ban_log_channel(guild_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        return conn.execute("""
+        SELECT BAN_CHANNEL_ID
+        FROM server_settings
+        WHERE guild_id = ?
+        """, (str(guild_id),)).fetchone()[0]
+
+
     
 def save_ticket_setting(guild_id, enabled, apply_channel_id):
     with sqlite3.connect(DB_PATH) as conn:

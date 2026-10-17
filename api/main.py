@@ -11,6 +11,8 @@ from api.database import (
     save_ticket_setting,
     get_ticket_setting,
     set_welcome_channel,
+    set_ban_log_channel,
+    set_leave_join_log_channel,
     set_bot_status_channel_id,
     get_bot_status_channel_id,
     get_apply_channel_id,
@@ -341,22 +343,32 @@ async def save_settings(guild_id: str, request: Request):
     apply_channel_id = data.get("apply_channel_id")
     bot_status_channel_id = data.get("statusInput")
     welcome_channel_id = data.get("welcomeChannelInput")
+    ban_channel_id = data.get("banChannelIdInput")
+
+    join_leave_log_channel_id = data.get("join_leave_log_channelInput")
+
     save_ticket_setting(
         guild_id,
         tickets_enabled,
         apply_channel_id
     )
+
     set_bot_status_channel_id(
         guild_id,
         bot_status_channel_id
     )
+    set_leave_join_log_channel(guild_id,join_leave_log_channel_id)
     set_welcome_channel(guild_id,welcome_channel_id)
+    set_ban_log_channel(guild_id,ban_channel_id)
 
     return {
         "tickets_enabled": tickets_enabled,
         "apply_channel_id": apply_channel_id,
         "statusInput": bot_status_channel_id,
-        "welcomeChannelInput": welcome_channel_id
+        "welcomeChannelInput": welcome_channel_id,
+        "join_leave_log_channel_id": join_leave_log_channel_id,
+        "ban_channel_id": ban_channel_id
+
     }
 
 

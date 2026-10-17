@@ -1,12 +1,10 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
-from config import (WELCOME_CHANNEL_ID, 
-                    WELCOME_MESSAGE, 
-                    JOIN_LEAVE_LOG_CHANNEL,
+from config import ( WELCOME_MESSAGE, 
                     JOIN_LOG_MESSAGE, 
                     JOIN_TITEL_LOG_MESSAGE,LEAVE_LOG_MESSAGE, LEAVE_TITEL_LOG_MESSAGE,WELCOME_THUMBNAIL_URL)
-from api.database import get_welcome_channel
+from api.database import get_welcome_channel, get_leave_join_log_channel
 
 class Join(commands.Cog):
     def __init__(self, bot):
@@ -24,41 +22,35 @@ class Join(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        print("1. JOIN EVENT")
-
         try:
             channel_id = get_welcome_channel(member.guild.id)
-            print(f"2. Channel ID: {channel_id}")
         except Exception as e:
             print(f"FEHLER bei get_welcome_channel: {e}")
             return
 
         channel = self.bot.get_channel(int(channel_id)) if channel_id else None
-        print(f"3. Channel: {channel}")
 
         if channel is None:
             print("Welcome-Channel nicht gefunden!")
             return
 
         await self.send_embed(channel, member)
-        print("4. Embed gesendet!")
-
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        channel = self.bot.get_channel(WELCOME_CHANNEL_ID)
-        log_channel = self.bot.get_channel(JOIN_LEAVE_LOG_CHANNEL)
+        try:
+            join_leave_channel_id = get_leave_join_log_channel(member.guild.id)
+        except Exception as e:
+            print(f"FEHLER bei get_welcome_channel: {e}")
+            return
+        log_channel = self.bot.get_channel(join_leave_channel_id)
     
         helper_cog = self.bot.get_cog("Helper")
     
         if log_channel is None:
             print("Kanal nicht gefunden!")
             return
-            
-        if channel is None:
-            print("Kanal nicht gefunden!")
-            return
-        
+
         leave_message = LEAVE_LOG_MESSAGE.format(member=member.mention)
         await helper_cog.send_embed(log_channel,LEAVE_TITEL_LOG_MESSAGE, leave_message, discord.Color.red(), member.display_avatar.url)
     
