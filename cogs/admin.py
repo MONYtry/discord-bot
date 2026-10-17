@@ -1,8 +1,8 @@
 
 import discord
 from discord.ext import commands
-from config import BOT_STATUS_CHANNEL_ID, SERVER_ID, EMBED_ALLOWED_ROLE_IDS,NO_RIGHTS_MESSAGE
-
+from config import EMBED_ALLOWED_ROLE_IDS,NO_RIGHTS_MESSAGE
+from api.database import get_bot_status_channel_id
 
 class Admin(commands.Cog):
     # Wird direkt aufgerufen
@@ -33,8 +33,8 @@ class Admin(commands.Cog):
         
         # Bot wird ausgeschalten
         await interaction.response.send_message("🔴 Bot geht offline.", ephemeral=True)
-        
-        channel = self.bot.get_channel(BOT_STATUS_CHANNEL_ID)
+
+        channel = self.bot.get_channel(get_bot_status_channel_id(interaction.guild.id))
         
         # Holt sich die Module anhand der Class-Namen
         status_cog = self.bot.get_cog("Status")
@@ -45,7 +45,7 @@ class Admin(commands.Cog):
         if channel is not None and status_cog is not None:
             status_cog.is_online = False
 
-            guild = self.bot.get_guild(SERVER_ID)
+            guild = self.bot.get_guild(interaction.guild.id)
             await helper_cog.get_member_count(guild)
             
             await clear_cog.clear_channel(channel,10)

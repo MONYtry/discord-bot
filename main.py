@@ -3,7 +3,6 @@ import os
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from config import SERVER_ID
 from api.main import app,set_bot
 import asyncio
 import uvicorn

@@ -2,13 +2,26 @@ from fastapi import FastAPI
 import asyncio
 import time
 from fastapi.middleware.cors import CORSMiddleware
-from api.database import get_total_tickets,get_open_tickets,get_closed_tickets
+from api.database import DB_PATH
+
+from api.database import (
+    get_total_tickets,
+    get_open_tickets,
+    get_closed_tickets,
+    save_ticket_setting,
+    get_ticket_setting,
+    set_welcome_channel,
+    set_bot_status_channel_id,
+    get_bot_status_channel_id,
+    get_apply_channel_id,
+)
 import httpx
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 import os
 import secrets
+import sqlite3
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -165,6 +178,7 @@ def commands():
         "command_count": len(command_list),
         "commands": command_list
     }
+
 @app.get("/auth/login")
 async def auth_logging():
     # Werte über die Anfrage
@@ -268,6 +282,10 @@ async def getUserGuilds(request: Request):
                 "Authorization": f"Bearer {access_token}"
             }
         )
+
+        if response.status_code != 200:
+                raise HTTPException(status_code=502, detail=f"Discord API Fehler: {response.status_code}")
+        
     all_guilds = []
     user_guilds = response.json()
 
@@ -278,10 +296,9 @@ async def getUserGuilds(request: Request):
             if guild["owner"]:
                 all_guilds.append(guild)
 
-    if response.status_code != 200:
-        raise HTTPException(status_code=502, detail=f"Discord API Fehler: {response.status_code}")
-
+    
     return all_guilds
+
 
 @app.post("/auth/logout")
 async def get_current_user(request: Request):
@@ -289,3 +306,83 @@ async def get_current_user(request: Request):
     request.session.clear()
     return {"message": "Erfolgreich ausgeloggt"}
 
+@app.post("/servers/{guild_id}/settings")
+async def save_settings(guild_id: str, request: Request):
+    user = request.session.get("discord_user")
+
+    if not user:
+        raise HTTPException(status_code=401)
+
+    # Owner-Prüfung wie im GET-Endpoint
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            "https://discord.com/api/v10/users/@me/guilds",
+            headers={
+                "Authorization": f"Bearer {user['saved_token']}"
+            }
+        )
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=502)
+
+    is_owner = False
+
+    for guild in response.json():
+        if guild["id"] == guild_id and guild["owner"]:
+            is_owner = True
+            break
+
+    if not is_owner:
+        raise HTTPException(status_code=403)
+
+    data = await request.json()
+
+    tickets_enabled = data.get("tickets_enabled") is True
+    apply_channel_id = data.get("apply_channel_id")
+    bot_status_channel_id = data.get("statusInput")
+    welcome_channel_id = data.get("welcomeChannelInput")
+    save_ticket_setting(
+        guild_id,
+        tickets_enabled,
+        apply_channel_id
+    )
+    set_bot_status_channel_id(
+        guild_id,
+        bot_status_channel_id
+    )
+    set_welcome_channel(guild_id,welcome_channel_id)
+
+    return {
+        "tickets_enabled": tickets_enabled,
+        "apply_channel_id": apply_channel_id,
+        "statusInput": bot_status_channel_id,
+        "welcomeChannelInput": welcome_channel_id
+    }
+
+
+
+
+def save_setting(guild_id, setting, value):
+    allowed = {
+        "tickets_enabled",
+        "apply_channel_id",
+        "BOT_STATUS_CHANNEL_ID",
+        "welcome_channel_id"
+    }
+
+    if setting not in allowed:
+        raise ValueError("Ungültige Einstellung")
+    
+    if setting == "tickets_enabled":
+        value = int(value)
+
+    with sqlite3.connect(DB_PATH) as conn:
+            conn.execute(
+            f"""
+            INSERT INTO server_settings (guild_id, {setting})
+            VALUES (?, ?)
+            ON CONFLICT(guild_id)
+            DO UPDATE SET {setting} = excluded.{setting}
+            """,
+            (str(guild_id), value)
+        )

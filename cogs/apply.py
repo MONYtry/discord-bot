@@ -2,8 +2,7 @@ from discord.ext import commands
 import discord
 import asyncio
 import datetime
-from config import (APPLY_CATEGORIES_OPTIONS, 
-                    APPLY_CHANNEL_ID, 
+from config import (APPLY_CATEGORIES_OPTIONS,  
                     TICKET_PREWVIEW_EMBED_TITEL,
                     TICKET_PREVIEW_MESSAGE,
                     SUPPORT_CHANNEL_LOG_ID,
@@ -11,7 +10,7 @@ from config import (APPLY_CATEGORIES_OPTIONS,
                     APPLY_QUESTIONS,APPLY_ALLOWED_ROLE_IDS,
                     TICKET_EMBED_DESCRIPTION)
 
-from api.database import open_ticket,close_ticket
+from api.database import open_ticket,close_ticket, get_ticket_setting, get_apply_channel_id
 
 
 class SupportView(discord.ui.View):
@@ -86,28 +85,51 @@ class applyDropDown(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.already_logged = False
+        self.clean_done = False
         
     @commands.Cog.listener()
     async def on_ready(self):
-        if self.already_logged:
-            return
-        self.already_logged = True
-
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("apply.py","Succcsessfully loaded")
-        
-        channel = self.bot.get_channel(APPLY_CHANNEL_ID)
-        
-        # Cleart bestimmte Anzahl an Messages
-        await channel.purge(limit=10)
-        await helper_cog.logMessage("apply.py","Ticket was succcsessfully sent!")
-        await helper_cog.send_embed(channel, 
-                                    TICKET_PREWVIEW_EMBED_TITEL, 
-                                    TICKET_PREVIEW_MESSAGE, 
-                                    discord.Color.blue(),
-                                    None,
-                                    SUPPORT_THUMBNAIL_URL)  
-        await channel.send(view=SupportView())
+        if helper_cog is None:
+            print("Fehler, Helpercog konnte nicht gefunden werden")
+            
+        await helper_cog.logMessage("apply.py","Bewerbung bereit")
+
+        # Geht durch jeden Server
+        for guild in self.bot.guilds:
+            channel_id = get_apply_channel_id(guild.id)
+            
+            # Falls kein Channel gefunden wird
+            if not channel_id:
+                await helper_cog.logMessage("apply.py",f"Kein Apply-Channel für {guild.name}")
+                continue
+            
+            channel = self.bot.get_channel(int(channel_id))
+
+            if channel is None:
+                try:
+                    channel = await self.bot.fetch_channel(int(channel_id))
+                except discord.HTTPException as e:
+                    await helper_cog.logMessage("apply.py",f"Channel-Fehler {e}")
+                    continue
+
+            embed = discord.Embed(
+                title=TICKET_PREWVIEW_EMBED_TITEL,
+                description=TICKET_PREVIEW_MESSAGE,
+                color=discord.Color.blue()
+            )
+            embed.set_thumbnail(url=SUPPORT_THUMBNAIL_URL)
+            
+            # Löscht 10 Messages von dem Channel
+            if self.clean_done is False:
+                await channel.purge(limit=10)
+                self.clean_done = True
+            
+            try:
+                await channel.send(embed=embed, view=SupportView())
+                await helper_cog.logMessage("apply.py",f"Apply-Embed gesendt: {guild.name}")
+            except discord.HTTPException as e:
+                await helper_cog.logMessage("apply.py",f"Embed konnte nicht gesendet werden: {e}")
    
 # Erstellt eine Class mit Discord UI & Titel
 class Formular(discord.ui.Modal, title="Bewerbung"):
@@ -126,6 +148,11 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
     
     # Sobald abgeschickt wird
     async def on_submit(self, interaction: discord.Interaction):
+
+        if not get_ticket_setting(interaction.guild.id):
+            await interaction.response.send_message("Das Ticket-System ist aktuell deaktiviert!", ephemeral=True)
+            return
+            
         # Holt sich den aktuellen Value
         selected_value = self.selected_value
         data = APPLY_CATEGORIES_OPTIONS[selected_value]

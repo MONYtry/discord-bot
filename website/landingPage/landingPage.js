@@ -36,15 +36,16 @@ async function loadProfile() {
     loadGuilds();
     
     const name = document.createElement("p");
-    name.textContent = "Name:" + user.global_name;
+    name.textContent = "Name: " + user.username;
 
     const id = document.createElement("p");
-    id.textContent = "Discord-ID:" + user.id;
+    id.textContent = "Discord-ID: #" + user.id;
 
     document.getElementById("profile").append(name, id);
 
     if (user.avatar) {
         const avatar = document.createElement("img");
+        avatar.className = "avatar-img"
         avatar.width = 80;
         avatar.alt = "Discord-Avatar";
         avatar.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
@@ -66,12 +67,23 @@ async function loadGuilds() {
     const guilds = await response.json();
 
     const profile = document.getElementById("profile");
-    
-    for (var i = 0; i < guilds.length; i++)
-    {
-        const name = document.createElement("p");
-        name.textContent = "Server: " + guilds[i].name;
-        profile.append(name);
+    // Geht durch alle Server
+    for (const guild of guilds) {
+        const card = document.createElement("div");
+        card.className = "server-card";
+
+        const name = document.createElement("h3");
+        name.textContent = guild.name;
+
+        card.append(name);
+
+        const guildId = guild.id;
+        
+        card.onclick = () => {
+            window.location.href = `server.html?id=${guildId}`;
+        };
+
+        profile.append(card);
     }
 }
 
@@ -87,4 +99,3 @@ async function logout() {
 
 loadProfile();
 getData();
-  

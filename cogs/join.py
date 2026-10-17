@@ -6,7 +6,7 @@ from config import (WELCOME_CHANNEL_ID,
                     JOIN_LEAVE_LOG_CHANNEL,
                     JOIN_LOG_MESSAGE, 
                     JOIN_TITEL_LOG_MESSAGE,LEAVE_LOG_MESSAGE, LEAVE_TITEL_LOG_MESSAGE,WELCOME_THUMBNAIL_URL)
-
+from api.database import get_welcome_channel
 
 class Join(commands.Cog):
     def __init__(self, bot):
@@ -24,24 +24,24 @@ class Join(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        channel = self.bot.get_channel(WELCOME_CHANNEL_ID)
-        log_channel = self.bot.get_channel(JOIN_LEAVE_LOG_CHANNEL)
+        print("1. JOIN EVENT")
 
-        helper_cog = self.bot.get_cog("Helper")
-
-        if log_channel is None:
-            print("Kanal nicht gefunden!")
+        try:
+            channel_id = get_welcome_channel(member.guild.id)
+            print(f"2. Channel ID: {channel_id}")
+        except Exception as e:
+            print(f"FEHLER bei get_welcome_channel: {e}")
             return
-        
+
+        channel = self.bot.get_channel(int(channel_id)) if channel_id else None
+        print(f"3. Channel: {channel}")
+
         if channel is None:
-            print("Kanal nicht gefunden!")
+            print("Welcome-Channel nicht gefunden!")
             return
-        
-        join_message = JOIN_LOG_MESSAGE.format(member=member.mention)
-        await helper_cog.send_embed(log_channel,JOIN_TITEL_LOG_MESSAGE,join_message, discord.Color.green(), member.display_avatar.url)
-        
-        # Embed senden
+
         await self.send_embed(channel, member)
+        print("4. Embed gesendet!")
 
 
     @commands.Cog.listener()
