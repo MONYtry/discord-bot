@@ -27,7 +27,6 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 import os
-import secrets
 import sqlite3
 from dotenv import load_dotenv
 

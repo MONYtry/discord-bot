@@ -2,8 +2,7 @@ from discord.ext import commands
 import discord
 import asyncio
 import datetime
-from config import (SUPPORT_CATEGORIES_OPTIONS, 
-                    SUPPORT_CHANNEL_ID, 
+from config import (SUPPORT_CATEGORIES_OPTIONS,  
                     SUPPORT_EMBED_TITEL, 
                     SUPPORT_EMBED_MESSAGE,
                     SUPPORT_PREVIEW_EMBED_MESSAGE,
@@ -11,7 +10,7 @@ from config import (SUPPORT_CATEGORIES_OPTIONS,
                     SUPPORT_CHANNEL_LOG_ID,
                     SUPPORT_THUMBNAIL_URL)
 
-
+from api.database import get_support_channel_id
 
 class SupportView(discord.ui.View):
     def __init__(self):
@@ -166,16 +165,32 @@ class DropDown(commands.Cog):
         self.already_logged = True
 
         helper_cog = self.bot.get_cog("Helper")
+        
+        if helper_cog is None:
+            print("Fehler: Helper-Cog nicht gefunden!")
+            return
+        
         await helper_cog.logMessage("support.py","Succcsessfully loaded")
+   
+        for guild in self.bot.guilds:
+            await helper_cog.logMessage("support.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
+            await helper_cog.logMessage("support.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
+            
+            channel_id = get_support_channel_id(guild.id)
+            if not channel_id:
+                print(f"{guild.name}: KEINE ID GEFUNDEN!")
+            
+            channel = self.bot.get_channel(channel_id)
+            if not channel:
+                print(f"{guild.name}: KEIN CHANNEL GEFUNDEN!")
+
+            
+            # Cleart bestimmte Anzahl an Messages
+            await channel.purge(limit=10)
+            await helper_cog.logMessage("support.py","Ticket was succcsessfully sent!")
+            await helper_cog.send_embed(channel, SUPPORT_PREVIEW_EMBED_TITEL, SUPPORT_PREVIEW_EMBED_MESSAGE, discord.Color.blue(),None,SUPPORT_THUMBNAIL_URL)        
+            await channel.send(view=SupportView())
         
-        channel = self.bot.get_channel(SUPPORT_CHANNEL_ID)
-        
-        # Cleart bestimmte Anzahl an Messages
-        await channel.purge(limit=10)
-        await helper_cog.logMessage("support.py","Ticket was succcsessfully sent!")
-        await helper_cog.send_embed(channel, SUPPORT_PREVIEW_EMBED_TITEL, SUPPORT_PREVIEW_EMBED_MESSAGE, discord.Color.blue(),None,SUPPORT_THUMBNAIL_URL)        
-        await channel.send(view=SupportView())
-       
 
 async def setup(bot):
     await bot.add_cog(DropDown(bot))

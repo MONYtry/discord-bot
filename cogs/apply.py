@@ -90,34 +90,32 @@ class applyDropDown(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         helper_cog = self.bot.get_cog("Helper")
+
         if helper_cog is None:
-            print("Fehler, Helpercog konnte nicht gefunden werden")
-            
-        await helper_cog.logMessage("apply.py","Bewerbung bereit")
+            print("Fehler: Helper-Cog nicht gefunden!")
+            return
 
-        # Geht durch jeden Server
+        await helper_cog.logMessage("apply.py", "Bewerbung bereit")
+
         for guild in self.bot.guilds:
+            await helper_cog.logMessage("apply.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
+            await helper_cog.logMessage("apply.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
+            
             channel_id = get_apply_channel_id(guild.id)
-            
-            # Falls kein Channel gefunden wird
             if not channel_id:
-                await helper_cog.logMessage("apply.py",f"Kein Apply-Channel für {guild.name}")
-                continue
+                print(f"{guild.name}: KEINE ID GEFUNDEN!")
+
+            channel = self.bot.get_channel(channel_id)
+            if not channel:
+                print(f"{guild.name}: KEIN CHANNEL GEFUNDEN!")
             
-            channel = self.bot.get_channel(int(channel_id))
-
-            if channel is None:
-                try:
-                    channel = await self.bot.fetch_channel(int(channel_id))
-                except discord.HTTPException as e:
-                    await helper_cog.logMessage("apply.py",f"Channel-Fehler {e}")
-                    continue
-
+            print(f"{guild.name}: {channel}")
+            
             embed = discord.Embed(
                 title=TICKET_PREWVIEW_EMBED_TITEL,
                 description=TICKET_PREVIEW_MESSAGE,
-                color=discord.Color.blue()
-            )
+                color=discord.Color.blue())
+            
             embed.set_thumbnail(url=SUPPORT_THUMBNAIL_URL)
             
             # Löscht 10 Messages von dem Channel
@@ -130,7 +128,8 @@ class applyDropDown(commands.Cog):
                 await helper_cog.logMessage("apply.py",f"Apply-Embed gesendt: {guild.name}")
             except discord.HTTPException as e:
                 await helper_cog.logMessage("apply.py",f"Embed konnte nicht gesendet werden: {e}")
-   
+
+
 # Erstellt eine Class mit Discord UI & Titel
 class Formular(discord.ui.Modal, title="Bewerbung"):
 
