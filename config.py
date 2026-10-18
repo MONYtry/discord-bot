@@ -2,7 +2,6 @@
 # Otherwise your Bot wont work well 
 
 # ----------- CHANNELS ----------- #
-SUPPORT_CHANNEL_ID = 1557488329279144096
 
 # LOGGING - CHANNELS
 TIMEOUT_LOG_CHANNEL = 1557488290511196211

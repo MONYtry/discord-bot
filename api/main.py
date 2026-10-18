@@ -18,7 +18,9 @@ from api.database import (
     get_apply_channel_id,
     get_leave_join_log_channel,
     get_welcome_channel,
-    get_ban_log_channel
+    get_ban_log_channel,
+    get_support_channel_id,
+    set_support_channel_id
 )
 import httpx
 from fastapi import FastAPI, Request, HTTPException
@@ -348,6 +350,7 @@ async def save_settings(guild_id: str, request: Request):
     welcome_channel_id = data.get("Input_Welcome_Channel_ID")
     ban_channel_id = data.get("Input_Ban_Channel_ID")
     join_leave_log_channel_id = data.get("Input_Join_Leave_Log_Channel_ID")
+    support_channel_id = data.get("support_channel_id")
 
     # Save Ticket Setting
     save_ticket_setting(guild_id, tickets_enabled, apply_channel_id)
@@ -359,6 +362,7 @@ async def save_settings(guild_id: str, request: Request):
     # LOG CHANNEL
     set_ban_log_channel(guild_id,ban_channel_id)
     set_leave_join_log_channel(guild_id,join_leave_log_channel_id)
+    set_support_channel_id(guild_id,support_channel_id)
 
     return {
         "tickets_enabled": tickets_enabled,
@@ -366,7 +370,8 @@ async def save_settings(guild_id: str, request: Request):
         "statusInput": bot_status_channel_id,
         "welcomeChannelInput": welcome_channel_id,
         "join_leave_log_channel_id": join_leave_log_channel_id,
-        "ban_channel_id": ban_channel_id
+        "ban_channel_id": ban_channel_id,
+        "support_channel_id": support_channel_id
     }
 
 
@@ -409,7 +414,8 @@ async def getSettings(guild_id: str, request: Request):
     ban_log_channel_id = get_ban_log_channel(guild_id)
     apply_channel_id = get_apply_channel_id(guild_id)
     ticket_setting = get_ticket_setting(guild_id)
-    
+    support_channel_id = get_support_channel_id(guild_id)
+
     return {
         "apply_channel_id": apply_channel_id,
         "statusInput": status_channel_id,
@@ -417,5 +423,6 @@ async def getSettings(guild_id: str, request: Request):
         "join_leave_log_channel_id": join_leave_channel_id,
         "ban_channel_id": ban_log_channel_id,
         "apply_channel_id": apply_channel_id,
-        "tickets_enabled": ticket_setting
+        "tickets_enabled": ticket_setting,
+        "support_channel_id": support_channel_id
     }

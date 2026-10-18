@@ -105,6 +105,8 @@ async function getSettings()
         document.getElementById("Input_Ban_Log_Channel_ID").value = antwort.ban_channel_id;
         document.getElementById("Input_Apply_Channel_ID").value = antwort.apply_channel_id;
         document.getElementById("Input_Ticket_System_Display").value = antwort.tickets_enabled;
+        document.getElementById("Input_Support_Channel_ID").value = antwort.support_channel_id;
+
     }
     catch (error)
     {
@@ -124,7 +126,7 @@ async function saveSettings()
     const Input_Join_Leave_Log_Channel_ID = document.getElementById("Input_Join_Leave_Log_Channel_ID");
     const Input_Ban_Channel_ID = document.getElementById("Input_Ban_Log_Channel_ID");
     const Input_Apply_Channel_ID = document.getElementById("Input_Apply_Channel_ID");
-    
+    const Input_Support_Channel_ID = document.getElementById("Input_Support_Channel_ID");
 
     if ( 
         Input_Status_Channel_ID.value == "" || 
@@ -143,6 +145,7 @@ async function saveSettings()
     console.log("Join_leave_log-Channel-ID: " + Input_Join_Leave_Log_Channel_ID.value);
     console.log("ban_Channel_Id_Input: " + Input_Ban_Channel_ID.value);
     console.log("Bewerbungs ID: " + Input_Apply_Channel_ID.value)
+    console.log("Support ID: " + Input_Support_Channel_ID.value)
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
 
     const response = await fetch(
@@ -163,7 +166,8 @@ async function saveSettings()
                 Input_Welcome_Channel_ID: Input_Welcome_Channel_ID.value || null,
                 Input_Join_Leave_Log_Channel_ID: Input_Join_Leave_Log_Channel_ID.value || null,
                 Input_Ban_Channel_ID: Input_Ban_Channel_ID.value || null,
-                Input_Apply_Channel_ID: Input_Apply_Channel_ID.value
+                Input_Apply_Channel_ID: Input_Apply_Channel_ID.value || null,
+                support_channel_id: Input_Support_Channel_ID.value || null
             })
         }
     );

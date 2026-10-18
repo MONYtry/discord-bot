@@ -48,7 +48,8 @@ def load_dataBase():
             BOT_STATUS_CHANNEL_ID INTEGER,
             WELCOME_CHANNEL_ID INTEGER,
             JOIN_LEAVE_LOG_CHANNEL_ID INTEGER,
-            BAN_CHANNEL_ID INTEGER)
+            BAN_CHANNEL_ID INTEGER,
+            SUPPORT_CHANNEL_ID INTEGER)
         """)
 
 def open_ticket(channel_id, status, guild_id):
@@ -244,4 +245,26 @@ def get_apply_channel_id(guild_id):
         """, (str(guild_id),)).fetchone()
 
         return row[0] if row is not None else None
+
+def get_support_channel_id(guild_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        row = conn.execute("""
+            SELECT SUPPORT_CHANNEL_ID
+            FROM server_settings
+            WHERE guild_id = ?
+        """, (str(guild_id),)).fetchone()
+        return row[0] if row is not None else None
+
+def set_support_channel_id(guild_id, SUPPORT_CHANNEL_ID):
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+            INSERT INTO server_settings(
+            guild_id,
+            SUPPORT_CHANNEL_ID)
+            VALUES (?,?)
+            ON CONFLICT(guild_id)
+            DO UPDATE SET
+                SUPPORT_CHANNEL_ID = excluded.SUPPORT_CHANNEL_ID
+        """, (str(guild_id), int(SUPPORT_CHANNEL_ID) if SUPPORT_CHANNEL_ID else None))
+
 load_dataBase()
