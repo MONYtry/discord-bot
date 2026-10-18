@@ -50,7 +50,9 @@ def load_dataBase():
             JOIN_LEAVE_LOG_CHANNEL_ID INTEGER,
             BAN_CHANNEL_ID INTEGER,
             SUPPORT_CHANNEL_ID INTEGER, 
-            TIMEOUT_LOG_CHANNEL INTEGER)
+            TIMEOUT_LOG_CHANNEL INTEGER,
+            MESSAGE_LOG_CHANNEL INTEGER,
+            SUPPORT_CHANNEL_LOG_ID INTEGER)
         """)
 
 def open_ticket(channel_id, status, guild_id):
@@ -160,7 +162,53 @@ def get_welcome_channel(guild_id):
         if result is None:
             return None
         return result[0]
+
+def get_support_channel_log(guild_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        result = conn.execute("""
+            SELECT SUPPORT_CHANNEL_LOG_ID
+            FROM server_settings
+            WHERE guild_id = ?
+        """, (str(guild_id),)).fetchone()
     
+        if result is None:
+            return None
+        return result[0]
+def set_support_channel_log(guild_id, SUPPORT_CHANNEL_LOG_ID):
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+            INSERT INTO server_settings(
+            guild_id,
+            SUPPORT_CHANNEL_LOG_ID)
+            VALUES (?,?)
+            ON CONFLICT(guild_id)
+            DO UPDATE SET
+                SUPPORT_CHANNEL_LOG_ID = excluded.SUPPORT_CHANNEL_LOG_ID
+        """, (str(guild_id), int(SUPPORT_CHANNEL_LOG_ID) if SUPPORT_CHANNEL_LOG_ID else None))
+def set_message_log_channel(guild_id,MESSAGE_LOG_CHANNEL):
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+            INSERT INTO server_settings(
+            guild_id,
+            MESSAGE_LOG_CHANNEL)
+            VALUES (?,?)
+            ON CONFLICT(guild_id)
+            DO UPDATE SET
+                MESSAGE_LOG_CHANNEL = excluded.MESSAGE_LOG_CHANNEL
+        """, (str(guild_id), int(MESSAGE_LOG_CHANNEL) if MESSAGE_LOG_CHANNEL else None))
+       
+    
+def get_message_log_channel(guild_id):
+     with sqlite3.connect(DB_PATH) as conn:
+        result = conn.execute("""
+            SELECT MESSAGE_LOG_CHANNEL
+            FROM server_settings
+            WHERE guild_id = ?
+        """, (str(guild_id),)).fetchone()
+        if result is None:
+            return None
+        return result[0]
+
 def get_timeout_channel(guild_id):
     with sqlite3.connect(DB_PATH) as conn:
         result = conn.execute("""

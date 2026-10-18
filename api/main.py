@@ -22,7 +22,11 @@ from api.database import (
     get_support_channel_id,
     set_support_channel_id,
     get_timeout_channel,
-    set_timeout_channel
+    set_timeout_channel,
+    get_message_log_channel,
+    set_message_log_channel,
+    get_support_channel_log,
+    set_support_channel_log
 )
 import httpx
 from fastapi import FastAPI, Request, HTTPException
@@ -353,6 +357,8 @@ async def save_settings(guild_id: str, request: Request):
     join_leave_log_channel_id = data.get("Input_Join_Leave_Log_Channel_ID")
     support_channel_id = data.get("support_channel_id")
     timeout_channel_id = data.get("timeout_channel_id")
+    message_channel_id = data.get("message_channel_id")
+    support_log_channel_id = data.get("support_log_channel_id")
 
     # Save Ticket Setting
     save_ticket_setting(guild_id, tickets_enabled, apply_channel_id)
@@ -362,6 +368,8 @@ async def save_settings(guild_id: str, request: Request):
     set_welcome_channel(guild_id,welcome_channel_id)
     
     # LOG CHANNEL
+    set_support_channel_log(guild_id,support_log_channel_id)
+    set_message_log_channel(guild_id,message_channel_id)
     set_ban_log_channel(guild_id,ban_channel_id)
     set_leave_join_log_channel(guild_id,join_leave_log_channel_id)
     set_support_channel_id(guild_id,support_channel_id)
@@ -375,7 +383,10 @@ async def save_settings(guild_id: str, request: Request):
         "join_leave_log_channel_id": join_leave_log_channel_id,
         "ban_channel_id": ban_channel_id,
         "support_channel_id": support_channel_id,
-        "timeout_channel_id": timeout_channel_id
+        "timeout_channel_id": timeout_channel_id,
+        "message_channel_id": message_channel_id,
+        "support_log_channel_id": support_log_channel_id
+
     }
 
 
@@ -420,6 +431,9 @@ async def getSettings(guild_id: str, request: Request):
     ticket_setting = get_ticket_setting(guild_id)
     support_channel_id = get_support_channel_id(guild_id)
     timeout_channel_id = get_timeout_channel(guild_id)
+    message_channel_id = get_message_log_channel(guild_id)
+    support_channel_id = get_support_channel_log(guild_id)
+
     return {
         "apply_channel_id": apply_channel_id,
         "statusInput": status_channel_id,
@@ -429,5 +443,7 @@ async def getSettings(guild_id: str, request: Request):
         "apply_channel_id": apply_channel_id,
         "tickets_enabled": ticket_setting,
         "support_channel_id": support_channel_id,
-        "timeout_channel_id": timeout_channel_id
+        "timeout_channel_id": timeout_channel_id,
+        "message_channel_id": message_channel_id,
+        "support_log_channel_id": support_channel_id
     }
