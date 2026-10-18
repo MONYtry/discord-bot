@@ -70,6 +70,7 @@ async function checkServerID()
         return;
     }
 }
+
 async function getSettings()
 {
     try
@@ -133,16 +134,7 @@ async function saveSettings()
     const Input_Message_Log_Channel_ID = document.getElementById("Input_Message_Log_Channel_ID");
     const Input_Support_Log_Channel_ID = document.getElementById("Input_Ticket_Log_Channel_ID");
 
-    if ( 
-        Input_Status_Channel_ID.value == "" || 
-        Input_Welcome_Channel_ID.value == "" || 
-        Input_Join_Leave_Log_Channel_ID.value == "" ||
-        Input_Ban_Channel_ID.value == "") 
-    {
-        alert("Kein Bewerbungs-Channel gefunden!");
-        return;
-    }
-
+    // Kleine Hilfe zum Debuggen etc.
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
     console.log("Tickets-Status: " + useTickets);
     console.log("Status-Channel-ID: " + Input_Status_Channel_ID.value);
@@ -166,6 +158,7 @@ async function saveSettings()
             headers: {
                 "Content-Type": "application/json"
             },
+
             // Sendet angegebene Daten an das Backend 
             // Kleiner Reminder an mich selbst!!
             // Der erste Parameter muss mit dem Backend übereinstimmen!

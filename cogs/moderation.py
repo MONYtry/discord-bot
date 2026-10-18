@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from datetime import timedelta
-from config import TIMEOUT_LOG_CHANNEL, TIMEOUT_ALLOWED_ROLE_IDS, NO_RIGHTS_MESSAGE,SUPPORT_THUMBNAIL_URL
+from config import TIMEOUT_ALLOWED_ROLE_IDS, NO_RIGHTS_MESSAGE,SUPPORT_THUMBNAIL_URL
 from api.database import get_timeout_channel
 class Moderation(commands.Cog):
     def __init__(self, bot):
@@ -62,6 +62,8 @@ class Moderation(commands.Cog):
         # Zeit wird berechnet
         dauer_zeit = time_units[timetype.value] * duration
         channel_id = get_timeout_channel(interaction.guild_id)
+        # Kleiner Bug behoben
+        channel_id = channel_id[0]
         if channel_id is None:
              print(f"Es wurde kein Channel zum logen des Timeoutes gefunden")
         print(channel_id)

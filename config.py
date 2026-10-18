@@ -1,10 +1,6 @@
 # Just replace the values
 # Otherwise your Bot wont work well 
 
-# ----------- CHANNELS ----------- #
-
-# LOGGING - CHANNELS
-
 # ----------- MESSAGES ----------- #
 NO_RIGHTS_MESSAGE = "Du hast dazu keine Berechtigung!"
 REMOVED_REACTION_ROLE_MESSAGE = "Du hattest die Rolle {role} bereits (Sie wurde entfernt!)"
@@ -170,6 +166,7 @@ APPLY_CATEGORIES_OPTIONS = {
 TRUSTED_URL = [
     "youtube.com"
     ]
+
 # Inhalt KI genererriert!
 FORBIDDEN_WORDS = [
     # Beleidigungen

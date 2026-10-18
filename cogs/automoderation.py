@@ -1,11 +1,12 @@
 from discord.ext import commands
 import discord
-from config import (MESSAGE_LOG_CHANNEL,
+from config import (
                     SUPPORT_THUMBNAIL_URL,
                     FORBIDDEN_WORDS, 
                     BOT_HAS_NO_RIGHTS,
                     TRUSTED_URL)
 from datetime import timedelta
+from api.database import get_message_log_channel
 
 class Automod(commands.Cog):
     def __init__(self,bot):
@@ -29,7 +30,9 @@ class Automod(commands.Cog):
 
         # Holt sich die Module anhand der Class-Namen
         helper_cog = self.bot.get_cog("Helper")
-        log_channel = self.bot.get_channel(MESSAGE_LOG_CHANNEL)
+        channel_id = get_message_log_channel(message.guild.id)
+        print(f"Automoderation: {channel_id}")
+        log_channel = self.bot.get_channel(channel_id)
         if log_channel is not None:
             await helper_cog.send_embed(log_channel,"Message deleted",
                                         f"👤 User: {message.author.mention} (ID: {message.author.id})\n"
@@ -46,7 +49,9 @@ class Automod(commands.Cog):
         
         # Holt sich die Module anhand der Class-Namen
         helper_cog = self.bot.get_cog("Helper")
-        log_channel = self.bot.get_channel(MESSAGE_LOG_CHANNEL)
+        channel_id = get_message_log_channel(message.guild.id)
+        print(f"Automoderation: {channel_id}")
+        log_channel = self.bot.get_channel(channel_id)
         
         if log_channel is not None:
             if await self.checkForbiddenWords(message,helper_cog,log_channel):

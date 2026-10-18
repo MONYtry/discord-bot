@@ -7,10 +7,9 @@ from config import (SUPPORT_CATEGORIES_OPTIONS,
                     SUPPORT_EMBED_MESSAGE,
                     SUPPORT_PREVIEW_EMBED_MESSAGE,
                     SUPPORT_PREVIEW_EMBED_TITEL,
-                    SUPPORT_CHANNEL_LOG_ID,
                     SUPPORT_THUMBNAIL_URL)
 
-from api.database import get_support_channel_id
+from api.database import get_support_channel_id,get_support_channel_log
 
 class SupportView(discord.ui.View):
     def __init__(self):
@@ -40,8 +39,8 @@ class TicketView(discord.ui.View):
         member = interaction.guild.get_member(user_id)
         if member:
             print(f"Ticket erstellt von: {member.name}")
-
-        log_channel = interaction.client.get_channel(SUPPORT_CHANNEL_LOG_ID)
+        log_channel_id = get_support_channel_log(interaction.guild_id)
+        log_channel = interaction.client.get_channel(log_channel_id)
         await helper_cog.send_embed(log_channel,"TICKET CLOSED",
                             f"User: {member.mention} \n"
                             f"Datum: {datetime.datetime.now()} \n"
@@ -82,12 +81,12 @@ class SupportCategories(discord.ui.Select):
         helper_cog = interaction.client.get_cog("Helper")
 
         # Rollen, die den Ticket-Channel sehen dürfen
-        team_role = discord.utils.get(guild.roles, name="Python")
-        if team_role is None:
-            await helper_cog.logError("support.py","roles wasn't found!")
-            await helper_cog.send_embed()
-            await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
-            return
+        #team_role = discord.utils.get(guild.roles, name="Python")
+        #if team_role is None:
+         #   await helper_cog.logError("support.py","roles wasn't found!")
+          #  await helper_cog.send_embed()
+           # await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
+            #return
         
         # Holt sich den aktuellen Value
         selected_value = self.values[0]
@@ -125,11 +124,11 @@ class SupportCategories(discord.ui.Select):
                 guild.default_role: discord.PermissionOverwrite(view_channel=False),
                 # Nun sieht member diesen Channel
                 member: discord.PermissionOverwrite(view_channel=True,send_messages=True),
-                team_role: discord.PermissionOverwrite(view_channel=True,send_messages=True),
+                #team_role: discord.PermissionOverwrite(view_channel=True,send_messages=True),
             }
         )
-
-        log_channel = interaction.client.get_channel(SUPPORT_CHANNEL_LOG_ID)
+        log_channel_id = get_support_channel_log(interaction.guild_id)
+        log_channel = interaction.client.get_channel(log_channel_id)
         await helper_cog.send_embed(log_channel,"TICKET CREATED",
                                                f"User: {member.mention} \n"
                                                f"Datum: {datetime.datetime.now()} \n"
@@ -143,7 +142,7 @@ class SupportCategories(discord.ui.Select):
         await helper_cog.logMessage("support.py",f"Ticket was created (User:{member.name})")
 
         # Sendet einen Ping an die angegebene Rolle
-        await channel.send(f"{team_role.mention}")
+        #await channel.send(f"{team_role.mention}")
 
         description = SUPPORT_EMBED_MESSAGE.format(member=member.mention)
 
