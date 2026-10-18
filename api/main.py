@@ -421,6 +421,6 @@ async def getSettings(guild_id: str, request: Request):
         "welcomeChannelInput": welcome_channel_id,
         "join_leave_log_channel_id": join_leave_channel_id,
         "ban_channel_id": ban_log_channel_id,
-        "apply_channel_id_Input": apply_channel_id,
+        "apply_channel_id": apply_channel_id,
         "tickets_enabled": ticket_setting
     }

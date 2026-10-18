@@ -1,8 +1,9 @@
-
 const API = "http://127.0.0.1:8000";
 
 // Holt sich die ID aus der URL 
 const serverId = new URLSearchParams(window.location.search).get("id");
+
+var useTickets = true;
 
 async function loadServer() {
     try {
@@ -60,7 +61,6 @@ async function loadServer() {
         console.error("Fehler beim Laden des Servers:", error);
         document.getElementById("serverName").textContent = "Fehler beim Laden des Servers!";
     }
-
 }
 
 async function checkServerID()
@@ -72,9 +72,10 @@ async function checkServerID()
 }
 async function getSettings()
 {
-    try {
-        
+    try
+    {    
         checkServerID();
+     
         // Sendet Anfrage
         const response = await fetch(API + "/servers/" + serverId + "/settings",
             {
@@ -92,17 +93,18 @@ async function getSettings()
         // Kleiner Dynamischer String zur Anzeige für Ticket_Status
         var ticket_status = "Stauts: ";
         if (antwort.tickets_enabled == "1")
-            ticket_status += "aktiviert!"
+            ticket_status += "[✅] - Aktiviert !"
         else
-            ticket_status += "deaktiviert!"
+            ticket_status += "[💥] - Deaktiviert!"
 
         // Setzt die Werte
-        document.getElementById("statusInput").value = antwort.statusInput;
-        document.getElementById("welcomeChannelInput").value = antwort.welcomeChannelInput;
-        document.getElementById("join_leave_log_channel_input").value = antwort.join_leave_log_channel_id;
-        document.getElementById("ticketSystemDisplay").textContent = ticket_status;
-        document.getElementById("banChannelIdInput").value = antwort.ban_channel_id;
-        document.getElementById("apply_channel_Input").value = antwort.apply_channel_id_Input;
+        document.getElementById("Input_Status_Channel_ID").value = antwort.statusInput;
+        document.getElementById("Input_Welcome_Channel_ID").value = antwort.welcomeChannelInput;
+        document.getElementById("Input_Join_Leave_Log_Channel_ID").value = antwort.join_leave_log_channel_id;
+        document.getElementById("Input_Ticket_System_Display").textContent = ticket_status;
+        document.getElementById("Input_Ban_Log_Channel_ID").value = antwort.ban_channel_id;
+        document.getElementById("Input_Apply_Channel_ID").value = antwort.apply_channel_id;
+        document.getElementById("Input_Ticket_System_Display").value = antwort.tickets_enabled;
     }
     catch (error)
     {
@@ -111,35 +113,38 @@ async function getSettings()
 }
 
 
-async function saveSettings() {
-
-    const channelInput = document.getElementById("inputDing");
-    const statusInput = document.getElementById("statusInput");
-    const welcomeChannelInput = document.getElementById("welcomeChannelInput");
-    const join_leave_log_channelInput = document.getElementById("join_leave_log_channel_input");
-    const ban_Channel_Id_Input = document.getElementById("banChannelIdInput");
-
+async function saveSettings() 
+{
+    // Nullpointer vermeiden
     checkServerID();
 
-    if (channelInput.value == "" || 
-        statusInput.value == "" || 
-        welcomeChannelInput.value == "" || 
-        join_leave_log_channelInput.value == "" ||
-        ban_Channel_Id_Input.value == "") 
+    // Holt sich die Eingabe-Felder
+    const Input_Status_Channel_ID = document.getElementById("Input_Status_Channel_ID");
+    const Input_Welcome_Channel_ID = document.getElementById("Input_Welcome_Channel_ID");
+    const Input_Join_Leave_Log_Channel_ID = document.getElementById("Input_Join_Leave_Log_Channel_ID");
+    const Input_Ban_Channel_ID = document.getElementById("Input_Ban_Log_Channel_ID");
+    const Input_Apply_Channel_ID = document.getElementById("Input_Apply_Channel_ID");
+    
+
+    if ( 
+        Input_Status_Channel_ID.value == "" || 
+        Input_Welcome_Channel_ID.value == "" || 
+        Input_Join_Leave_Log_Channel_ID.value == "" ||
+        Input_Ban_Channel_ID.value == "") 
     {
         alert("Kein Bewerbungs-Channel gefunden!");
         return;
     }
 
+    console.log("----- DEVELOPMENT-INFOMATION'S -----");
     console.log("Tickets-Status: " + useTickets);
-    console.log("Bewerbungs-ID: " + channelInput.value);
-    console.log("Status-Channel-ID: " + statusInput.value);
-    console.log("Welcome-Channel-ID: " + welcomeChannelInput.value);
-    console.log("Join_leave_log-Channel-ID: " + join_leave_log_channelInput.value);
-    console.log("ban_Channel_Id_Input: " + ban_Channel_Id_Input.value);
-    
-    const applyChannelId = channelInput.value.trim();
-    
+    console.log("Status-Channel-ID: " + Input_Status_Channel_ID.value);
+    console.log("Welcome-Channel-ID: " + Input_Welcome_Channel_ID.value);
+    console.log("Join_leave_log-Channel-ID: " + Input_Join_Leave_Log_Channel_ID.value);
+    console.log("ban_Channel_Id_Input: " + Input_Ban_Channel_ID.value);
+    console.log("Bewerbungs ID: " + Input_Apply_Channel_ID.value)
+    console.log("----- DEVELOPMENT-INFOMATION'S -----");
+
     const response = await fetch(
         API + "/servers/" + serverId + "/settings",
         {
@@ -151,11 +156,11 @@ async function saveSettings() {
             },
             body: JSON.stringify({
                 tickets_enabled: useTickets,
-                apply_channel_id: applyChannelId || null,
-                statusInput: statusInput.value || null,
-                welcomeChannelInput: welcomeChannelInput.value || null,
-                join_leave_log_channelInput: join_leave_log_channelInput.value || null,
-                banChannelIdInput: ban_Channel_Id_Input.value || null
+                Input_Status_Channel_ID: Input_Status_Channel_ID.value || null,
+                Input_Welcome_Channel_ID: Input_Welcome_Channel_ID.value || null,
+                Input_Join_Leave_Log_Channel_ID: Input_Join_Leave_Log_Channel_ID.value || null,
+                Input_Ban_Channel_ID: Input_Ban_Channel_ID.value || null,
+                Input_Apply_Channel_ID: Input_Apply_Channel_ID.value
             })
         }
     );
