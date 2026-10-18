@@ -154,6 +154,9 @@ async function saveSettings()
             headers: {
                 "Content-Type": "application/json"
             },
+            // Sendet angegebene Daten an das Backend 
+            // Kleiner Reminder an mich selbst!!
+            // Der erste Parameter muss mit dem Backend übereinstimmen!
             body: JSON.stringify({
                 tickets_enabled: useTickets,
                 Input_Status_Channel_ID: Input_Status_Channel_ID.value || null,

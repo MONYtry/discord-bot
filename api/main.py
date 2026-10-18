@@ -343,26 +343,22 @@ async def save_settings(guild_id: str, request: Request):
     data = await request.json()
 
     tickets_enabled = data.get("tickets_enabled") is True
-    apply_channel_id = data.get("apply_channel_id")
-    bot_status_channel_id = data.get("statusInput")
-    welcome_channel_id = data.get("welcomeChannelInput")
-    ban_channel_id = data.get("banChannelIdInput")
+    apply_channel_id = data.get("Input_Apply_Channel_ID")
+    bot_status_channel_id = data.get("Input_Status_Channel_ID")
+    welcome_channel_id = data.get("Input_Welcome_Channel_ID")
+    ban_channel_id = data.get("Input_Ban_Channel_ID")
+    join_leave_log_channel_id = data.get("Input_Join_Leave_Log_Channel_ID")
 
-    join_leave_log_channel_id = data.get("join_leave_log_channelInput")
-
-    save_ticket_setting(
-        guild_id,
-        tickets_enabled,
-        apply_channel_id
-    )
+    # Save Ticket Setting
+    save_ticket_setting(guild_id, tickets_enabled, apply_channel_id)
     
-    set_bot_status_channel_id(
-        guild_id,
-        bot_status_channel_id
-    )
-    set_leave_join_log_channel(guild_id,join_leave_log_channel_id)
+    # NORMAL CHANNELS
+    set_bot_status_channel_id(guild_id, bot_status_channel_id)
     set_welcome_channel(guild_id,welcome_channel_id)
+    
+    # LOG CHANNEL
     set_ban_log_channel(guild_id,ban_channel_id)
+    set_leave_join_log_channel(guild_id,join_leave_log_channel_id)
 
     return {
         "tickets_enabled": tickets_enabled,
@@ -371,7 +367,6 @@ async def save_settings(guild_id: str, request: Request):
         "welcomeChannelInput": welcome_channel_id,
         "join_leave_log_channel_id": join_leave_log_channel_id,
         "ban_channel_id": ban_channel_id
-
     }
 
 
@@ -416,7 +411,7 @@ async def getSettings(guild_id: str, request: Request):
     ticket_setting = get_ticket_setting(guild_id)
     
     return {
-        "apply_channel_id": None,
+        "apply_channel_id": apply_channel_id,
         "statusInput": status_channel_id,
         "welcomeChannelInput": welcome_channel_id,
         "join_leave_log_channel_id": join_leave_channel_id,
