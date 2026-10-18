@@ -355,7 +355,7 @@ async def save_settings(guild_id: str, request: Request):
         tickets_enabled,
         apply_channel_id
     )
-
+    
     set_bot_status_channel_id(
         guild_id,
         bot_status_channel_id
@@ -413,13 +413,14 @@ async def getSettings(guild_id: str, request: Request):
     join_leave_channel_id = get_leave_join_log_channel(guild_id)
     ban_log_channel_id = get_ban_log_channel(guild_id)
     apply_channel_id = get_apply_channel_id(guild_id)
+    ticket_setting = get_ticket_setting(guild_id)
     
     return {
-        "tickets_enabled": None,
         "apply_channel_id": None,
         "statusInput": status_channel_id,
         "welcomeChannelInput": welcome_channel_id,
         "join_leave_log_channel_id": join_leave_channel_id,
         "ban_channel_id": ban_log_channel_id,
-        "apply_channel_id_Input": apply_channel_id
+        "apply_channel_id_Input": apply_channel_id,
+        "tickets_enabled": ticket_setting
     }

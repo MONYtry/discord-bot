@@ -79,19 +79,24 @@ async function getSettings()
                     "Content-Type": "application/json"
                 }
             });
-
+        // Antwort
         const antwort = await response.json();
+        // Kleiner Dynamischer String zur Anzeige
+        var ticket_status = "Stauts: ";
+        if (antwort.tickets_enabled == "1")
+            ticket_status += "aktiviert!"
+        else
+            ticket_status += "deaktiviert!"
 
 
 
         document.getElementById("statusInput").value = antwort.statusInput;
-
         document.getElementById("welcomeChannelInput").value = antwort.welcomeChannelInput;
-
         document.getElementById("join_leave_log_channel_input").value = antwort.join_leave_log_channel_id;
-
+        document.getElementById("ticketSystemDisplay").textContent = ticket_status;
         document.getElementById("banChannelIdInput").value = antwort.ban_channel_id;
         document.getElementById("apply_channel_Input").value = antwort.apply_channel_id_Input;
+    
     }
     catch (error)
     {
