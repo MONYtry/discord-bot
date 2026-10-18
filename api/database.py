@@ -49,7 +49,8 @@ def load_dataBase():
             WELCOME_CHANNEL_ID INTEGER,
             JOIN_LEAVE_LOG_CHANNEL_ID INTEGER,
             BAN_CHANNEL_ID INTEGER,
-            SUPPORT_CHANNEL_ID INTEGER)
+            SUPPORT_CHANNEL_ID INTEGER, 
+            TIMEOUT_LOG_CHANNEL INTEGER)
         """)
 
 def open_ticket(channel_id, status, guild_id):
@@ -158,10 +159,30 @@ def get_welcome_channel(guild_id):
 
         if result is None:
             return None
-
+        return result[0]
+    
+def get_timeout_channel(guild_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        result = conn.execute("""
+            SELECT TIMEOUT_LOG_CHANNEL
+            FROM server_settings
+            WHERE guild_id = ?
+        """, (str(guild_id), )).fetchall()
+        if result is None:
+            return None
         return result[0]
 
-
+def set_timeout_channel(guild_id, TIMEOUT_LOG_CHANNEL):
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+        INSERT INTO server_settings(
+        guild_id,
+        TIMEOUT_LOG_CHANNEL)
+        VALUES (?,?)
+        ON CONFLICT(guild_id)
+        DO UPDATE SET
+            TIMEOUT_LOG_CHANNEL = excluded.TIMEOUT_LOG_CHANNEL
+        """, (str(guild_id), int(TIMEOUT_LOG_CHANNEL) if TIMEOUT_LOG_CHANNEL else None))
 
 def set_leave_join_log_channel(guild_id, JOIN_LEAVE_LOG_CHANNEL_ID):
     with sqlite3.connect(DB_PATH) as conn:

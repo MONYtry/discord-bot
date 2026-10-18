@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 from datetime import timedelta
 from config import TIMEOUT_LOG_CHANNEL, TIMEOUT_ALLOWED_ROLE_IDS, NO_RIGHTS_MESSAGE,SUPPORT_THUMBNAIL_URL
-
+from api.database import get_timeout_channel
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -61,8 +61,11 @@ class Moderation(commands.Cog):
         
         # Zeit wird berechnet
         dauer_zeit = time_units[timetype.value] * duration
-
-        channel = self.bot.get_channel(TIMEOUT_LOG_CHANNEL)
+        channel_id = get_timeout_channel(interaction.guild_id)
+        if channel_id is None:
+             print(f"Es wurde kein Channel zum logen des Timeoutes gefunden")
+        print(channel_id)
+        channel = self.bot.get_channel(channel_id)
         helper_cog = self.bot.get_cog("Helper")
 
         try:
@@ -79,9 +82,11 @@ class Moderation(commands.Cog):
             
             await user.timeout(dauer_zeit, reason=reason)
 
-        except discord.Forbidden:
-            await interaction.response.send_message("❌ Bot fehlen die nötigen Rechte!", ephemeral=True)
-            return
+        except discord.Forbidden as e:
+            await interaction.response.send_message(
+                f"❌ Keine Berechtigung für den Timeout!\n" 
+                f"Details: {e.text}", ephemeral=True
+            )
         
         await interaction.response.send_message(f"{user.mention} wurde getimeoutet für {duration} {timetype.name}", ephemeral=True)
 
