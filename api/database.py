@@ -55,6 +55,14 @@ def load_dataBase():
             SUPPORT_CHANNEL_LOG_ID INTEGER)
         """)
 
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS embed_allowed_roles (
+            guild_id TEXT NOT NULL,
+            role_id INTEGER NOT NULL,
+            PRIMARY KEY (guild_id, role_id))
+        """)
+
+
 def open_ticket(channel_id, status, guild_id):
     with sqlite3.connect(DB_PATH) as conn:
         # SET setzt werte (die rechnung ist selbst erklärend)
@@ -110,7 +118,35 @@ def get_total_tickets():
         SELECT total_tickets
         FROM stats
         """).fetchone()[0]
+    
 
+def set_embed_allowed_roles(guild_id: int, role_ids: list[int]):
+    # Doppelte Rollen-IDs entfernen
+    role_ids = list(dict.fromkeys(role_ids))
+
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+            DELETE FROM embed_allowed_roles
+            WHERE guild_id = ?
+        """, (str(guild_id),))
+
+        conn.executemany("""
+            INSERT INTO embed_allowed_roles (guild_id, role_id)
+            VALUES (?, ?)
+        """, [
+            (str(guild_id), int(role_id))
+            for role_id in role_ids
+        ])
+
+        
+def get_embed_allowed_roles(guild_id: int) -> list[int]:
+    with sqlite3.connect(DB_PATH) as conn:
+        rows = conn.execute("""
+            SELECT role_id
+            FROM embed_allowed_roles
+            WHERE guild_id = ?
+        """, (str(guild_id),)).fetchall()
+        return [row[0] for row in rows]
     
 def get_bot_status_channel_id(guild_id):
     with sqlite3.connect(DB_PATH) as conn:
@@ -174,6 +210,7 @@ def get_support_channel_log(guild_id):
         if result is None:
             return None
         return result[0]
+    
 def set_support_channel_log(guild_id, SUPPORT_CHANNEL_LOG_ID):
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
@@ -185,6 +222,7 @@ def set_support_channel_log(guild_id, SUPPORT_CHANNEL_LOG_ID):
             DO UPDATE SET
                 SUPPORT_CHANNEL_LOG_ID = excluded.SUPPORT_CHANNEL_LOG_ID
         """, (str(guild_id), int(SUPPORT_CHANNEL_LOG_ID) if SUPPORT_CHANNEL_LOG_ID else None))
+
 def set_message_log_channel(guild_id,MESSAGE_LOG_CHANNEL):
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
@@ -196,7 +234,6 @@ def set_message_log_channel(guild_id,MESSAGE_LOG_CHANNEL):
             DO UPDATE SET
                 MESSAGE_LOG_CHANNEL = excluded.MESSAGE_LOG_CHANNEL
         """, (str(guild_id), int(MESSAGE_LOG_CHANNEL) if MESSAGE_LOG_CHANNEL else None))
-       
     
 def get_message_log_channel(guild_id):
      with sqlite3.connect(DB_PATH) as conn:
@@ -244,7 +281,6 @@ def set_leave_join_log_channel(guild_id, JOIN_LEAVE_LOG_CHANNEL_ID):
                 JOIN_LEAVE_LOG_CHANNEL_ID = excluded.JOIN_LEAVE_LOG_CHANNEL_ID
         """, (str(guild_id), int(JOIN_LEAVE_LOG_CHANNEL_ID) if JOIN_LEAVE_LOG_CHANNEL_ID else None))
 
-
 def set_ban_log_channel(guild_id, BAN_CHANNEL_ID):
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
@@ -272,8 +308,6 @@ def save_ticket_setting(guild_id, enabled, apply_channel_id):
                 apply_channel_id = excluded.apply_channel_id
         """, (str(guild_id), int(enabled), int(apply_channel_id) if apply_channel_id else None))
 
-
-
 def get_ticket_setting(guild_id):
     with sqlite3.connect(DB_PATH) as con:
         return con.execute("""
@@ -281,7 +315,6 @@ def get_ticket_setting(guild_id):
             FROM server_settings 
             WHERE guild_id = ?
             """, (str(guild_id),)).fetchone()[0]
-
     return bool(row[0]) if row else False
 
 def get_leave_join_log_channel(guild_id):
@@ -293,7 +326,6 @@ def get_leave_join_log_channel(guild_id):
         """, (str(guild_id),)).fetchone()
         return row[0] if row is not None else None
 
-
 def get_ban_log_channel(guild_id):
     with sqlite3.connect(DB_PATH) as conn:
         row = conn.execute("""
@@ -301,9 +333,7 @@ def get_ban_log_channel(guild_id):
             FROM server_settings
             WHERE guild_id = ?
         """, (str(guild_id),)).fetchone()
-
         return row[0] if row is not None else None
-
 
 def get_apply_channel_id(guild_id):
     with sqlite3.connect(DB_PATH) as conn:
@@ -312,7 +342,6 @@ def get_apply_channel_id(guild_id):
             FROM server_settings
             WHERE guild_id = ?
         """, (str(guild_id),)).fetchone()
-
         return row[0] if row is not None else None
 
 def get_support_channel_id(guild_id):

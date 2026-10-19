@@ -109,7 +109,9 @@ async function getSettings()
         document.getElementById("Input_Support_Channel_ID").value = antwort.support_channel_id;
         document.getElementById("Input_Timeout_Channel_ID").value = antwort.timeout_channel_id;
         document.getElementById("Input_Message_Log_Channel_ID").value = antwort.message_channel_id;
-        document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id
+        document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
+        document.getElementById("Input_Embed_Allowed_Roles_ID").value = (antwort.embed_allowed_roles || []).join(",");
+
     }
     catch (error)
     {
@@ -133,6 +135,7 @@ async function saveSettings()
     const Input_Timeout_Channel_ID = document.getElementById("Input_Timeout_Channel_ID");
     const Input_Message_Log_Channel_ID = document.getElementById("Input_Message_Log_Channel_ID");
     const Input_Support_Log_Channel_ID = document.getElementById("Input_Ticket_Log_Channel_ID");
+    const Input_Embed_Allowed_Role = document.getElementById("Input_Embed_Allowed_Roles_ID");
 
     // Kleine Hilfe zum Debuggen etc.
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
@@ -146,6 +149,7 @@ async function saveSettings()
     console.log("Timeout ID: " + Input_Timeout_Channel_ID.value);
     console.log("MessageLoggingChannel: " + Input_Message_Log_Channel_ID.value);
     console.log("Input_Support_Log_Channel_ID: " + Input_Support_Log_Channel_ID.value)
+    console.log("Input_Embed_Allowed_Role: " + Input_Embed_Allowed_Role.value)
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
 
     const test = Input_Timeout_Channel_ID.value.trim();
@@ -172,7 +176,11 @@ async function saveSettings()
                 support_channel_id: Input_Support_Channel_ID.value || null,
                 timeout_channel_id: test || null,
                 message_channel_id: Input_Message_Log_Channel_ID.value || null,
-                support_log_channel_id: Input_Support_Log_Channel_ID.value || null
+                support_log_channel_id: Input_Support_Log_Channel_ID.value || null,
+                
+                // map = Entfernt Leerzeichen am Anfang und Ende
+                // Filter = Entfernt Leere Array Einträge
+                embed_allowed_roles: Input_Embed_Allowed_Role.value.split(",").map(id => id.trim()).filter(id => id !== "")
             })
         }
     );

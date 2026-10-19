@@ -26,7 +26,9 @@ from api.database import (
     get_message_log_channel,
     set_message_log_channel,
     get_support_channel_log,
-    set_support_channel_log
+    set_support_channel_log,
+    get_embed_allowed_roles,
+    set_embed_allowed_roles
 )
 import httpx
 from fastapi import FastAPI, Request, HTTPException
@@ -359,6 +361,7 @@ async def save_settings(guild_id: str, request: Request):
     timeout_channel_id = data.get("timeout_channel_id")
     message_channel_id = data.get("message_channel_id")
     support_log_channel_id = data.get("support_log_channel_id")
+    embed_allowed_roles = data.get("embed_allowed_roles")
 
     # Save Ticket Setting
     save_ticket_setting(guild_id, tickets_enabled, apply_channel_id)
@@ -366,7 +369,7 @@ async def save_settings(guild_id: str, request: Request):
     # NORMAL CHANNELS
     set_bot_status_channel_id(guild_id, bot_status_channel_id)
     set_welcome_channel(guild_id,welcome_channel_id)
-    
+    set_embed_allowed_roles(guild_id,embed_allowed_roles)
     # LOG CHANNEL
     set_support_channel_log(guild_id,support_log_channel_id)
     set_message_log_channel(guild_id,message_channel_id)
@@ -385,8 +388,8 @@ async def save_settings(guild_id: str, request: Request):
         "support_channel_id": support_channel_id,
         "timeout_channel_id": timeout_channel_id,
         "message_channel_id": message_channel_id,
-        "support_log_channel_id": support_log_channel_id
-
+        "support_log_channel_id": support_log_channel_id,
+        "embed_allowed_roles": embed_allowed_roles
     }
 
 
@@ -433,6 +436,7 @@ async def getSettings(guild_id: str, request: Request):
     timeout_channel_id = get_timeout_channel(guild_id)
     message_channel_id = get_message_log_channel(guild_id)
     support_channel_id = get_support_channel_log(guild_id)
+    embed_allowed_roles = get_embed_allowed_roles(guild_id)
 
     return {
         "apply_channel_id": apply_channel_id,
@@ -445,5 +449,6 @@ async def getSettings(guild_id: str, request: Request):
         "support_channel_id": support_channel_id,
         "timeout_channel_id": timeout_channel_id,
         "message_channel_id": message_channel_id,
-        "support_log_channel_id": support_channel_id
+        "support_log_channel_id": support_channel_id,
+        "embed_allowed_roles": embed_allowed_roles
     }

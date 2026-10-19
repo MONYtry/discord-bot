@@ -66,9 +66,6 @@ WELCOME_THUMBNAIL_URL = "https://cdn.discordapp.com/attachments/1534607507023069
 
 
 # ----------- ROLE-IDS ----------- #
-EMBED_ALLOWED_ROLE_IDS = [
-    1558241441929760889  # Owner
-]
 
 APPLY_ALLOWED_ROLE_IDS = [
     1558241441929760889,  # Owner

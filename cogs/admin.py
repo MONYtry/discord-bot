@@ -1,7 +1,7 @@
 
 import discord
 from discord.ext import commands
-from config import EMBED_ALLOWED_ROLE_IDS,NO_RIGHTS_MESSAGE
+from config import NO_RIGHTS_MESSAGE
 from api.database import get_bot_status_channel_id
 
 class Admin(commands.Cog):
@@ -24,12 +24,12 @@ class Admin(commands.Cog):
     @discord.app_commands.command(name="shutdown", description="Fährt den Bot herunter")
     async def shutdown(self, interaction: discord.Interaction):    
         # Geht jede Rolle durch 
-        has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
+        #has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
         
         # Wenn der Nutzer keine Rechte hat
-        if not has_permission:
-            await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
-            return
+        #if not has_permission:
+         #   await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
+          #  return
         
         # Bot wird ausgeschalten
         await interaction.response.send_message("🔴 Bot geht offline.", ephemeral=True)

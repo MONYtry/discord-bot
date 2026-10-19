@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
-from config import EMBED_ALLOWED_ROLE_IDS, NO_RIGHTS_MESSAGE
+from config import NO_RIGHTS_MESSAGE
+from api.database import get_embed_allowed_roles
 
 # Erstellt eine Class mit Discord UI & Titel
 class EmbedModal(discord.ui.Modal, title="Embed erstellen"):
@@ -72,9 +73,10 @@ class Embed(commands.Cog):
     # Erstellt Command 
     @discord.app_commands.command(name="sendembed", description="Öffnet ein Formular zum Erstellen eines Embeds")
     async def sendembed(self, interaction: discord.Interaction):
+
         
         # Prüft ob der Nutzer eine Rolle hat welche Rechte dazu hat
-        has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
+        has_permission = any(role.id in get_embed_allowed_roles(interaction.guild_id) for role in interaction.user.roles)
         if not has_permission:
             await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
             return
