@@ -35,12 +35,13 @@ class TicketView(discord.ui.View):
         user_id = int(channel_name.split("-")[1])
         typ = str(channel_name.split("-")[2])
 
-        # Erstellt member Object anhand der UserID
+        # Erstellt Member-Object anhand der UserID
         member = interaction.guild.get_member(user_id)
-        if member:
-            print(f"Ticket erstellt von: {member.name}")
+        
+        # Erstellung des Log-Channels
         log_channel_id = get_support_channel_log(interaction.guild_id)
         log_channel = interaction.client.get_channel(log_channel_id)
+
         await helper_cog.send_embed(log_channel,"TICKET CLOSED",
                             f"User: {member.mention} \n"
                             f"Datum: {datetime.datetime.now()} \n"
@@ -48,8 +49,7 @@ class TicketView(discord.ui.View):
                             f"Ticket: {channel_name}",discord.Color.red(), member.avatar.url)
         
         await helper_cog.logMessage("support.py",
-                                    f"Ticket was closed \n" 
-                                    f"(Ticket creator:{member} | Close command sender: {interaction.user})")
+                                    f"Closed Ticket (Server-Name: {interaction.guild.name} | Ticket-Creator:{member} | Closer: {interaction.user})")
         # Wartet 3 Sekunden
         await asyncio.sleep(3)
         # Löscht den Channel
@@ -58,12 +58,14 @@ class TicketView(discord.ui.View):
 
 class SupportCategories(discord.ui.Select):
     def __init__(self):
-        # Setzt Options
-        options = [
-            discord.SelectOption(label=data["label"], emoji=data["emoji"], value=key)
-            # Geht durch alle SUPPORT_CATEGORIES_OPTIONS  
-            for key, data in SUPPORT_CATEGORIES_OPTIONS.items()
-        ]
+        # Setzt leeren Options-Array
+        options = []
+
+        # Geht durch jeden Support-Categorie Eintrag
+        for key, data in SUPPORT_CATEGORIES_OPTIONS.items():
+            # Fügt Optionen hinzu
+            options.append(discord.SelectOption(label=data["label"], emoji=data["emoji"], value=key))
+ 
         # Setzt Dropdown Settings
         super().__init__(
             placeholder="Wähle ein Ticket aus!",
@@ -72,8 +74,6 @@ class SupportCategories(discord.ui.Select):
             max_values=1
         )
 
-
-################################ ERSTELLLT TICKET ################################
     async def callback(self, interaction: discord.Interaction):
         # Hilfs-Variablen
         guild = interaction.guild
@@ -83,10 +83,9 @@ class SupportCategories(discord.ui.Select):
         # Rollen, die den Ticket-Channel sehen dürfen
         role_ids = get_support_roles(interaction.guild_id)
         
-        print("Guild ID:", interaction.guild_id)
-        print("Role IDs:", repr(role_ids))
+        await helper_cog.logMessage("support.py",f"Guild ID: {interaction.guild_id}")
+        await helper_cog.logMessage("support.py",f"Role IDs: {repr(role_ids)}")
         
-
         # Setzt Leere Rolle 
         team_roles = []
 
@@ -129,12 +128,13 @@ class SupportCategories(discord.ui.Select):
         
         # Holt sich die ID des Support Log Channels
         log_channel_id = get_support_channel_log(interaction.guild_id)
-        # Definiert den Log Channel anhand der ID
         log_channel = interaction.client.get_channel(log_channel_id)
         
         if log_channel is None:
             await helper_cog.logError("support.py", f"Log Channel wurde nicht gefunden")
-
+            await interaction.response.send_message("Es ist ein Fehler aufgetreten! (Kontaktiere einen Administrator)",ephemeral=True)
+            return
+        
         # Rechte für den Ticket-Channel
         overwrites = {
             guild.default_role: discord.PermissionOverwrite(view_channel=False),
@@ -166,7 +166,7 @@ class SupportCategories(discord.ui.Select):
 
         # Antwort in dem Ticket-Channel
         await interaction.response.send_message(f"Ticket erstellt: {channel.mention}", ephemeral=True)        
-        await helper_cog.logMessage("support.py",f"Ticket was created (User:{member.name})")
+        await helper_cog.logMessage("support.py",f"New Ticket (Server-Name: {interaction.guild.name} | User:{member.name})")
 
         # Sendet einen Ping an die Ticket-Rollen
         if team_roles:
@@ -205,11 +205,11 @@ class DropDown(commands.Cog):
             
             channel_id = get_support_channel_id(guild.id)
             if not channel_id:
-                print(f"{guild.name}: KEINE ID GEFUNDEN!")
+                await helper_cog.logError("support.py",f"{guild.name}: KEINE ID GEFUNDEN!")
             
             channel = self.bot.get_channel(channel_id)
             if not channel:
-                print(f"{guild.name}: KEIN CHANNEL GEFUNDEN!")
+                await helper_cog.logError("support.py",f"{guild.name}: KEIN CHANNEL GEFUNDEN!")
 
             
             # Cleart bestimmte Anzahl an Messages

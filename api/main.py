@@ -1,10 +1,16 @@
-from fastapi import FastAPI
-import asyncio
 import time
 from fastapi.middleware.cors import CORSMiddleware
-from api.database import DB_PATH
+import httpx
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import RedirectResponse
+from starlette.middleware.sessions import SessionMiddleware
+import os
+import sqlite3
+from dotenv import load_dotenv
+
 
 from api.database import (
+    DB_PATH,
     get_total_tickets,
     get_open_tickets,
     get_closed_tickets,
@@ -32,13 +38,7 @@ from api.database import (
     get_support_roles,
     set_support_roles
 )
-import httpx
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse
-from starlette.middleware.sessions import SessionMiddleware
-import os
-import sqlite3
-from dotenv import load_dotenv
+
 
 load_dotenv()
 CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
@@ -65,8 +65,6 @@ app.add_middleware(CORSMiddleware,
 
 bot = None
 start_time = None
-oauth_tokens = {}
-
 saved_tokens = []
 
 
@@ -105,14 +103,18 @@ def getTime():
 
 def getBotOnline():
     if bot is None or bot.is_ready() is False:
+        helper_cog = bot.get_cog("Helper")
+        helper_cog.logError("api.main.py", f"Bot ist nicht geladen!")
         return False
     return True
 
 def getMembersCount():
     # Setzt Member_Count auf 0
     member_count = 0
+    
     # Geht durch alle Server
     for server in bot.guilds:
+    
         # Holt sich die Mitglieder-Anzahl
         # Falls Fehler Auftritt setzt es 0
         member_count += server.member_count or 0
@@ -125,10 +127,14 @@ def status():
             "bot_online": False,
             "message": "Bot hasn't loaded"
         }
-        
+    
+    # Holt sich die Latency des Bot's    
     raw_ping = bot.latency
+    
+    # Rundet den Ping ab
     ping = round(raw_ping * 1000)
 
+    # Übergibt die Infos an die API
     return {
             "bot_online": True,
             "username": str(bot.user),
@@ -145,7 +151,8 @@ def stats():
         return {
             "message": "Bot hasn't loaded"
         }
-
+    
+    # Gibt Statistiken zurück
     return {
         "guild_count": len(bot.guilds),
         "user_count": getMembersCount(),
@@ -161,35 +168,38 @@ def guilds():
         return {
             "message": "Bot hasn't loaded"
         }
-
+    # Erstellt leeren-Array
     guild_list = []
+
+    # Geht durch alle Server (Wo der Bot drauf ist)
     for server in bot.guilds:
+        # Fügt Infomationen in Array
         guild_list.append({
             "id": str(server.id),
             "name": server.name,
             "member_count": server.member_count
         })
-
+    # Gibt Array-Infos zurück
     return {
         "guild_count":  len(guild_list),
         "guilds": guild_list
     }
 
-
 @app.get("/commands")
 def commands():
-    if bot is None:
-        print("Error")
+
+    if getBotOnline() is False:
         return
     
     command_list = []
-
+    # Geht durch jeden Eintrag (Geladene Discord Commands)
     for command in bot.tree.get_commands():
+        # Fügt Discord-Commands in Array ein
         command_list.append({
             "name": command.name,
             "description": command.description
         })
-        
+    # Gibt Liste zurück an API 
     return {
         "command_count": len(command_list),
         "commands": command_list
@@ -261,17 +271,13 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         # Schickt Nutzer zurück auf die Startseite 
         return RedirectResponse(url="http://127.0.0.1:5500/website/landingPage/ladingPage.html")
 
-
 @app.get("/auth/me")
 async def get_current_user(request: Request):
     # Holt sich anhand der Anfrage die Session
     user = request.session.get("discord_user")
     # Falls keine Session gefunden wurde
     if user is None:
-        raise HTTPException(
-            status_code=401,
-            detail="Nicht angemeldet"
-        )
+        raise HTTPException(status_code=401, detail="Nicht angemeldet")
 
     # Gibt die Nutzer-Daten zurück
     return user
@@ -300,19 +306,23 @@ async def getUserGuilds(request: Request):
         )
 
         if response.status_code != 200:
-                raise HTTPException(status_code=502, detail=f"Discord API Fehler: {response.status_code}")
-        
+            raise HTTPException(status_code=502, detail=f"Discord API Fehler: {response.status_code}")
+
+    # Erstellt leeren Array
     all_guilds = []
+    # Holt sich die Antwort als Dictanary
     user_guilds = response.json()
 
     # Geht durch alle Server wo der Bot ist
     for guild in user_guilds:
+        # Holt sich die guild-id
         guild_id = int(guild["id"])
+        # Falls eine Guild-Id gefunden wurde
         if bot.get_guild(guild_id) is not None:
+            # Falls Nutzer Inhaber des Servers ist
             if guild["owner"]:
                 all_guilds.append(guild)
 
-    
     return all_guilds
 
 
@@ -325,23 +335,26 @@ async def get_current_user(request: Request):
 @app.post("/servers/{guild_id}/settings")
 async def save_settings(guild_id: str, request: Request):
     user = request.session.get("discord_user")
-
+    # Falls Nutzer nicht gefunden wird
     if not user:
         raise HTTPException(status_code=401, detail="Nicht eingeloggt")
 
     async with httpx.AsyncClient() as client:
         response = await client.get(
             "https://discord.com/api/v10/users/@me/guilds",
-            headers={"Authorization": f"Bearer {user['saved_token']}"}
+            headers={
+                "Authorization": f"Bearer {user['saved_token']}"
+                }
         )
 
     if response.status_code != 200:
         raise HTTPException(status_code=502, detail="Discord API Fehler")
-
-    is_owner = any(
-        guild["id"] == guild_id and guild["owner"]
-        for guild in response.json()
-    )
+    
+    for guild in response.json():
+        if guild["id"] == guild_id and guild["owner"]:
+            is_owner = True
+        else:
+            is_owner = False
 
     if not is_owner:
         raise HTTPException(status_code=403, detail="Keine Berechtigung")
@@ -421,11 +434,11 @@ def to_str(value):
             # Value wird Null
             value = None
 
-        # Falls Value nichts ist gibt Null zurück
-        if value is None:
-            return None
+    # Falls Value nichts ist gibt Null zurück
+    if value is None:
+        return None
     
-        return str(value)
+    return str(value)
 
 def to_str_list(values):
     # Falls kein Value exisiert
