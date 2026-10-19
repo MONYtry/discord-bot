@@ -56,6 +56,13 @@ def load_dataBase():
         """)
 
         conn.execute("""
+            CREATE TABLE IF NOT EXISTS supporting_roles (
+            guild_id TEXT NOT NULL,
+            role_id INTEGER NOT NULL,
+            PRIMARY KEY (guild_id, role_id))
+        """)
+
+        conn.execute("""
             CREATE TABLE IF NOT EXISTS embed_allowed_roles (
             guild_id TEXT NOT NULL,
             role_id INTEGER NOT NULL,
@@ -119,6 +126,30 @@ def get_total_tickets():
         FROM stats
         """).fetchone()[0]
     
+def set_support_roles(guild_id: int, role_ids: list[int]):
+    role_ids = list(dict.fromkeys(role_ids))
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+        DELETE FROM supporting_roles
+        WHERE guild_id = ?
+        """, (str(guild_id),))
+        
+        conn.executemany("""
+            INSERT INTO supporting_roles (guild_id, role_id)
+            VALUES (?,?)
+        """, [
+            (str(guild_id), int(role_id))
+            for role_id in role_ids
+        ])
+        
+def get_support_roles(guild_id: int) -> list[int]:
+    with sqlite3.connect(DB_PATH) as conn:
+        rows = conn.execute("""
+            SELECT role_id
+            FROM supporting_roles
+            WHERE guild_id = ?
+        """, (str(guild_id), )).fetchall()
+        return [row[0] for row in rows]
 
 def set_embed_allowed_roles(guild_id: int, role_ids: list[int]):
     # Doppelte Rollen-IDs entfernen

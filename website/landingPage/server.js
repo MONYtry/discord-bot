@@ -107,11 +107,12 @@ async function getSettings()
         document.getElementById("Input_Apply_Channel_ID").value = antwort.apply_channel_id;
         document.getElementById("Input_Ticket_System_Display").value = antwort.tickets_enabled;
         document.getElementById("Input_Support_Channel_ID").value = antwort.support_channel_id;
+        document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
         document.getElementById("Input_Timeout_Channel_ID").value = antwort.timeout_channel_id;
         document.getElementById("Input_Message_Log_Channel_ID").value = antwort.message_channel_id;
         document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
         document.getElementById("Input_Embed_Allowed_Roles_ID").value = (antwort.embed_allowed_roles || []).join(",");
-
+        document.getElementById("Input_Support_Role").value = (antwort.support_roles || []).join(",");
     }
     catch (error)
     {
@@ -132,10 +133,11 @@ async function saveSettings()
     const Input_Ban_Channel_ID = document.getElementById("Input_Ban_Log_Channel_ID");
     const Input_Apply_Channel_ID = document.getElementById("Input_Apply_Channel_ID");
     const Input_Support_Channel_ID = document.getElementById("Input_Support_Channel_ID");
+    const Input_Support_Log_Channel_ID = document.getElementById("Input_Ticket_Log_Channel_ID");
     const Input_Timeout_Channel_ID = document.getElementById("Input_Timeout_Channel_ID");
     const Input_Message_Log_Channel_ID = document.getElementById("Input_Message_Log_Channel_ID");
-    const Input_Support_Log_Channel_ID = document.getElementById("Input_Ticket_Log_Channel_ID");
     const Input_Embed_Allowed_Role = document.getElementById("Input_Embed_Allowed_Roles_ID");
+    const Input_Support_Role = document.getElementById("Input_Support_Role");
 
     // Kleine Hilfe zum Debuggen etc.
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
@@ -148,11 +150,30 @@ async function saveSettings()
     console.log("Support ID: " + Input_Support_Channel_ID.value);
     console.log("Timeout ID: " + Input_Timeout_Channel_ID.value);
     console.log("MessageLoggingChannel: " + Input_Message_Log_Channel_ID.value);
-    console.log("Input_Support_Log_Channel_ID: " + Input_Support_Log_Channel_ID.value)
-    console.log("Input_Embed_Allowed_Role: " + Input_Embed_Allowed_Role.value)
+    console.log("Input_Support_Log_Channel_ID: " + Input_Support_Log_Channel_ID.value);
+    console.log("Input_Embed_Allowed_Role: " + Input_Embed_Allowed_Role.value);
+    console.log("Input_Support_Role: " + Input_Support_Role.value);
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
 
     const test = Input_Timeout_Channel_ID.value.trim();
+
+    console.log("=== INPUT CHECK VOR DEM SPEICHERN ===");
+
+    console.log("Ticket-Log:", {
+        element: document.getElementById("Input_Ticket_Log_Channel_ID"),
+        value: document.getElementById("Input_Ticket_Log_Channel_ID")?.value
+    });
+
+    console.log("Support-Rolle:", {
+        element: document.getElementById("Input_Support_Role"),
+        value: document.getElementById("Input_Support_Role")?.value
+    });
+
+    console.log("Support-Channel:", {
+        element: document.getElementById("Input_Support_Channel_ID"),
+        value: document.getElementById("Input_Support_Channel_ID")?.value
+    });
+
     const response = await fetch(
         API + "/servers/" + serverId + "/settings",
         {
@@ -180,21 +201,25 @@ async function saveSettings()
                 
                 // map = Entfernt Leerzeichen am Anfang und Ende
                 // Filter = Entfernt Leere Array Einträge
-                embed_allowed_roles: Input_Embed_Allowed_Role.value.split(",").map(id => id.trim()).filter(id => id !== "")
+                embed_allowed_roles: Input_Embed_Allowed_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),
+                support_roles: Input_Support_Role.value.split(",").map(id => id.trim()).filter(id => id !== "")
             })
         }
     );
 
-    if (response.ok) 
-    {
+
+    const result = await response.json();
+
+    console.log("=== SERVER ANTWORT NACH DEM SPEICHERN ===");
+    console.log(JSON.stringify(result, null, 2));
+
+    if (response.ok) {
         alert("Einstellungen gespeichert!");
-    }
-    else 
-    {
-        const error = await response.text();
-        console.error("Speicherfehler:", response.status, error);
+    } else {
+        console.error("Speicherfehler:", result);
         alert("Speichern fehlgeschlagen: " + response.status);
     }
+
 }
 
 loadServer();

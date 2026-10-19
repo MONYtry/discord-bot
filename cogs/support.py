@@ -9,7 +9,7 @@ from config import (SUPPORT_CATEGORIES_OPTIONS,
                     SUPPORT_PREVIEW_EMBED_TITEL,
                     SUPPORT_THUMBNAIL_URL)
 
-from api.database import get_support_channel_id,get_support_channel_log
+from api.database import get_support_channel_id,get_support_channel_log,get_support_roles
 
 class SupportView(discord.ui.View):
     def __init__(self):
@@ -81,17 +81,33 @@ class SupportCategories(discord.ui.Select):
         helper_cog = interaction.client.get_cog("Helper")
 
         # Rollen, die den Ticket-Channel sehen dürfen
-        #team_role = discord.utils.get(guild.roles, name="Python")
-        #if team_role is None:
-         #   await helper_cog.logError("support.py","roles wasn't found!")
-          #  await helper_cog.send_embed()
-           # await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
-            #return
+        role_ids = get_support_roles(interaction.guild_id)
+        
+        print("Guild ID:", interaction.guild_id)
+        print("Role IDs:", repr(role_ids))
+        
+
+        # Setzt Leere Rolle 
+        team_roles = []
+
+        # Geht durch jede Rolle die in Support eingetragen ist 
+        for role_id in role_ids:
+            # Holt sich die Rolle
+            role = guild.get_role(role_id)
+            print(f"Role ID: {role_id} | Role: {role}")
+            
+            # Falls Rolle exsitiert
+            if role is not None:
+                team_roles.append(role)
+
+        if not team_roles:
+            await helper_cog.logError("support.py","roles wasn't found!")
+            await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!", ephemeral=True)
+            return
         
         # Holt sich den aktuellen Value
         selected_value = self.values[0]
         data = SUPPORT_CATEGORIES_OPTIONS[selected_value]
-        
         
         # Hilfs Variable
         TICKET_NAME = f"ticket-{member.id}-{data['label']}"
@@ -111,24 +127,35 @@ class SupportCategories(discord.ui.Select):
             await interaction.response.send_message(f"{member.mention} du hast bereits ein Ticket in dieser Kategorie erstellt: {ticket.mention}", ephemeral=True)
             return
         
-        # Erstellt einen Text-Channel
-        channel = await guild.create_text_channel(
-            # Setzt den Namen des Channels
-            name=TICKET_NAME,
-            # Setzt die Category
-            category=category,
-            
-            # Überschreibt Rechte
-            overwrites={
-                # Überschreibt die Rechte des @Everyones (Niemand sieht diesen Channel)
-                guild.default_role: discord.PermissionOverwrite(view_channel=False),
-                # Nun sieht member diesen Channel
-                member: discord.PermissionOverwrite(view_channel=True,send_messages=True),
-                #team_role: discord.PermissionOverwrite(view_channel=True,send_messages=True),
-            }
-        )
+        # Holt sich die ID des Support Log Channels
         log_channel_id = get_support_channel_log(interaction.guild_id)
+        # Definiert den Log Channel anhand der ID
         log_channel = interaction.client.get_channel(log_channel_id)
+        
+        if log_channel is None:
+            await helper_cog.logError("support.py", f"Log Channel wurde nicht gefunden")
+
+        # Rechte für den Ticket-Channel
+        overwrites = {
+            guild.default_role: discord.PermissionOverwrite(view_channel=False),
+            member: discord.PermissionOverwrite(view_channel=True,send_messages=True)
+        }
+
+        # Alle Support-Rollen hinzufügen
+        for role in team_roles:
+            overwrites[role] = discord.PermissionOverwrite(
+                view_channel=True,
+                send_messages=True)
+
+        # Ticket erstellen
+        channel = await guild.create_text_channel(
+            name=TICKET_NAME.lower(),
+            category=category,
+            overwrites=overwrites
+        )
+        
+        
+
         await helper_cog.send_embed(log_channel,"TICKET CREATED",
                                                f"User: {member.mention} \n"
                                                f"Datum: {datetime.datetime.now()} \n"
@@ -141,8 +168,9 @@ class SupportCategories(discord.ui.Select):
         await interaction.response.send_message(f"Ticket erstellt: {channel.mention}", ephemeral=True)        
         await helper_cog.logMessage("support.py",f"Ticket was created (User:{member.name})")
 
-        # Sendet einen Ping an die angegebene Rolle
-        #await channel.send(f"{team_role.mention}")
+        # Sendet einen Ping an die Ticket-Rollen
+        if team_roles:
+            await channel.send(" ".join(role.mention for role in team_roles))
 
         description = SUPPORT_EMBED_MESSAGE.format(member=member.mention)
 

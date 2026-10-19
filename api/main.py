@@ -28,7 +28,9 @@ from api.database import (
     get_support_channel_log,
     set_support_channel_log,
     get_embed_allowed_roles,
-    set_embed_allowed_roles
+    set_embed_allowed_roles,
+    get_support_roles,
+    set_support_roles
 )
 import httpx
 from fastapi import FastAPI, Request, HTTPException
@@ -325,32 +327,42 @@ async def save_settings(guild_id: str, request: Request):
     user = request.session.get("discord_user")
 
     if not user:
-        raise HTTPException(status_code=401)
+        raise HTTPException(status_code=401, detail="Nicht eingeloggt")
 
-    # Owner-Prüfung wie im GET-Endpoint
     async with httpx.AsyncClient() as client:
         response = await client.get(
             "https://discord.com/api/v10/users/@me/guilds",
-            headers={
-                "Authorization": f"Bearer {user['saved_token']}"
-            }
+            headers={"Authorization": f"Bearer {user['saved_token']}"}
         )
 
     if response.status_code != 200:
-        raise HTTPException(status_code=502)
+        raise HTTPException(status_code=502, detail="Discord API Fehler")
 
-    is_owner = False
-
-    for guild in response.json():
-        if guild["id"] == guild_id and guild["owner"]:
-            is_owner = True
-            break
+    is_owner = any(
+        guild["id"] == guild_id and guild["owner"]
+        for guild in response.json()
+    )
 
     if not is_owner:
-        raise HTTPException(status_code=403)
+        raise HTTPException(status_code=403, detail="Keine Berechtigung")
 
     data = await request.json()
 
+    # Support-Rollen: IDs als Strings empfangen, erst in Python konvertieren
+    raw_roles = data.get("support_roles", [])
+
+    if not isinstance(raw_roles, list):
+        raise HTTPException(status_code=400, detail="support_roles muss eine Liste sein")
+
+    try:
+        support_roles = list(dict.fromkeys(
+            int(role_id) for role_id in raw_roles
+            if str(role_id).strip()
+        ))
+    except (ValueError, TypeError):
+        raise HTTPException(status_code=400, detail="Ungültige Rollen-ID")
+
+    # Bestehende Einstellungen speichern
     tickets_enabled = data.get("tickets_enabled") is True
     apply_channel_id = data.get("Input_Apply_Channel_ID")
     bot_status_channel_id = data.get("Input_Status_Channel_ID")
@@ -358,25 +370,30 @@ async def save_settings(guild_id: str, request: Request):
     ban_channel_id = data.get("Input_Ban_Channel_ID")
     join_leave_log_channel_id = data.get("Input_Join_Leave_Log_Channel_ID")
     support_channel_id = data.get("support_channel_id")
+    support_log_channel_id = data.get("support_log_channel_id")
     timeout_channel_id = data.get("timeout_channel_id")
     message_channel_id = data.get("message_channel_id")
-    support_log_channel_id = data.get("support_log_channel_id")
-    embed_allowed_roles = data.get("embed_allowed_roles")
+    embed_allowed_roles = data.get("embed_allowed_roles", [])
 
-    # Save Ticket Setting
     save_ticket_setting(guild_id, tickets_enabled, apply_channel_id)
-    
-    # NORMAL CHANNELS
+    set_support_roles(guild_id, support_roles)
+
     set_bot_status_channel_id(guild_id, bot_status_channel_id)
-    set_welcome_channel(guild_id,welcome_channel_id)
-    set_embed_allowed_roles(guild_id,embed_allowed_roles)
-    # LOG CHANNEL
-    set_support_channel_log(guild_id,support_log_channel_id)
-    set_message_log_channel(guild_id,message_channel_id)
-    set_ban_log_channel(guild_id,ban_channel_id)
-    set_leave_join_log_channel(guild_id,join_leave_log_channel_id)
-    set_support_channel_id(guild_id,support_channel_id)
+    set_welcome_channel(guild_id, welcome_channel_id)
+    set_embed_allowed_roles(guild_id, embed_allowed_roles)
+    set_support_channel_log(guild_id, support_log_channel_id)
+    set_message_log_channel(guild_id, message_channel_id)
+    set_ban_log_channel(guild_id, ban_channel_id)
+    set_leave_join_log_channel(guild_id, join_leave_log_channel_id)
+    set_support_channel_id(guild_id, support_channel_id)
     set_timeout_channel(guild_id, timeout_channel_id)
+
+    # Direkt aus SQLite zurücklesen
+    saved_roles = get_support_roles(guild_id)
+
+    print(f"[SAVE] Guild: {guild_id}")
+    print(f"[SAVE] Empfangene Rollen: {support_roles}")
+    print(f"[SAVE] Aus SQLite gelesen: {saved_roles}")
 
     return {
         "tickets_enabled": tickets_enabled,
@@ -386,14 +403,47 @@ async def save_settings(guild_id: str, request: Request):
         "join_leave_log_channel_id": join_leave_log_channel_id,
         "ban_channel_id": ban_channel_id,
         "support_channel_id": support_channel_id,
+        "support_log_channel_id": support_log_channel_id,
         "timeout_channel_id": timeout_channel_id,
         "message_channel_id": message_channel_id,
-        "support_log_channel_id": support_log_channel_id,
-        "embed_allowed_roles": embed_allowed_roles
+        "embed_allowed_roles": embed_allowed_roles,
+        "support_roles": [str(role_id) for role_id in saved_roles]
     }
 
 
+def to_str(value):
+    # Falls die DatenBank eine ganze Zeile (Tuple) zurückgibt nur den Wert nehmen
+    if isinstance(value, (tuple, list)):
+        # Nimmt den ersten Wert, falls exisiert 
+        if value:
+            value = value[0]
+        else:
+            # Value wird Null
+            value = None
 
+        # Falls Value nichts ist gibt Null zurück
+        if value is None:
+            return None
+    
+        return str(value)
+
+def to_str_list(values):
+    # Falls kein Value exisiert
+    if not values:
+        # Setzt Values auf Null
+        values = []
+
+    # Erstellt leeren Array
+    final_value = []
+    
+    # Geht durch jedes Ergebnis in Values
+    for value in values:
+        if isinstance(value, (tuple,list)):
+            value = value[0]
+        # Fügt value hinzu
+        final_value.append(str(value))
+    # Gibt Final Value zurück
+    return final_value
 
 def save_setting(guild_id, setting, value):
     allowed = {
@@ -435,20 +485,21 @@ async def getSettings(guild_id: str, request: Request):
     support_channel_id = get_support_channel_id(guild_id)
     timeout_channel_id = get_timeout_channel(guild_id)
     message_channel_id = get_message_log_channel(guild_id)
-    support_channel_id = get_support_channel_log(guild_id)
+    support_channel_id_log = get_support_channel_log(guild_id)
     embed_allowed_roles = get_embed_allowed_roles(guild_id)
+    support_role = get_support_roles(guild_id)
 
     return {
-        "apply_channel_id": apply_channel_id,
-        "statusInput": status_channel_id,
-        "welcomeChannelInput": welcome_channel_id,
-        "join_leave_log_channel_id": join_leave_channel_id,
-        "ban_channel_id": ban_log_channel_id,
-        "apply_channel_id": apply_channel_id,
+        "apply_channel_id": to_str(apply_channel_id),
+        "statusInput": to_str(status_channel_id),
+        "welcomeChannelInput": to_str(welcome_channel_id),
+        "join_leave_log_channel_id": to_str(join_leave_channel_id),
+        "ban_channel_id": to_str(ban_log_channel_id),
         "tickets_enabled": ticket_setting,
-        "support_channel_id": support_channel_id,
-        "timeout_channel_id": timeout_channel_id,
-        "message_channel_id": message_channel_id,
-        "support_log_channel_id": support_channel_id,
-        "embed_allowed_roles": embed_allowed_roles
+        "support_channel_id": to_str(support_channel_id),
+        "support_log_channel_id": to_str(support_channel_id_log),
+        "timeout_channel_id": to_str(timeout_channel_id),
+        "message_channel_id": to_str(message_channel_id),
+        "embed_allowed_roles": to_str_list(embed_allowed_roles),
+        "support_roles": to_str_list(support_role)
     }
