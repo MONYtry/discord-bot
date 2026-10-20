@@ -68,7 +68,7 @@ class Embed(commands.Cog):
 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("embed.py","Succcsessfully loaded") 
+        await helper_cog.logSuccess("embed.py","Succcsessfully loaded") 
 
     # Erstellt Command 
     @discord.app_commands.command(name="sendembed", description="Öffnet ein Formular zum Erstellen eines Embeds")

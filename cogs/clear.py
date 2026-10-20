@@ -16,7 +16,7 @@ class Clear(commands.Cog):
                 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("clear.py","Succcsessfully loaded")
+        await helper_cog.logSuccess("clear.py","Succcsessfully loaded")
 
     # Regisitiert den Command
     @discord.app_commands.command(name="clear", description="Löscht Nachrichten")

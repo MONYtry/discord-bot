@@ -16,7 +16,7 @@ class Moderation(commands.Cog):
                 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("moderation.py","Succcsessfully loaded")
+        await helper_cog.logSuccess("moderation.py","Succcsessfully loaded")
     
     # Platzhalter
     @app_commands.describe(

@@ -18,7 +18,7 @@ class Admin(commands.Cog):
                 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("Admin.py","Succcsessfully loaded")
+        await helper_cog.logSuccess("Admin.py","Succcsessfully loaded")
 
     # Regisiterung von Command
     @discord.app_commands.command(name="shutdown", description="Fährt den Bot herunter")

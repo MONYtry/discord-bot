@@ -20,7 +20,7 @@ class Automod(commands.Cog):
                 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("Automod.py","Succcsessfully loaded")
+        await helper_cog.logSuccess("Automod.py","Succcsessfully loaded")
     
     @commands.Cog.listener()
     async def on_message_delete(self,message):

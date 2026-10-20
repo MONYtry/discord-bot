@@ -13,7 +13,7 @@ class Log(commands.Cog):
         
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("log.py","Succcsessfully loaded")
+        await helper_cog.logSuccess("log.py","Succcsessfully loaded")
         
     @commands.Cog.listener()
     async def on_member_ban(self,guild,user):

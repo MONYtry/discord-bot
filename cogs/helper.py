@@ -27,12 +27,27 @@ class Helper(commands.Cog):
         # Sends the Embed in the Channel
         await channel.send(embed=embed)
 
+    
 
     async def logError(self,fileName,message):
-        print(f"[{datetime.datetime.now()}] | [ERROR] at {fileName}, {message}")
+        RED = "\033[91m"
+        BLUE = "\033[94m"
+        RESET = "\033[0m"
+
+        print(f"{BLUE}[{datetime.datetime.now()}]{RESET} |{RED} [ERROR] {RESET}   at {fileName}, {message}")
     
     async def logMessage(self,fileName,message):
-        print(f"[{datetime.datetime.now()}] | [INFO] at {fileName}, {message}")
+        BLUE = "\033[94m"
+        RESET = "\033[0m"
+
+        print(f"{BLUE}[{datetime.datetime.now()}]{RESET} | [INFO]     at {fileName}, {message}")
+
+    async def logSuccess(self,fileName,message):
+            GREEN = "\033[92m"
+            BLUE = "\033[94m"
+            RESET = "\033[0m"
+
+            print(f"{BLUE}[{datetime.datetime.now()}]{RESET} | {GREEN}[SUCCESS] {RESET} at {fileName}, {message}")
 
 async def setup(bot):
     await bot.add_cog(Helper(bot))

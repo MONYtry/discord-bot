@@ -74,7 +74,6 @@ class ApplyCategories(discord.ui.Select):
             max_values=1
         )
 
-
     async def callback(self, interaction: discord.Interaction):        
         # Holt sich den aktuellen Value
         selected_value = self.values[0]
@@ -95,21 +94,22 @@ class applyDropDown(commands.Cog):
             print("Fehler: Helper-Cog nicht gefunden!")
             return
 
-        await helper_cog.logMessage("apply.py", "Bewerbung bereit")
+        await helper_cog.logSuccess("apply.py", "Bewerbung bereit")
 
         for guild in self.bot.guilds:
-            await helper_cog.logMessage("apply.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
+            #await helper_cog.logMessage("apply.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
             await helper_cog.logMessage("apply.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
             
             channel_id = get_apply_channel_id(guild.id)
             if not channel_id:
-                print(f"{guild.name}: KEINE ID GEFUNDEN!")
+                await helper_cog.logError("apply.py", f"{guild.name}: No Apply-Channel-ID was found!")
 
             channel = self.bot.get_channel(channel_id)
             if not channel:
-                print(f"{guild.name}: KEIN CHANNEL GEFUNDEN!")
+                await helper_cog.logError("apply.py", f"{guild.name}: No Apply-Channel was found!")
+                return
             
-            print(f"{guild.name}: {channel}")
+            await helper_cog.logMessage("apply.py", f"{guild.name}: {channel}")
             
             embed = discord.Embed(
                 title=TICKET_PREWVIEW_EMBED_TITEL,
@@ -125,7 +125,7 @@ class applyDropDown(commands.Cog):
             
             try:
                 await channel.send(embed=embed, view=SupportView())
-                await helper_cog.logMessage("apply.py",f"Apply-Embed gesendt: {guild.name}")
+                #await helper_cog.logMessage("apply.py",f"Apply-Embed gesendt: {guild.name}")
             except discord.HTTPException as e:
                 await helper_cog.logMessage("apply.py",f"Embed konnte nicht gesendet werden: {e}")
 

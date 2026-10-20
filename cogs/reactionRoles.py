@@ -23,7 +23,7 @@ class DropDownReactionRoles(commands.Cog):
                 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("reactionroles.py","Succcsessfully loaded")
+        await helper_cog.logSuccess("reactionroles.py","Succcsessfully loaded")
 
     # Erstellt Command
     @discord.app_commands.command(name="senddropdown", description="Sendet ein Auswahlmenü für Rollen")

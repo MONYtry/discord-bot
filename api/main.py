@@ -61,7 +61,6 @@ bot = None
 start_time = None
 saved_tokens = []
 
-
 def set_bot(discord_bot):
     global bot,start_time
     bot = discord_bot
@@ -137,7 +136,6 @@ def status():
             "api_status": "online",
             "message": "Bot ist online"
         }
-
 
 @app.get("/stats")
 def stats():
@@ -219,7 +217,6 @@ async def auth_logging():
     discord_url = "https://discord.com/oauth2/authorize?" + urlencode(parameter)
     return RedirectResponse(discord_url)
 
-
 @app.get("/auth/callback")
 async def auth_callback(request: Request, code: str | None = None, error: str | None = None):
     if error:
@@ -278,8 +275,6 @@ async def get_current_user(request: Request):
     # Gibt die Nutzer-Daten zurück
     return user
 
-
-
 @app.get("/auth/guilds")
 async def getUserGuilds(request: Request):
     # Holt sich den User
@@ -320,7 +315,6 @@ async def getUserGuilds(request: Request):
                 all_guilds.append(guild)
 
     return all_guilds
-
 
 @app.post("/auth/logout")
 async def get_current_user(request: Request):
@@ -395,9 +389,9 @@ async def save_settings(guild_id: str, request: Request):
     set_value_channel(guild_id, "SUPPORT_CHANNEL_LOG_ID", support_log_channel_id)
     set_value_channel(guild_id, "BAN_CHANNEL_ID", ban_channel_id)
     set_value_channel(guild_id, "JOIN_LEAVE_LOG_CHANNEL_ID", join_leave_log_channel_id)
-
+    set_value_channel(guild_id, "TIMEOUT_LOG_CHANNEL", timeout_channel_id)
+    
     set_embed_allowed_roles(guild_id, embed_allowed_roles)
-    set_timeout_channel(guild_id, timeout_channel_id)
 
     # Direkt aus SQLite zurücklesen
     saved_roles = get_support_roles(guild_id)

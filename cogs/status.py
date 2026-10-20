@@ -19,7 +19,7 @@ class Status(commands.Cog):
                 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("status.py","Succcsessfully loaded")
+        await helper_cog.logSuccess("status.py","Succcsessfully loaded")
 
         self.is_online = True
         if self.cleanup_done:

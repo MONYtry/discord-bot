@@ -18,7 +18,7 @@ class Join(commands.Cog):
                 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logMessage("join.py","Succcsessfully loaded")
+        await helper_cog.logSuccess("join.py","Succcsessfully loaded")
 
     @commands.Cog.listener()
     async def on_member_join(self, member):

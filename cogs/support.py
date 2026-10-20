@@ -197,19 +197,19 @@ class DropDown(commands.Cog):
             print("Fehler: Helper-Cog nicht gefunden!")
             return
         
-        await helper_cog.logMessage("support.py","Succcsessfully loaded")
+        await helper_cog.logSuccess("support.py","Succcsessfully loaded")
    
         for guild in self.bot.guilds:
-            await helper_cog.logMessage("support.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
+            #await helper_cog.logMessage("support.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
             await helper_cog.logMessage("support.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
             
             channel_id = get_support_channel_id(guild.id)
             if not channel_id:
-                await helper_cog.logError("support.py",f"{guild.name}: KEINE ID GEFUNDEN!")
+                await helper_cog.logError("support.py",f"{guild.name}: No Support-Channel-ID was found")
             
             channel = self.bot.get_channel(channel_id)
             if not channel:
-                await helper_cog.logError("support.py",f"{guild.name}: KEIN CHANNEL GEFUNDEN!")
+                await helper_cog.logError("support.py",f"{guild.name}: No Support-Channel was found")
 
             
             # Cleart bestimmte Anzahl an Messages

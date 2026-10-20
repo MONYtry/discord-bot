@@ -44,7 +44,12 @@ bot = MyBot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f"Bot ist online: {bot.user}")
+
+    placeholder = "―" * 2
+    print(
+        f"{placeholder}\n"
+        f"Bot went online: {bot.user} \n"
+        f"{placeholder}\n")
 
 # Falls Token nicht gefunden wird
 if not TOKEN:
