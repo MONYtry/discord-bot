@@ -191,14 +191,13 @@ async function saveSettings()
                 tickets_enabled: useTickets,
                 Input_Status_Channel_ID: Input_Status_Channel_ID.value || null,
                 Input_Welcome_Channel_ID: Input_Welcome_Channel_ID.value || null,
-                Input_Join_Leave_Log_Channel_ID: Input_Join_Leave_Log_Channel_ID.value || null,
                 Input_Ban_Channel_ID: Input_Ban_Channel_ID.value || null,
                 Input_Apply_Channel_ID: Input_Apply_Channel_ID.value || null,
                 support_channel_id: Input_Support_Channel_ID.value || null,
                 timeout_channel_id: test || null,
                 message_channel_id: Input_Message_Log_Channel_ID.value || null,
                 support_log_channel_id: Input_Support_Log_Channel_ID.value || null,
-                
+                Input_Join_Leave_Log_Channel_ID: Input_Join_Leave_Log_Channel_ID.value || null,
                 // map = Entfernt Leerzeichen am Anfang und Ende
                 // Filter = Entfernt Leere Array Einträge
                 embed_allowed_roles: Input_Embed_Allowed_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),

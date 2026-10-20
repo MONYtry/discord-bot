@@ -178,6 +178,53 @@ def get_embed_allowed_roles(guild_id: int) -> list[int]:
             WHERE guild_id = ?
         """, (str(guild_id),)).fetchall()
         return [row[0] for row in rows]
+
+ALLOWED_COLUMNS = {
+    "apply_channel_id",
+    "BOT_STATUS_CHANNEL_ID",
+    "WELCOME_CHANNEL_ID",
+    "JOIN_LEAVE_LOG_CHANNEL_ID",
+    "BAN_CHANNEL_ID",
+    "SUPPORT_CHANNEL_ID",
+    "TIMEOUT_LOG_CHANNEL",
+    "MESSAGE_LOG_CHANNEL",
+    "SUPPORT_CHANNEL_LOG_ID",
+}
+
+def check_column(column_name):
+    if column_name not in ALLOWED_COLUMNS:
+        raise ValueError(f"Ungültige Spalte: {column_name}")
+
+def set_value_channel(guild_id, column_name, value):
+    check_column(column_name)
+    # Leere Eingabe -> NULL, sonst als Zahl speichern
+    if value:
+        value = int(value)
+    else:
+        value = None
+
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute(f"""
+            INSERT INTO server_settings (
+            guild_id, 
+            {column_name})
+
+            VALUES (?, ?)
+            ON CONFLICT(guild_id)
+            DO UPDATE SET 
+                {column_name} = excluded.{column_name}
+        """, (str(guild_id), value))
+
+def get_value_channel(guild_id, column_name):
+    check_column(column_name)
+
+    with sqlite3.connect(DB_PATH) as conn:
+        row = conn.execute(f"""
+            SELECT {column_name}
+            FROM server_settings
+            WHERE guild_id = ?
+        """, (str(guild_id),)).fetchone()
+        return row[0] if row else None
     
 def get_bot_status_channel_id(guild_id):
     with sqlite3.connect(DB_PATH) as conn:
@@ -205,19 +252,6 @@ def set_bot_status_channel_id(guild_id, bot_status_channel_id):
                 BOT_STATUS_CHANNEL_ID = excluded.BOT_STATUS_CHANNEL_ID
         """, (str(guild_id), int(bot_status_channel_id) if bot_status_channel_id else None))
 
-def set_welcome_channel(guild_id, WELCOME_CHANNEL_ID):
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            INSERT INTO server_settings(
-            guild_id,
-            WELCOME_CHANNEL_ID)
-            VALUES (?,?)
-            ON CONFLICT(guild_id)
-            DO UPDATE SET
-                WELCOME_CHANNEL_ID = excluded.WELCOME_CHANNEL_ID
-        """, (str(guild_id), int(WELCOME_CHANNEL_ID) if WELCOME_CHANNEL_ID else None))
-
-
 def get_welcome_channel(guild_id):
     with sqlite3.connect(DB_PATH) as conn:
         result = conn.execute("""
@@ -242,30 +276,7 @@ def get_support_channel_log(guild_id):
             return None
         return result[0]
     
-def set_support_channel_log(guild_id, SUPPORT_CHANNEL_LOG_ID):
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            INSERT INTO server_settings(
-            guild_id,
-            SUPPORT_CHANNEL_LOG_ID)
-            VALUES (?,?)
-            ON CONFLICT(guild_id)
-            DO UPDATE SET
-                SUPPORT_CHANNEL_LOG_ID = excluded.SUPPORT_CHANNEL_LOG_ID
-        """, (str(guild_id), int(SUPPORT_CHANNEL_LOG_ID) if SUPPORT_CHANNEL_LOG_ID else None))
 
-def set_message_log_channel(guild_id,MESSAGE_LOG_CHANNEL):
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            INSERT INTO server_settings(
-            guild_id,
-            MESSAGE_LOG_CHANNEL)
-            VALUES (?,?)
-            ON CONFLICT(guild_id)
-            DO UPDATE SET
-                MESSAGE_LOG_CHANNEL = excluded.MESSAGE_LOG_CHANNEL
-        """, (str(guild_id), int(MESSAGE_LOG_CHANNEL) if MESSAGE_LOG_CHANNEL else None))
-    
 def get_message_log_channel(guild_id):
      with sqlite3.connect(DB_PATH) as conn:
         result = conn.execute("""
@@ -288,42 +299,6 @@ def get_timeout_channel(guild_id):
             return None
         return result[0]
 
-def set_timeout_channel(guild_id, TIMEOUT_LOG_CHANNEL):
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-        INSERT INTO server_settings(
-        guild_id,
-        TIMEOUT_LOG_CHANNEL)
-        VALUES (?,?)
-        ON CONFLICT(guild_id)
-        DO UPDATE SET
-            TIMEOUT_LOG_CHANNEL = excluded.TIMEOUT_LOG_CHANNEL
-        """, (str(guild_id), int(TIMEOUT_LOG_CHANNEL) if TIMEOUT_LOG_CHANNEL else None))
-
-def set_leave_join_log_channel(guild_id, JOIN_LEAVE_LOG_CHANNEL_ID):
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            INSERT INTO server_settings(
-            guild_id,
-            JOIN_LEAVE_LOG_CHANNEL_ID)
-            VALUES (?,?)
-            ON CONFLICT(guild_id)
-            DO UPDATE SET
-                JOIN_LEAVE_LOG_CHANNEL_ID = excluded.JOIN_LEAVE_LOG_CHANNEL_ID
-        """, (str(guild_id), int(JOIN_LEAVE_LOG_CHANNEL_ID) if JOIN_LEAVE_LOG_CHANNEL_ID else None))
-
-def set_ban_log_channel(guild_id, BAN_CHANNEL_ID):
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            INSERT INTO server_settings(
-            guild_id,
-            BAN_CHANNEL_ID)
-            VALUES (?,?)
-            ON CONFLICT(guild_id)
-            DO UPDATE SET
-                BAN_CHANNEL_ID = excluded.BAN_CHANNEL_ID
-        """, (str(guild_id), int(BAN_CHANNEL_ID) if BAN_CHANNEL_ID else None))
-     
 def save_ticket_setting(guild_id, enabled, apply_channel_id):
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
@@ -383,17 +358,5 @@ def get_support_channel_id(guild_id):
             WHERE guild_id = ?
         """, (str(guild_id),)).fetchone()
         return row[0] if row is not None else None
-
-def set_support_channel_id(guild_id, SUPPORT_CHANNEL_ID):
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            INSERT INTO server_settings(
-            guild_id,
-            SUPPORT_CHANNEL_ID)
-            VALUES (?,?)
-            ON CONFLICT(guild_id)
-            DO UPDATE SET
-                SUPPORT_CHANNEL_ID = excluded.SUPPORT_CHANNEL_ID
-        """, (str(guild_id), int(SUPPORT_CHANNEL_ID) if SUPPORT_CHANNEL_ID else None))
 
 load_dataBase()
