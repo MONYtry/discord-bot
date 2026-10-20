@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 from datetime import timedelta
 from config import TIMEOUT_ALLOWED_ROLE_IDS, NO_RIGHTS_MESSAGE,SUPPORT_THUMBNAIL_URL
-from api.database import get_timeout_channel
+from api.database import get_value_channel
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -61,7 +61,7 @@ class Moderation(commands.Cog):
         
         # Zeit wird berechnet
         dauer_zeit = time_units[timetype.value] * duration
-        channel_id = get_timeout_channel(interaction.guild_id)
+        channel_id = get_value_channel(interaction.guild_id, "TIMEOUT_LOG_CHANNEL")
         # Kleiner Bug behoben
         channel_id = channel_id[0]
         if channel_id is None:

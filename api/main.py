@@ -16,17 +16,8 @@ from api.database import (
     get_closed_tickets,
     save_ticket_setting,
     get_ticket_setting,
-    set_bot_status_channel_id,
-    get_bot_status_channel_id,
-    get_apply_channel_id,
-    get_leave_join_log_channel,
-    get_welcome_channel,
-    get_ban_log_channel,
     get_value_channel,
     set_value_channel,
-    get_timeout_channel,
-    get_message_log_channel,
-    get_support_channel_log,
     get_embed_allowed_roles,
     set_embed_allowed_roles,
     get_support_roles,
@@ -481,16 +472,17 @@ async def getSettings(guild_id: str, request: Request):
     if not request.session.get("discord_user"):
         raise HTTPException(status_code=401, detail="Nicht eingeloggt")
     
-    status_channel_id = get_bot_status_channel_id(guild_id)
-    welcome_channel_id = get_welcome_channel(guild_id)
-    join_leave_channel_id = get_leave_join_log_channel(guild_id)
-    ban_log_channel_id = get_ban_log_channel(guild_id)
-    apply_channel_id = get_apply_channel_id(guild_id)
-    ticket_setting = get_ticket_setting(guild_id)
+    status_channel_id = get_value_channel(guild_id, "BOT_STATUS_CHANNEL_ID")
+    welcome_channel_id = get_value_channel(guild_id, "WELCOME_CHANNEL_ID")
+    join_leave_channel_id = get_value_channel(guild_id,"JOIN_LEAVE_LOG_CHANNEL_ID")
+    ban_log_channel_id = get_value_channel(guild_id, "BAN_CHANNEL_ID")
+    apply_channel_id = get_value_channel(guild_id, "apply_channel_id")
     support_channel_id = get_value_channel(guild_id,"SUPPORT_CHANNEL_ID")
-    timeout_channel_id = get_timeout_channel(guild_id)
-    message_channel_id = get_message_log_channel(guild_id)
-    support_channel_id_log = get_support_channel_log(guild_id)
+    timeout_channel_id = get_value_channel(guild_id, "TIMEOUT_LOG_CHANNEL")
+    message_channel_id = get_value_channel(guild_id, "MESSAGE_LOG_CHANNEL")
+    support_channel_id_log = get_value_channel(guild_id, "SUPPORT_CHANNEL_LOG_ID")
+
+    ticket_setting = get_ticket_setting(guild_id)
     embed_allowed_roles = get_embed_allowed_roles(guild_id)
     support_role = get_support_roles(guild_id)
 

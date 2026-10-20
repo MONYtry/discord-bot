@@ -4,7 +4,7 @@ from datetime import datetime
 from config import (WELCOME_MESSAGE, 
                     JOIN_LOG_MESSAGE, 
                     JOIN_TITEL_LOG_MESSAGE,LEAVE_LOG_MESSAGE, LEAVE_TITEL_LOG_MESSAGE,WELCOME_THUMBNAIL_URL)
-from api.database import get_welcome_channel, get_leave_join_log_channel
+from api.database import get_value_channel
 
 class Join(commands.Cog):
     def __init__(self, bot):
@@ -27,7 +27,7 @@ class Join(commands.Cog):
             print("Helper_Cog wurde nicht richtig geladen")
 
         try:
-            channel_id = get_welcome_channel(member.guild.id)
+            channel_id = get_value_channel(member.guild.id, "WELCOME_CHANNEL_ID")
         except Exception as e:
             await helper_cog.logError("join.py",f"Fehler: {e}")
             return
@@ -44,7 +44,7 @@ class Join(commands.Cog):
     async def on_member_remove(self, member):
         helper_cog = self.bot.get_cog("Helper")
         try:
-            join_leave_channel_id = get_leave_join_log_channel(member.guild.id)
+            join_leave_channel_id = get_value_channel(member.guild.id, "JOIN_LEAVE_LOG_CHANNEL_ID")
         except Exception as e:
             await helper_cog.logError("join.py",f"FEHLER bei get_welcome_channel: {e}")
             return

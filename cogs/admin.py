@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands
 from config import NO_RIGHTS_MESSAGE
-from api.database import get_bot_status_channel_id
+from api.database import get_value_channel
 
 class Admin(commands.Cog):
     # Wird direkt aufgerufen
@@ -34,7 +34,7 @@ class Admin(commands.Cog):
         # Bot wird ausgeschalten
         await interaction.response.send_message("🔴 Bot geht offline.", ephemeral=True)
 
-        channel = self.bot.get_channel(get_bot_status_channel_id(interaction.guild.id))
+        channel = self.bot.get_channel(get_value_channel(interaction.guild.id, "BOT_STATUS_CHANNEL_ID"))
         
         # Holt sich die Module anhand der Class-Namen
         status_cog = self.bot.get_cog("Status")

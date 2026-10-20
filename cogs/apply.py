@@ -9,7 +9,7 @@ from config import (APPLY_CATEGORIES_OPTIONS,
                     APPLY_QUESTIONS,APPLY_ALLOWED_ROLE_IDS,
                     TICKET_EMBED_DESCRIPTION)
 
-from api.database import open_ticket,close_ticket, get_ticket_setting, get_apply_channel_id,get_support_channel_log
+from api.database import open_ticket,close_ticket, get_ticket_setting, get_value_channel
 
 
 class SupportView(discord.ui.View):
@@ -41,7 +41,7 @@ class TicketView(discord.ui.View):
         if member:
             print(f"Ticket erstellt von: {member.name}")
 
-        channel_id = get_support_channel_log(interaction.guild_id)
+        channel_id = get_value_channel(interaction.guild_id, "SUPPORT_CHANNEL_LOG_ID")
         log_channel = interaction.client.get_channel(channel_id)
         await helper_cog.send_embed(log_channel,"TICKET CLOSED",
                             f"User: {member.mention} \n"
@@ -100,7 +100,7 @@ class applyDropDown(commands.Cog):
             #await helper_cog.logMessage("apply.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
             await helper_cog.logMessage("apply.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
             
-            channel_id = get_apply_channel_id(guild.id)
+            channel_id = get_value_channel(guild.id, "apply_channel_id")
             if not channel_id:
                 await helper_cog.logError("apply.py", f"{guild.name}: No Apply-Channel-ID was found!")
 
@@ -247,7 +247,7 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
         # Datenbank 
         open_ticket(channel.id,1,guild.id)
 
-        channel_id = get_support_channel_log(interaction.guild_id)
+        channel_id = get_value_channel(interaction.guild_id, "SUPPORT_CHANNEL_LOG_ID")
         log_channel = interaction.client.get_channel(channel_id)
         await helper_cog.send_embed(log_channel,"TICKET CREATED",
                                                f"User: {member.mention} \n"

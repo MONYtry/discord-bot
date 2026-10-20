@@ -9,7 +9,7 @@ from config import (SUPPORT_CATEGORIES_OPTIONS,
                     SUPPORT_PREVIEW_EMBED_TITEL,
                     SUPPORT_THUMBNAIL_URL)
 
-from api.database import get_support_channel_id,get_support_channel_log,get_support_roles
+from api.database import get_support_roles,get_value_channel
 
 class SupportView(discord.ui.View):
     def __init__(self):
@@ -39,7 +39,7 @@ class TicketView(discord.ui.View):
         member = interaction.guild.get_member(user_id)
         
         # Erstellung des Log-Channels
-        log_channel_id = get_support_channel_log(interaction.guild_id)
+        log_channel_id = get_value_channel(interaction.guild_id, "SUPPORT_CHANNEL_LOG_ID")
         log_channel = interaction.client.get_channel(log_channel_id)
 
         await helper_cog.send_embed(log_channel,"TICKET CLOSED",
@@ -127,7 +127,7 @@ class SupportCategories(discord.ui.Select):
             return
         
         # Holt sich die ID des Support Log Channels
-        log_channel_id = get_support_channel_log(interaction.guild_id)
+        log_channel_id = get_value_channel(interaction.guild_id, "SUPPORT_CHANNEL_LOG_ID")
         log_channel = interaction.client.get_channel(log_channel_id)
         
         if log_channel is None:
@@ -203,7 +203,7 @@ class DropDown(commands.Cog):
             #await helper_cog.logMessage("support.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
             await helper_cog.logMessage("support.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
             
-            channel_id = get_support_channel_id(guild.id)
+            channel_id = get_value_channel(guild.id, "SUPPORT_CHANNEL_ID")
             if not channel_id:
                 await helper_cog.logError("support.py",f"{guild.name}: No Support-Channel-ID was found")
             

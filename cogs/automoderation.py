@@ -6,7 +6,7 @@ from config import (
                     BOT_HAS_NO_RIGHTS,
                     TRUSTED_URL)
 from datetime import timedelta
-from api.database import get_message_log_channel
+from api.database import get_value_channel
 
 class Automod(commands.Cog):
     def __init__(self,bot):
@@ -30,7 +30,7 @@ class Automod(commands.Cog):
 
         # Holt sich die Module anhand der Class-Namen
         helper_cog = self.bot.get_cog("Helper")
-        channel_id = get_message_log_channel(message.guild.id)
+        channel_id = get_value_channel(message.guild.id, "MESSAGE_LOG_CHANNEL")
         print(f"Automoderation: {channel_id}")
         log_channel = self.bot.get_channel(channel_id)
         if log_channel is not None:
@@ -49,7 +49,7 @@ class Automod(commands.Cog):
         
         # Holt sich die Module anhand der Class-Namen
         helper_cog = self.bot.get_cog("Helper")
-        channel_id = get_message_log_channel(message.guild.id)
+        channel_id = get_value_channel(message.guild.id, "MESSAGE_LOG_CHANNEL")
         print(f"Automoderation: {channel_id}")
         log_channel = self.bot.get_channel(channel_id)
         

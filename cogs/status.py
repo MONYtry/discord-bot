@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
-from api.database import get_bot_status_channel_id 
+from api.database import get_value_channel 
 
 class Status(commands.Cog):
     def __init__(self, bot):
@@ -26,7 +26,7 @@ class Status(commands.Cog):
             return
         
         for guild in self.bot.guilds:
-            channel = self.bot.get_channel(get_bot_status_channel_id(guild.id))
+            channel = self.bot.get_channel(get_value_channel(guild.id, "BOT_STATUS_CHANNEL_ID"))
             if channel is not None:
                 deleted = await channel.purge(limit=10)
                 await helper_cog.logMessage("status.py",f"Succcsessfully cleart {channel} with {len(deleted)} messages")
