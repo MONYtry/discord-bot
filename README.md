@@ -14,7 +14,7 @@
 
 ## ✨ Overview
 
-This repository contains a **Python-based Discord bot** combined with a **FastAPI backend** and a web-based dashboard.
+This project contains a **Python-based Discord bot** combined with a **FastAPI backend** and a web-based dashboard.
 
 The platform allows server administrators to manage moderation, support tickets, community features, and guild-specific settings through Discord commands and a browser-based interface.
 
@@ -85,20 +85,15 @@ Activate it:
 .venv\Scripts\activate
 ```
 
-**Linux / macOS**
-```bash
-source .venv/bin/activate
-```
-
 ### 3. Install dependencies
 
-If a `requirements.txt` file exists:
+Use the `requirements.txt` file:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Otherwise, install the dependencies specified by your project.
+Otherwise, it wont work without a bunch of errors 
 
 ### 4. Configure environment variables
 
@@ -113,7 +108,7 @@ DISCORD_CLIENT_SECRET=your_discord_client_secret
 DISCORD_REDIRECT_URI=http://localhost:8000/auth/callback
 ```
 
-> ⚠️ The variable names and redirect URI must match your actual implementation. Never commit your `.env` file or expose your bot token.
+> ⚠️ The variable names and redirect URI must match your actual implementation. Never commit your `.env` file or expose your bot token. (Consider using an .gitignore to prevent problems)
 
 ### 5. Start the application
 
@@ -164,5 +159,5 @@ Contributions, bug reports, and feature suggestions are welcome.
 
 
 <p align="center">
-  💜 Built with Python, Discord, FastAPI and alot of Hearth by <a href="https://github.com/Monytry"><b>MONYtry</b> </a>
+  💜 Built with Python, Discord, FastAPI and alot of Hearth by <a href="https://github.com/Monytry"><b>MONYtry</b></a>
 </p>
