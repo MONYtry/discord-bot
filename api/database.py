@@ -267,18 +267,16 @@ def get_ticket_setting(guild_id):
     return bool(row[0]) if row else False
 
 
-
-
-
-
 def save_member_count(guild_id, member_count):
     timestamp = datetime.now(BERLIN_TZ).strftime("%Y-%m-%dT%H:%M")
 
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
             INSERT INTO member_history_minutes (
-                guild_id, timestamp, member_count
-            )
+                guild_id, 
+                timestamp, 
+                member_count)
+
             VALUES (?, ?, ?)
             ON CONFLICT(guild_id, timestamp)
             DO UPDATE SET 
@@ -286,25 +284,47 @@ def save_member_count(guild_id, member_count):
         """, (str(guild_id), timestamp, int(member_count)))
 
 
-def get_member_history(guild_id, minutes=60):
-    cutoff = (datetime.now(BERLIN_TZ) - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M")
+def get_member_history(guild_id, minutes=5):
+    now = datetime.now(BERLIN_TZ).replace(second=0, microsecond=0)
+    fmt = "%Y-%m-%dT%H:%M"
+    start = now - timedelta(minutes=minutes)
 
+    # ODER BY timestamp ASC = Sortierung von ältestem bis neusten Eintrag
     with sqlite3.connect(DB_PATH) as conn:
         rows = conn.execute("""
             SELECT timestamp, member_count
             FROM member_history_minutes
             WHERE guild_id = ?
-              AND timestamp >= ?
+              AND timestamp <= ?
             ORDER BY timestamp ASC
-        """, (str(guild_id), cutoff)).fetchall()
+        """, (str(guild_id), now.strftime(fmt))).fetchall()
 
-    return [
-        {
-            "date": row[0],
-            "member_count": row[1]
-        }
-        for row in rows
-    ]
+    # Daten aus der Datenbank in eine Liste packen
+    history = []
+
+    for row in rows:
+        history.append({"date": row[0], "member_count": row[1]})
+
+    # Für jede Minute einen neuen Eintrag erzeugen
+    result = []
+    last_count = None
+
+    # Erhöhung um eine Minute
+    for i in range(minutes + 1):
+        point_time = start + timedelta(minutes=i)
+        timestamp = point_time.strftime(fmt)
+
+        for entry in history:
+            if entry["date"] <= timestamp:
+                last_count = entry["member_count"]
+            else:
+                break
+
+        if last_count is not None:
+            result.append({"date": timestamp, "member_count": last_count})
+
+    return result
+
 
 
 load_dataBase()
