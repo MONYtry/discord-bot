@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from api.main import app,set_bot
 import asyncio
 import uvicorn
+from api.tracking import start_tracking
 
 # Läd geheimnisse
 load_dotenv()
@@ -59,8 +60,9 @@ async def start_service():
 
     # Bot wird in die API übergeben
     set_bot(bot)
-    
+    start_tracking(bot)
     # Konfiguriert Server 
+    
     config = uvicorn.Config(
         app,
         host="127.0.0.1",

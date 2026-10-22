@@ -21,7 +21,8 @@ from api.database import (
     get_embed_allowed_roles,
     set_embed_allowed_roles,
     get_support_roles,
-    set_support_roles
+    set_support_roles,
+    get_member_history
 )
 
 
@@ -188,6 +189,21 @@ def commands():
     return {
         "command_count": len(command_list),
         "commands": command_list
+    }
+
+@app.get("/stats/{guild_id}")
+def member_stats(guild_id: str, minutes: int = 60):
+    if minutes < 1 or minutes > 10080:
+        raise HTTPException(
+            status_code=400,
+            detail="minutes muss zwischen 1 und 10080 liegen"
+        )
+
+    history = get_member_history(guild_id, minutes=minutes)
+
+    return {
+        "guild_id": guild_id,
+        "history": history
     }
 
 @app.get("/auth/login")

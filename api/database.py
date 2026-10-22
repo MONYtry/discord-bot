@@ -1,6 +1,11 @@
 import sqlite3
 import os
 
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+BERLIN_TZ = ZoneInfo("Europe/Berlin")
+
+
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tickets.db")
 
 def load_dataBase():
@@ -67,6 +72,16 @@ def load_dataBase():
             guild_id TEXT NOT NULL,
             role_id INTEGER NOT NULL,
             PRIMARY KEY (guild_id, role_id))
+        """)
+
+         # Mitgliederverlauf für Tests im Minutentakt
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS member_history_minutes (
+                guild_id TEXT NOT NULL,
+                timestamp TEXT NOT NULL,
+                member_count INTEGER NOT NULL,
+                PRIMARY KEY (guild_id, timestamp)
+            )
         """)
 
 
@@ -250,4 +265,46 @@ def get_ticket_setting(guild_id):
             WHERE guild_id = ?
             """, (str(guild_id),)).fetchone()[0]
     return bool(row[0]) if row else False
+
+
+
+
+
+
+def save_member_count(guild_id, member_count):
+    timestamp = datetime.now(BERLIN_TZ).strftime("%Y-%m-%dT%H:%M")
+
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+            INSERT INTO member_history_minutes (
+                guild_id, timestamp, member_count
+            )
+            VALUES (?, ?, ?)
+            ON CONFLICT(guild_id, timestamp)
+            DO UPDATE SET 
+                member_count = excluded.member_count
+        """, (str(guild_id), timestamp, int(member_count)))
+
+
+def get_member_history(guild_id, minutes=60):
+    cutoff = (datetime.now(BERLIN_TZ) - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M")
+
+    with sqlite3.connect(DB_PATH) as conn:
+        rows = conn.execute("""
+            SELECT timestamp, member_count
+            FROM member_history_minutes
+            WHERE guild_id = ?
+              AND timestamp >= ?
+            ORDER BY timestamp ASC
+        """, (str(guild_id), cutoff)).fetchall()
+
+    return [
+        {
+            "date": row[0],
+            "member_count": row[1]
+        }
+        for row in rows
+    ]
+
+
 load_dataBase()
