@@ -192,7 +192,7 @@ def commands():
     }
 
 @app.get("/stats/{guild_id}")
-def member_stats(guild_id: str, minutes: int = 60):
+def member_stats(guild_id: str, minutes: int = 5):
     if minutes < 1 or minutes > 10080:
         raise HTTPException(
             status_code=400,

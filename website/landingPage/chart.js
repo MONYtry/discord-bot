@@ -22,28 +22,35 @@ async function getMemberHistory() {
     }
 }
 
-async function createDiagram() {
+async function createDiagram() 
+{
+    
     const entries = await getMemberHistory();
+    
+    const labels = [];
+    for (var i = 0; i < entries.length; i++)
+    {
+        labels.push(entries[i].date.slice(11,16));
+    }
 
-    const labels = entries.map(entry =>
-        entry.date.slice(11, 16)
-    );
+    const memberCounts = [];
+    for (var i = 0; i < entries.length; i++)
+    {
+        memberCounts.push(entries[i].member_count); 
+    }
 
-    const memberCounts = entries.map(entry =>
-        entry.member_count
-    );
-
+    // Falls Chart bereits exisitiert, nur updaten
     if (chart) {
         chart.data.labels = labels;
         chart.data.datasets[0].data = memberCounts;
         chart.update();
         return;
     }
-
+    // Erstellung des Charts mit Chart.js :)
     chart = new Chart(ctx, {
         type: "line",
         data: {
-            labels,
+            labels: labels,
             datasets: [{
                 label: "Servermitglieder",
                 data: memberCounts,
@@ -52,10 +59,20 @@ async function createDiagram() {
                 fill: true,
                 tension: 0.3
             }]
+        },
+        options: {
+            scales: {
+                y: {
+                    ticks: {
+                        precision: 0,
+                        stepSize: 1
+                    }
+                }
+            }
         }
     });
 }
 
 
 createDiagram();
-setInterval(createDiagram, 60_000); // jede Minute aktualisieren
+setInterval(createDiagram, 120_000); // jede Minute aktualisieren

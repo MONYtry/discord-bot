@@ -270,61 +270,59 @@ def get_ticket_setting(guild_id):
 def save_member_count(guild_id, member_count):
     timestamp = datetime.now(BERLIN_TZ).strftime("%Y-%m-%dT%H:%M")
 
+    print(f"[TRACKING DB] {DB_PATH} | Guild: {guild_id} | Members: {member_count}")
+
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
             INSERT INTO member_history_minutes (
-                guild_id, 
-                timestamp, 
-                member_count)
+            guild_id, 
+            timestamp, 
+            member_count)
 
-            VALUES (?, ?, ?)
-            ON CONFLICT(guild_id, timestamp)
+            VALUES (?,?,?)
+            ON CONFLICT (guild_id,timestamp)
             DO UPDATE SET 
                 member_count = excluded.member_count
         """, (str(guild_id), timestamp, int(member_count)))
 
-
 def get_member_history(guild_id, minutes=5):
     now = datetime.now(BERLIN_TZ).replace(second=0, microsecond=0)
     fmt = "%Y-%m-%dT%H:%M"
-    start = now - timedelta(minutes=minutes)
+    start_time = now - timedelta(minutes=minutes)
 
-    # ODER BY timestamp ASC = Sortierung von ältestem bis neusten Eintrag
     with sqlite3.connect(DB_PATH) as conn:
         rows = conn.execute("""
             SELECT timestamp, member_count
             FROM member_history_minutes
-            WHERE guild_id = ?
-              AND timestamp <= ?
+            WHERE guild_id = ? AND timestamp <= ?
             ORDER BY timestamp ASC
-        """, (str(guild_id), now.strftime(fmt))).fetchall()
+        """, (str(guild_id), now.strftime(fmt))).fetchall() # Fetchall = holt alle Ergebnisse
 
-    # Daten aus der Datenbank in eine Liste packen
     history = []
-
     for row in rows:
+        # Holt sich aus den Zeilen bestimmte Werte, danach werden sie in einen Dictanary gespeichert
         history.append({"date": row[0], "member_count": row[1]})
-
-    # Für jede Minute einen neuen Eintrag erzeugen
+    
     result = []
     last_count = None
 
-    # Erhöhung um eine Minute
-    for i in range(minutes + 1):
-        point_time = start + timedelta(minutes=i)
-        timestamp = point_time.strftime(fmt)
-
+    for i in range(minutes + 2):
+        neue_zeit = start_time + timedelta(minutes=i)
+        timestamp = neue_zeit.strftime(fmt)
+        
+        # Geht durch alle Ergebnise 
         for entry in history:
+            # Falls in der History ein Eintrag mit "date" exisitert
+            # und dieser älter als die aktuelle zeit ist
             if entry["date"] <= timestamp:
+                # Erstellt eine Variable welche mit der 
+                # Mitglieder-Anzahl des Eintrags bestückt wird
                 last_count = entry["member_count"]
             else:
                 break
-
         if last_count is not None:
             result.append({"date": timestamp, "member_count": last_count})
 
     return result
-
-
 
 load_dataBase()

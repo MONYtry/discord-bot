@@ -3,7 +3,7 @@ from api.database import save_member_count
 
 bot = None
 
-@tasks.loop(minutes=1)
+@tasks.loop(minutes=5)
 async def daily_member_tracking():
     if bot is None:
         return
