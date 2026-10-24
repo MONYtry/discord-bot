@@ -35,7 +35,8 @@ class Admin(commands.Cog):
         await interaction.response.send_message("🔴 Bot geht offline.", ephemeral=True)
 
         channel = self.bot.get_channel(get_value_channel(interaction.guild.id, "BOT_STATUS_CHANNEL_ID"))
-        
+        if channel is None:
+            print(f"Fehler Channel: {channel} wurde nicht gefunden (None)")
         # Holt sich die Module anhand der Class-Namen
         status_cog = self.bot.get_cog("Status")
         clear_cog = self.bot.get_cog("Clear")

@@ -25,12 +25,12 @@ class Join(commands.Cog):
         helper_cog = self.bot.get_cog("Helper")
         if helper_cog is None:
             print("Helper_Cog wurde nicht richtig geladen")
-
-        try:
-            channel_id = get_value_channel(member.guild.id, "WELCOME_CHANNEL_ID")
-            save_member_count(member.guild.id, member.guild.member_count)
-        except Exception as e:
-            await helper_cog.logError("join.py",f"Fehler: {e}")
+            return
+        
+        channel_id = get_value_channel(member.guild.id, "WELCOME_CHANNEL_ID")
+        save_member_count(member.guild.id, member.guild.member_count)
+        if channel_id is None:
+            await helper_cog.logError("join.py",f"Fehler:")
             return
 
         channel = self.bot.get_channel(int(channel_id)) if channel_id else None
@@ -44,16 +44,17 @@ class Join(commands.Cog):
     @commands.Cog.listener()
     async def on_member_remove(self, member):
         helper_cog = self.bot.get_cog("Helper")
-        try:
-            join_leave_channel_id = get_value_channel(member.guild.id, "JOIN_LEAVE_LOG_CHANNEL_ID")
-            save_member_count(member.guild.id, member.guild.member_count)
-        except Exception as e:
-            await helper_cog.logError("join.py",f"FEHLER bei get_welcome_channel: {e}")
+        if helper_cog is None:
+            print("Helper Cog wasnt loaded")
             return
+        
+        save_member_count(member.guild.id, member.guild.member_count)
+        
+        join_leave_channel_id = get_value_channel(member.guild.id, "JOIN_LEAVE_LOG_CHANNEL_ID")
+        if join_leave_channel_id is None:
+            await helper_cog.logError("join.py",f"FEHLER bei get_welcome_channel:")
+
         log_channel = self.bot.get_channel(join_leave_channel_id)
-    
-        helper_cog = self.bot.get_cog("Helper")
-    
         if log_channel is None:
             await helper_cog.logError("join.py",f"FEHLER, Kanal nicht gefunden!")
             return

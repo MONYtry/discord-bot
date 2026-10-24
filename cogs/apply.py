@@ -103,7 +103,8 @@ class applyDropDown(commands.Cog):
             channel_id = get_value_channel(guild.id, "apply_channel_id")
             if not channel_id:
                 await helper_cog.logError("apply.py", f"{guild.name}: No Apply-Channel-ID was found!")
-
+                return
+            
             channel = self.bot.get_channel(channel_id)
             if not channel:
                 await helper_cog.logError("apply.py", f"{guild.name}: No Apply-Channel was found!")
