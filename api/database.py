@@ -148,30 +148,50 @@ def get_total_tickets():
         FROM stats
         """).fetchone()[0]
     
-def set_support_roles(guild_id: int, role_ids: list[int]):
-    role_ids = list(dict.fromkeys(role_ids))
+
+
+ALLOWED_ROLE_TABLES = {
+    "supporting_roles",
+    "admin_perm_roles",
+    "embed_allowed_roles",
+}
+
+
+def set_role_id_list(guild_id: int, role_ids: list[int], dbName: str):
+    if dbName not in ALLOWED_ROLE_TABLES:
+        raise ValueError(f"Ungültige Rollentabelle: {dbName}")
+
+    role_ids = list(dict.fromkeys(int(role_id) for role_id in role_ids))
+
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
-        DELETE FROM supporting_roles
-        WHERE guild_id = ?
-        """, (str(guild_id),))
-        
-        conn.executemany("""
-            INSERT INTO supporting_roles (guild_id, role_id)
-            VALUES (?,?)
-        """, [
-            (str(guild_id), int(role_id))
-            for role_id in role_ids
-        ])
-        
-def get_support_roles(guild_id: int) -> list[int]:
+            DELETE FROM supporting_roles
+            WHERE 0
+        """) if False else None
+
+        conn.execute(
+            f"DELETE FROM {dbName} WHERE guild_id = ?",
+            (str(guild_id),)
+        )
+
+        conn.executemany(
+            f"""
+            INSERT INTO {dbName} (guild_id, role_id)
+            VALUES (?, ?)
+            """,
+            [(str(guild_id), role_id) for role_id in role_ids]
+        )
+
+    
+def get_role_id_list(guild_id: int, dbName) -> list[int]:
     with sqlite3.connect(DB_PATH) as conn:
-        rows = conn.execute("""
+        rows = conn.execute(f"""
             SELECT role_id
-            FROM supporting_roles
+            FROM {dbName}
             WHERE guild_id = ?
         """, (str(guild_id), )).fetchall()
         return [row[0] for row in rows]
+
 
 def set_admin_perm_roles(guild_id: int, role_ids: list[int]):
     role_ids = list(dict.fromkeys(role_ids))
@@ -189,7 +209,7 @@ def set_admin_perm_roles(guild_id: int, role_ids: list[int]):
             (str(guild_id), int(role_id))
             for role_id in role_ids
         ])
-        
+
 def get_admin_perm_roles(guild_id: int) -> list[int]:
      with sqlite3.connect(DB_PATH) as conn:
             rows = conn.execute("""

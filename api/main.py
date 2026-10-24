@@ -20,8 +20,6 @@ from api.database import (
     set_value_channel,
     get_embed_allowed_roles,
     set_embed_allowed_roles,
-    get_support_roles,
-    set_support_roles,
     get_member_history,set_role_id_list,get_role_id_list
 )
 
@@ -377,12 +375,13 @@ async def save_settings(guild_id: str, request: Request):
     message_channel_id = data.get("message_channel_id")
     embed_allowed_roles = data.get("embed_allowed_roles", [])
     admin_perm_roles = data.get("admin_perm_roles", [])
-    support_perm_roles = data.get("support_perm_roles",[])
+    support_perm_roles = data.get("support_roles",[])
 
     save_ticket_setting(guild_id, tickets_enabled, apply_channel_id)
 
     set_role_id_list(guild_id, admin_perm_roles, "admin_perm_roles")
     set_role_id_list(guild_id, support_perm_roles, "supporting_roles")
+    set_role_id_list(guild_id, embed_allowed_roles, "embed_allowed_roles")
 
     set_value_channel(guild_id, "apply_channel_id", apply_channel_id)
     set_value_channel(guild_id, "BOT_STATUS_CHANNEL_ID", bot_status_channel_id)
@@ -394,11 +393,11 @@ async def save_settings(guild_id: str, request: Request):
     set_value_channel(guild_id, "JOIN_LEAVE_LOG_CHANNEL_ID", join_leave_log_channel_id)
     set_value_channel(guild_id, "TIMEOUT_LOG_CHANNEL", timeout_channel_id)
     
-    set_embed_allowed_roles(guild_id, embed_allowed_roles)
 
     # Direkt aus SQLite zurücklesen
     admin_perm_role = get_role_id_list(guild_id, "admin_perm_roles")
     support_perm_role = get_role_id_list(guild_id, "supporting_roles")
+    embed_role = get_role_id_list(guild_id, "embed_allowed_roles")
 
     print(f"[SAVE] Guild: {guild_id}")
     print(f"[SAVE] Empfangene Rollen: {support_perm_role}")
@@ -415,7 +414,7 @@ async def save_settings(guild_id: str, request: Request):
         "support_log_channel_id": support_log_channel_id,
         "timeout_channel_id": timeout_channel_id,
         "message_channel_id": message_channel_id,
-        "embed_allowed_roles": embed_allowed_roles,
+        "embed_allowed_roles": [str(role_id) for role_id in embed_role],
         "support_roles": [str(role_id) for role_id in support_perm_role],
         "admin_perm_roles": [str(role_id) for role_id in admin_perm_role]
     }
@@ -497,8 +496,8 @@ async def getSettings(guild_id: str, request: Request):
     support_channel_id_log = get_value_channel(guild_id, "SUPPORT_CHANNEL_LOG_ID")
     
     ticket_setting = get_ticket_setting(guild_id)
-    embed_allowed_roles = get_embed_allowed_roles(guild_id)
-    
+
+    embed_allowed_roles = get_role_id_list(guild_id, "embed_allowed_roles")
     admin_perm_role = get_role_id_list(guild_id,"admin_perm_roles")
     support_role = get_role_id_list(guild_id,"supporting_roles")
 
