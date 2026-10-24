@@ -206,12 +206,12 @@ class DropDown(commands.Cog):
             channel_id = get_value_channel(guild.id, "SUPPORT_CHANNEL_ID")
             if not channel_id:
                 await helper_cog.logError("support.py",f"{guild.name}: No Support-Channel-ID was found")
-                break
+                continue
 
             channel = self.bot.get_channel(channel_id)
-            if not channel:
+            if not channel or channel is None:
                 await helper_cog.logError("support.py",f"{guild.name}: No Support-Channel was found")
-                break
+                continue
             
             # Cleart bestimmte Anzahl an Messages
             await channel.purge(limit=10)

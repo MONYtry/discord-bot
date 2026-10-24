@@ -43,6 +43,9 @@ class TicketView(discord.ui.View):
 
         channel_id = get_value_channel(interaction.guild_id, "SUPPORT_CHANNEL_LOG_ID")
         log_channel = interaction.client.get_channel(channel_id)
+        if log_channel is None:
+            await helper_cog.logError("apply.py", "Support-Log-Channel nicht gefunden!")
+            return
         await helper_cog.send_embed(log_channel,"TICKET CLOSED",
                             f"User: {member.mention} \n"
                             f"Datum: {datetime.datetime.now()} \n"
@@ -103,12 +106,12 @@ class applyDropDown(commands.Cog):
             channel_id = get_value_channel(guild.id, "apply_channel_id")
             if not channel_id:
                 await helper_cog.logError("apply.py", f"{guild.name}: No Apply-Channel-ID was found!")
-                return
+                continue
             
             channel = self.bot.get_channel(channel_id)
             if not channel:
                 await helper_cog.logError("apply.py", f"{guild.name}: No Apply-Channel was found!")
-                return
+                continue
             
             await helper_cog.logMessage("apply.py", f"{guild.name}: {channel}")
             
@@ -202,7 +205,7 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
             role for role in guild.roles
                 if role.id in APPLY_ALLOWED_ROLE_IDS]
         
-        if team_roles is None:
+        if not team_roles:
             await helper_cog.logError("apply.py","roles wasn't found!")
             await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
             return
@@ -250,6 +253,10 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
 
         channel_id = get_value_channel(interaction.guild_id, "SUPPORT_CHANNEL_LOG_ID")
         log_channel = interaction.client.get_channel(channel_id)
+        if log_channel is None:
+            await helper_cog.logError("apply.py", "Support-Log-Channel nicht gefunden!")
+            return
+        
         await helper_cog.send_embed(log_channel,"TICKET CREATED",
                                                f"User: {member.mention} \n"
                                                f"Datum: {datetime.datetime.now()} \n"

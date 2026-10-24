@@ -239,7 +239,9 @@ def get_value_channel(guild_id, column_name):
             FROM server_settings
             WHERE guild_id = ?
         """, (str(guild_id),)).fetchone()
-        return row[0] if row else None
+        if row is None or row[0] is None:
+            return None
+        return int(row[0])
     
 
 def save_ticket_setting(guild_id, enabled, apply_channel_id):

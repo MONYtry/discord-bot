@@ -27,13 +27,15 @@ class Status(commands.Cog):
         
         for guild in self.bot.guilds:
             channel = self.bot.get_channel(get_value_channel(guild.id, "BOT_STATUS_CHANNEL_ID"))
-            if channel is not None:
-                deleted = await channel.purge(limit=10)
-                await helper_cog.logMessage("status.py",f"Succcsessfully cleart {channel} with {len(deleted)} messages")
-                self.cleanup_done = True
+            if not channel:
+                continue
+
+            deleted = await channel.purge(limit=10)
+            await helper_cog.logMessage("status.py",f"Succcsessfully cleart {channel} with {len(deleted)} messages")
+            self.cleanup_done = True
                 
                 # Sendet den Status in den angegebenen Parameter
-                await self.send_status(channel)
+            await self.send_status(channel)
 
     async def send_status(self, channel):
         embed = discord.Embed(
