@@ -506,10 +506,11 @@ async def getSettings(guild_id: str, request: Request):
     timeout_channel_id = get_value_channel(guild_id, "TIMEOUT_LOG_CHANNEL")
     message_channel_id = get_value_channel(guild_id, "MESSAGE_LOG_CHANNEL")
     support_channel_id_log = get_value_channel(guild_id, "SUPPORT_CHANNEL_LOG_ID")
-
+    
     ticket_setting = get_ticket_setting(guild_id)
     embed_allowed_roles = get_embed_allowed_roles(guild_id)
     support_role = get_support_roles(guild_id)
+    admin_perm_role = get_admin_perm_roles(guild_id)
 
     return {
         "apply_channel_id": to_str(apply_channel_id),
@@ -523,5 +524,6 @@ async def getSettings(guild_id: str, request: Request):
         "timeout_channel_id": to_str(timeout_channel_id),
         "message_channel_id": to_str(message_channel_id),
         "embed_allowed_roles": to_str_list(embed_allowed_roles),
-        "support_roles": to_str_list(support_role)
+        "support_roles": to_str_list(support_role),
+        "admin_perm_roles": to_str_list(admin_perm_role)
     }

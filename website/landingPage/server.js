@@ -91,7 +91,9 @@ async function getSettings()
 
         // Antwort
         const antwort = await response.json();
-        
+        console.log("Komplette Settings:", antwort);
+
+        console.log("Admin Perm Roles:", antwort.admin_perm_roles);
         // Kleiner Dynamischer String zur Anzeige für Ticket_Status
         var ticket_status = "Stauts: ";
         if (antwort.tickets_enabled == "1")
@@ -102,8 +104,8 @@ async function getSettings()
 
         document.getElementById("Input_Ticket_System_Display").textContent = ticket_status;
         document.getElementById("Input_Ticket").value = antwort.tickets_enabled;
-        document.getElementById("Input_Admin_Perm_Roles").value = antwort.admin_perm_roles
-        
+        document.getElementById("Input_Admin_Perm_Roles").value = (antwort.admin_perm_roles || []).join(",");
+
         // Setzt die Werte
         document.getElementById("Input_Status_Channel_ID").value = antwort.statusInput;
         document.getElementById("Input_Welcome_Channel_ID").value = antwort.welcomeChannelInput;

@@ -25,11 +25,13 @@ class Admin(commands.Cog):
     async def shutdown(self, interaction: discord.Interaction):    
         # Geht jede Rolle durch 
         admin_roles = get_admin_perm_roles(interaction.guild.id)
-
-        has_permission = any(
-            role.id in admin_roles
-            for role in interaction.user.roles
-        )
+        
+        has_permission = False
+        for role in interaction.user.roles:
+            if role.id in admin_roles:
+                has_permission = True
+                break
+        
         
         # Wenn der Nutzer keine Rechte hat
         if not has_permission:
