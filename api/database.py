@@ -74,6 +74,13 @@ def load_dataBase():
             PRIMARY KEY (guild_id, role_id))
         """)
 
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS admin_perm_roles (
+            guild_id INTEGER NOT NULL,
+            role_id INTEGER NOT NULL,
+            PRIMARY KEY (guild_id, role_id))
+        """)
+
          # Mitgliederverlauf für Tests im Minutentakt
         conn.execute("""
             CREATE TABLE IF NOT EXISTS member_history_minutes (
@@ -166,6 +173,32 @@ def get_support_roles(guild_id: int) -> list[int]:
         """, (str(guild_id), )).fetchall()
         return [row[0] for row in rows]
 
+def set_admin_perm_roles(guild_id: int, role_ids: list[int]):
+    role_ids = list(dict.fromkeys(role_ids))
+
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+            DELETE FROM admin_perm_roles
+            WHERE guild_id = ?
+        """, (str(guild_id),))
+
+        conn.executemany("""
+            INSERT INTO admin_perm_roles (guild_id, role_id)
+            VALUES (?, ?)
+        """, [
+            (str(guild_id), int(role_id))
+            for role_id in role_ids
+        ])
+        
+def get_admin_perm_roles(guild_id: int) -> list[int]:
+     with sqlite3.connect(DB_PATH) as conn:
+            rows = conn.execute("""
+                SELECT role_id
+                FROM admin_perm_roles
+                WHERE guild_id = ?
+            """, (str(guild_id),)).fetchall()
+            return [row[0] for row in rows]
+     
 def set_embed_allowed_roles(guild_id: int, role_ids: list[int]):
     # Doppelte Rollen-IDs entfernen
     role_ids = list(dict.fromkeys(role_ids))

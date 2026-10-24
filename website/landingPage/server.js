@@ -102,7 +102,8 @@ async function getSettings()
 
         document.getElementById("Input_Ticket_System_Display").textContent = ticket_status;
         document.getElementById("Input_Ticket").value = antwort.tickets_enabled;
-
+        document.getElementById("Input_Admin_Perm_Roles").value = antwort.admin_perm_roles
+        
         // Setzt die Werte
         document.getElementById("Input_Status_Channel_ID").value = antwort.statusInput;
         document.getElementById("Input_Welcome_Channel_ID").value = antwort.welcomeChannelInput;
@@ -142,11 +143,12 @@ async function saveSettings()
     const Input_Message_Log_Channel_ID = document.getElementById("Input_Message_Log_Channel_ID");
     const Input_Embed_Allowed_Role = document.getElementById("Input_Embed_Allowed_Roles_ID");
     const Input_Support_Role = document.getElementById("Input_Support_Role");
-
+    const Input_admin_roles = document.getElementById("Input_Admin_Perm_Roles");
     const use_tickets = document.getElementById("Input_Ticket");
 
     // Kleine Hilfe zum Debuggen etc.
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
+    console.log("Admin-Roles: " + Input_admin_roles.value);
     console.log("Tickets: " + use_tickets.value);
     console.log("Status-Channel-ID: " + Input_Status_Channel_ID.value);
     console.log("Welcome-Channel-ID: " + Input_Welcome_Channel_ID.value);
@@ -190,8 +192,8 @@ async function saveSettings()
                 // map = Entfernt Leerzeichen am Anfang und Ende
                 // Filter = Entfernt Leere Array Einträge
                 embed_allowed_roles: Input_Embed_Allowed_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),
-                support_roles: Input_Support_Role.value.split(",").map(id => id.trim()).filter(id => id !== "")
-                
+                support_roles: Input_Support_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),
+                admin_perm_roles: Input_admin_roles.value.split(",").map(id => id.trim()).filter(id => id !== ""),
             })
         }
     );

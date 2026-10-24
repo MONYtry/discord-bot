@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands
 from config import NO_RIGHTS_MESSAGE
-from api.database import get_value_channel
+from api.database import get_value_channel, get_admin_perm_roles
 
 class Admin(commands.Cog):
     # Wird direkt aufgerufen
@@ -24,23 +24,42 @@ class Admin(commands.Cog):
     @discord.app_commands.command(name="shutdown", description="Fährt den Bot herunter")
     async def shutdown(self, interaction: discord.Interaction):    
         # Geht jede Rolle durch 
-        #has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
+        admin_roles = get_admin_perm_roles(interaction.guild.id)
+
+        has_permission = any(
+            role.id in admin_roles
+            for role in interaction.user.roles
+        )
         
         # Wenn der Nutzer keine Rechte hat
-        #if not has_permission:
-         #   await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
-          #  return
+        if not has_permission:
+            await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
+            return
         
-        # Bot wird ausgeschalten
-        await interaction.response.send_message("🔴 Bot geht offline.", ephemeral=True)
-
-        channel = self.bot.get_channel(get_value_channel(interaction.guild.id, "BOT_STATUS_CHANNEL_ID"))
-        if channel is None:
-            print(f"Fehler Channel: {channel} wurde nicht gefunden (None)")
         # Holt sich die Module anhand der Class-Namen
         status_cog = self.bot.get_cog("Status")
         clear_cog = self.bot.get_cog("Clear")
         helper_cog = self.bot.get_cog("Helper")
+        
+        if status_cog is None or clear_cog is None or helper_cog is None:
+            await helper_cog.logMessage("admin.py","Es ist ein Fehler bei dem Laden der Hilfs-Modulen aufgetreten")
+            await interaction.response.send_message("Es ist ein interner Fehler aufgetreten (Kontaktiere einen Admin)")
+            return
+        
+        # Bot wird ausgeschalten
+        await interaction.response.send_message("🔴 Bot geht offline.", ephemeral=True)
+
+        channel_id = get_value_channel(interaction.guild.id, "BOT_STATUS_CHANNEL_ID")
+        if channel_id is None:
+            print("Keine Id gefunden zum shutdownen!")
+            return
+        
+        channel = self.bot.get_channel(channel_id)
+        if channel is None:
+            print(f"Fehler Channel: {channel} wurde nicht gefunden (None)")
+            return
+        
+        
 
         # Räumt den Channel auf danach kommt der Embed
         if channel is not None and status_cog is not None:
