@@ -21,89 +21,104 @@
     
     <button class="btn" onclick="history.back()">Zurück</button>
 
+    <div class="stat-card">
+        <h3>⚙️ Bot-Einstellungen</h3>
+        <p>Verwalte die wichtigsten Einstellungen deines Discord-Bots an einem Ort.</p>
+    </div>
+    
     <div class="stat-card-list">
         <div class="stat-card">
-            <h2>🎫 Welcome-Channel</h3>
-            <p>Setze den Channel der genutzt wird um Welcome-messages zu senden</p>
-            <input id="Input_Welcome_Channel_ID">
+            <h3>👋 Welcome-Channel</h3>
+            <p>Lege fest, in welchem Channel neue Mitglieder begrüßt werden.</p>
+            <input id="Input_Welcome_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
+    
         <div class="stat-card">
-            <h3> Join Leave Log-Channel</h3>
-            <p>Setze den Channel der genutzt wird um Welcome-messages zu senden</p>
-            <input id="Input_Join_Leave_Log_Channel_ID">
+            <h3>📋 Join-/Leave-Logs</h3>
+            <p>Wähle den Channel für Protokolle über Beitritte und Austritte.</p>
+            <input id="Input_Join_Leave_Log_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
+    
+        <div class="stat-card">
+            <h3>🔨 Ban-Logs</h3>
+            <p>Bestimme, wo Informationen über gesperrte Mitglieder protokolliert werden.</p>
+            <input id="Input_Ban_Log_Channel_ID" placeholder="Channel-ID eingeben">
+        </div>
+    
+        <div class="stat-card">
+            <h3>📡 Status-Channel</h3>
+            <p>Lege fest, in welchem Channel der Bot seinen Status veröffentlicht.</p>
+            <input id="Input_Status_Channel_ID" placeholder="Channel-ID eingeben">
+        </div>
+    
+        <div class="stat-card">
+            <h3>📝 Bewerbungs-Channel</h3>
+            <p>Wähle den Channel, in dem Bewerbungen eingehen oder angezeigt werden.</p>
+            <input id="Input_Apply_Channel_ID" placeholder="Channel-ID eingeben">
+        </div>
+    
+        <div class="stat-card">
+            <h3>⏳ Timeout-Logs</h3>
+            <p>Lege fest, wo Timeout-Aktionen protokolliert werden.</p>
+            <input id="Input_Timeout_Channel_ID" placeholder="Channel-ID eingeben">
+        </div>
+    
+        <div class="stat-card">
+            <h3>💬 Nachrichten-Logs</h3>
+            <p>Wähle den Channel für die Protokollierung von Nachrichtenereignissen.</p>
+            <input id="Input_Message_Log_Channel_ID" placeholder="Channel-ID eingeben">
+        </div>
+    
+        <div class="stat-card">
+            <h3>🎫 Ticket-Logs</h3>
+            <p>Bestimme, in welchem Channel Ticket-Ereignisse protokolliert werden.</p>
+            <input id="Input_Ticket_Log_Channel_ID" placeholder="Channel-ID eingeben">
+        </div>
+    
+        <div class="stat-card">
+            <h3>🛡️ Embed-Berechtigungen</h3>
+            <p>Lege die Rollen für die entsprechende Embed-Berechtigungsfunktion fest.</p>
+            <input id="Input_Embed_Allowed_Roles_ID" placeholder="Rollen-ID eingeben">
+        </div>
+    
+        <div class="stat-card">
+            <h3>🧑‍💻 Support-Rolle</h3>
+            <p>Wähle die Rolle, die für den Support zuständig ist.</p>
+            <input id="Input_Support_Role" placeholder="Rollen-ID eingeben">
+        </div>
+    
+        <div class="stat-card">
+            <h3>🆘 Support-Channel</h3>
+            <p>Lege fest, in welchem Channel Support-Anfragen bearbeitet werden.</p>
+            <input id="Input_Support_Channel_ID" placeholder="Channel-ID eingeben">
+        </div>
+    
+        <div class="stat-card">
+            <h3>🎟️ Ticket-System</h3>
+            <p>Aktiviere oder deaktiviere das Ticket-System deines Bots.</p>
+            <p id="Input_Ticket_System_Display">Aktueller Status: Unbekannt</p>
+            <input id="Input_Ticket" type="number" min="0" max="1" placeholder="1 = Aktiviert, 0 = Deaktiviert">
+        </div>
+    </div>
+    
+    <button class="btn primary" onclick="saveSettings()" id="test">
+        💾 Einstellungen speichern
+    </button>
+    
+    <div class="chart-card">
+        <h3>📊 Server-Statistik</h3>
+        <p>Behalte die Entwicklung deiner Server-Daten im Blick.</p>
+        <div class="chart-container">
+            <canvas id="he"></canvas>
+        </div>
+    </div>
 
-        <div class="stat-card">
-            <h3>🎫 BAN LOG-Channel</h3>
-            <p>Setze den Channel der genutzt wird um Bewerbungen zu senden</p>
-            <input id="Input_Ban_Log_Channel_ID">
-        </div>
-        
-        <div class="stat-card">
-            <h3>🎫 Status-Channel</h3>
-            <p>Setze den Channel der genutzt wird um den Status zu senden</p>
-            <input id="Input_Status_Channel_ID">
-        </div>
-
-        <div class="stat-card">
-            <h3>🎫 Bewerbungs-Channel</h3>
-            <p>Setze den Channel der genutzt wird um den Bewerbungen zu senden</p>
-            <input id="Input_Apply_Channel_ID">
-        </div>
-        
-        <div class="stat-card">
-            <h3>🎫 Timeout-Channel</h3>
-            <p>Setze den Channel der genutzt wird um den Timeout zu senden</p>
-            <input id="Input_Timeout_Channel_ID">
-        </div>
-
-        <div class="stat-card">
-            <h3>🎫 MESSAGE LOG-Channel</h3>
-            <p>Setze den Channel der genutzt wird um den Timeout zu senden</p>
-            <input id="Input_Message_Log_Channel_ID">
-        </div>
-
-        <div class="stat-card">
-            <h3>🎫 TICKET LOG-Channel</h3>
-            <p>Setze den Channel der genutzt wird um den Timeout zu senden</p>
-            <input id="Input_Ticket_Log_Channel_ID">
-        </div>
-
-        <div class="stat-card">
-            <h3>🎫 EMBED ALLOWED LOG-Channel</h3>
-            <p>Setze den Channel der genutzt wird um den Timeout zu senden</p>
-            <input id="Input_Embed_Allowed_Roles_ID">
-        </div>
-
-        <div class="stat-card">
-            <h3>🎫 SUPPORT ROLE LOG-Channel</h3>
-            <p>Setze den Channel der genutzt wird um den Timeout zu senden</p>
-            <input id="Input_Support_Role">
-        </div>
-
-        <div class="stat-card">
-            <h3>🎫 Support-Channel</h3>
-            <p>Setze den Channel der genutzt wird um den Bewerbungen zu senden</p>
-            <input id="Input_Support_Channel_ID">
-        </div>
-        
-        <div class="stat-card">
-            <h3>🎫 Ticket-System</h3>
-            <p>Aktiviere oder deaktiviere das Ticket-System.</p>
-            <p id="Input_Ticket_System_Display">Status: </p>
-        </div>
-
-        <div class="stat-card">
-            <h3>🎫 Ticket-System</h3>
-            <p>Aktiviere oder deaktiviere das Ticket-System.</p>
-            <input id="Input_Ticket"></input>
-        </div>
     </div>
 
     <button class="btn primary" onclick="saveSettings()" id="test">Speichern</button>
 
     <div>
-        <canvas id="he"></canvas>
+        <canvas id="he" style="max-height: 100px;"></canvas>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

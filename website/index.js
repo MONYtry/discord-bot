@@ -79,6 +79,7 @@ async function getGuildsData() {
     try {
         // Holt sich die URL
         const response = await fetch(guildsURL);
+        
         // Falls Fehler auftritt
         if (!response.ok) {
             throw new Error("Response Status: " + response.status);

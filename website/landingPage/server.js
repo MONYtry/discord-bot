@@ -56,7 +56,9 @@ async function loadServer() {
         // Läd Settings
         getSettings();
 
-    } catch (error) {
+    } 
+    catch (error) 
+    {
         console.error("Fehler beim Laden des Servers:", error);
         document.getElementById("serverName").textContent = "Fehler beim Laden des Servers!";
     }
@@ -97,14 +99,16 @@ async function getSettings()
         else
             ticket_status += "[💥] - Deaktiviert!"
 
+
+        document.getElementById("Input_Ticket_System_Display").textContent = ticket_status;
+        document.getElementById("Input_Ticket").value = antwort.tickets_enabled;
+
         // Setzt die Werte
         document.getElementById("Input_Status_Channel_ID").value = antwort.statusInput;
         document.getElementById("Input_Welcome_Channel_ID").value = antwort.welcomeChannelInput;
         document.getElementById("Input_Join_Leave_Log_Channel_ID").value = antwort.join_leave_log_channel_id;
-        document.getElementById("Input_Ticket_System_Display").textContent = ticket_status;
         document.getElementById("Input_Ban_Log_Channel_ID").value = antwort.ban_channel_id;
         document.getElementById("Input_Apply_Channel_ID").value = antwort.apply_channel_id;
-        document.getElementById("Input_Ticket_System_Display").value = antwort.tickets_enabled;
         document.getElementById("Input_Support_Channel_ID").value = antwort.support_channel_id;
         document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
         document.getElementById("Input_Timeout_Channel_ID").value = antwort.timeout_channel_id;
@@ -112,7 +116,7 @@ async function getSettings()
         document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
         document.getElementById("Input_Embed_Allowed_Roles_ID").value = (antwort.embed_allowed_roles || []).join(",");
         document.getElementById("Input_Support_Role").value = (antwort.support_roles || []).join(",");
-        document.getElementById("Input_Ticket").value = antwort.tickets_enabled;
+
     }
     catch (error)
     {
@@ -182,6 +186,7 @@ async function saveSettings()
                 message_channel_id: Input_Message_Log_Channel_ID.value || null,
                 support_log_channel_id: Input_Support_Log_Channel_ID.value || null,
                 Input_Join_Leave_Log_Channel_ID: Input_Join_Leave_Log_Channel_ID.value || null,
+                
                 // map = Entfernt Leerzeichen am Anfang und Ende
                 // Filter = Entfernt Leere Array Einträge
                 embed_allowed_roles: Input_Embed_Allowed_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),

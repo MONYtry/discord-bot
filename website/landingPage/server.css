@@ -142,8 +142,62 @@ input:focus {
     transform: translateY(-2px);
 }
 
-/* Wenn man Makiert */
 input::selection {
     background: #9333ea;
     color: white;
 }
+
+.stat-card-list {
+    width: min(1100px, 92%);
+    margin: 30px auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.stat-card {
+    width: 100%;
+    min-width: 0;
+    padding: 26px;
+    border: 1px solid rgba(168, 85, 247, 0.22);
+    border-radius: 20px;
+    background: linear-gradient(145deg,
+            rgba(30, 27, 55, 0.92),
+            rgba(15, 15, 30, 0.88));
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(14px);
+    transition: transform 0.25s ease, border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(192, 132, 252, 0.75);
+    box-shadow: 0 12px 32px rgba(139, 92, 246, 0.12);
+}
+
+.stat-card h3,
+.chart-card h3 {
+    margin: 0 0 12px;
+    font-size: 1.15rem;
+    color: #e9d5ff;
+}
+
+.stat-card p,
+.chart-card p {
+    margin: 0 0 16px;
+    color: #aaa8c3;
+    font-size: 0.95rem;
+    line-height: 1.65;
+}
+
+.chart-card {
+    width: min(1100px, 92%);
+    margin: 30px auto;
+    padding: 26px;
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: 22px;
+    background: rgba(25, 23, 45, 0.85);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+}
+
