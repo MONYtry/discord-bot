@@ -3,7 +3,6 @@ const API = "http://127.0.0.1:8000";
 // Holt sich die ID aus der URL 
 const serverId = new URLSearchParams(window.location.search).get("id");
 
-var useTickets = true;
 
 async function loadServer() {
     try {
@@ -113,6 +112,7 @@ async function getSettings()
         document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
         document.getElementById("Input_Embed_Allowed_Roles_ID").value = (antwort.embed_allowed_roles || []).join(",");
         document.getElementById("Input_Support_Role").value = (antwort.support_roles || []).join(",");
+        document.getElementById("Input_Ticket").value = antwort.tickets_enabled;
     }
     catch (error)
     {
@@ -139,9 +139,11 @@ async function saveSettings()
     const Input_Embed_Allowed_Role = document.getElementById("Input_Embed_Allowed_Roles_ID");
     const Input_Support_Role = document.getElementById("Input_Support_Role");
 
+    const use_tickets = document.getElementById("Input_Ticket");
+
     // Kleine Hilfe zum Debuggen etc.
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
-    console.log("Tickets-Status: " + useTickets);
+    console.log("Tickets: " + use_tickets.value);
     console.log("Status-Channel-ID: " + Input_Status_Channel_ID.value);
     console.log("Welcome-Channel-ID: " + Input_Welcome_Channel_ID.value);
     console.log("Join_leave_log-Channel-ID: " + Input_Join_Leave_Log_Channel_ID.value);
@@ -155,25 +157,7 @@ async function saveSettings()
     console.log("Input_Support_Role: " + Input_Support_Role.value);
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
 
-    const test = Input_Timeout_Channel_ID.value.trim();
-
-    console.log("=== INPUT CHECK VOR DEM SPEICHERN ===");
-
-    console.log("Ticket-Log:", {
-        element: document.getElementById("Input_Ticket_Log_Channel_ID"),
-        value: document.getElementById("Input_Ticket_Log_Channel_ID")?.value
-    });
-
-    console.log("Support-Rolle:", {
-        element: document.getElementById("Input_Support_Role"),
-        value: document.getElementById("Input_Support_Role")?.value
-    });
-
-    console.log("Support-Channel:", {
-        element: document.getElementById("Input_Support_Channel_ID"),
-        value: document.getElementById("Input_Support_Channel_ID")?.value
-    });
-
+    
     const response = await fetch(
         API + "/servers/" + serverId + "/settings",
         {
@@ -188,13 +172,13 @@ async function saveSettings()
             // Kleiner Reminder an mich selbst!!
             // Der erste Parameter muss mit dem Backend übereinstimmen!
             body: JSON.stringify({
-                tickets_enabled: useTickets,
+                tickets_enabled: use_tickets.value,
                 Input_Status_Channel_ID: Input_Status_Channel_ID.value || null,
                 Input_Welcome_Channel_ID: Input_Welcome_Channel_ID.value || null,
                 Input_Ban_Channel_ID: Input_Ban_Channel_ID.value || null,
                 Input_Apply_Channel_ID: Input_Apply_Channel_ID.value || null,
                 support_channel_id: Input_Support_Channel_ID.value || null,
-                timeout_channel_id: test || null,
+                timeout_channel_id: Input_Timeout_Channel_ID.value || null,
                 message_channel_id: Input_Message_Log_Channel_ID.value || null,
                 support_log_channel_id: Input_Support_Log_Channel_ID.value || null,
                 Input_Join_Leave_Log_Channel_ID: Input_Join_Leave_Log_Channel_ID.value || null,
@@ -202,6 +186,7 @@ async function saveSettings()
                 // Filter = Entfernt Leere Array Einträge
                 embed_allowed_roles: Input_Embed_Allowed_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),
                 support_roles: Input_Support_Role.value.split(",").map(id => id.trim()).filter(id => id !== "")
+                
             })
         }
     );

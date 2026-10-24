@@ -373,7 +373,7 @@ async def save_settings(guild_id: str, request: Request):
         raise HTTPException(status_code=400, detail="Ungültige Rollen-ID")
 
     # Bestehende Einstellungen speichern
-    tickets_enabled = data.get("tickets_enabled") is True
+    tickets_enabled = data.get("tickets_enabled")
     apply_channel_id = data.get("Input_Apply_Channel_ID")
     bot_status_channel_id = data.get("Input_Status_Channel_ID")
     welcome_channel_id = data.get("Input_Welcome_Channel_ID")
