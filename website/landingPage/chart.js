@@ -9,10 +9,14 @@ async function getMemberHistory() {
     {
         if (!chartServerId) throw new Error("Keine Server-ID in der URL gefunden!");
 
-        const response = await fetch(statsURL, { credentials: "include" });
+        const response = await fetch(statsURL, {
+             credentials: "include" 
+        });
+
         if (!response.ok) throw new Error(`API-Fehler: ${response.status}`);
 
         const result = await response.json();
+        
         return result.history || [];
     } 
     catch (error) 
@@ -26,16 +30,32 @@ async function createDiagram()
 {
     
     const entries = await getMemberHistory();
-    
     const labels = [];
+    if (entries == null)
+    {
+        console.log("Es wurden keine Einträge gefunden");
+        if (!chart)
+            return;
+
+        chart.data.datasets[0].data = 0;
+        chart.update();
+        return;
+    }
+
+    // Geht durch alle Einträge
     for (var i = 0; i < entries.length; i++)
     {
+        // Fügt die Uhrzeit ein
         labels.push(entries[i].date.slice(11,16));
     }
 
+    // Erstellt leeres Objekt
     const memberCounts = [];
+    
+    // Geht durch alle Einträge
     for (var i = 0; i < entries.length; i++)
     {
+        // Setzt Member-Anzahl
         memberCounts.push(entries[i].member_count); 
     }
 
