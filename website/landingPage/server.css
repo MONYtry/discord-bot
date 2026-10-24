@@ -154,7 +154,13 @@ input::selection {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 22px;
 }
-
+.info-cards {
+    width: 50%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 22px;
+}
 .stat-card {
     width: 100%;
     min-width: 0;

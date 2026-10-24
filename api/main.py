@@ -89,7 +89,11 @@ def getTime():
 def getBotOnline():
     if bot is None or bot.is_ready() is False:
         helper_cog = bot.get_cog("Helper")
-        helper_cog.logError("api.main.py", f"Bot ist nicht geladen!")
+        if helper_cog:
+            helper_cog.logError("api.main.py", f"Bot ist nicht geladen!")
+        else:
+            print("HelperCog ist nicht geladen un Bot ist nicht geladen api.main.py")
+            
         return False
     return True
 

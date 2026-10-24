@@ -12,19 +12,21 @@
         <h1 class="title" style="text-align: center;">Server Dashboard</h1>
         <h2 id="serverName"  style="text-align: center;">Server wird geladen...</h2>
         <img id="serverAvatar">
-
+    </div>
+    
+    <button class="btn" onclick="history.back()">Zurück</button>
+    <div class="info-cards">
         <div class="stat-card">
             <h3 style="text-align: center;">⚙️ Bot Einstellungen</h3>
             <p style="text-align: center;">Aktuell steht es noch unter Wartungsarbeiten.</p>
         </div>
+            <button class="btn primary" onclick="saveSettings()"> 💾 Einstellungen speichern</button>
+        <div class="stat-card">
+            <h3>⚙️ Bot-Einstellungen</h3>
+            <p>Verwalte die wichtigsten Einstellungen deines Discord-Bots an einem Ort.</p>
+        </div>
     </div>
     
-    <button class="btn" onclick="history.back()">Zurück</button>
-
-    <div class="stat-card">
-        <h3>⚙️ Bot-Einstellungen</h3>
-        <p>Verwalte die wichtigsten Einstellungen deines Discord-Bots an einem Ort.</p>
-    </div>
     
     <div class="stat-card-list">
         <div class="stat-card">
@@ -101,9 +103,7 @@
         </div>
     </div>
     
-    <button class="btn primary" onclick="saveSettings()" id="test">
-        💾 Einstellungen speichern
-    </button>
+
     
     <div class="chart-card">
         <h3>📊 Server-Statistik</h3>
@@ -112,10 +112,7 @@
             <canvas id="he"></canvas>
         </div>
     </div>
-
     </div>
-
-    <button class="btn primary" onclick="saveSettings()" id="test">Speichern</button>
 
     <div>
         <canvas id="he" style="max-height: 100px;"></canvas>
