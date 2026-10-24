@@ -9,7 +9,7 @@ from config import (SUPPORT_CATEGORIES_OPTIONS,
                     SUPPORT_PREVIEW_EMBED_TITEL,
                     SUPPORT_THUMBNAIL_URL)
 
-from api.database import get_support_roles,get_value_channel
+from api.database import get_value_channel, get_role_id_list
 
 class SupportView(discord.ui.View):
     def __init__(self):
@@ -81,7 +81,7 @@ class SupportCategories(discord.ui.Select):
         helper_cog = interaction.client.get_cog("Helper")
 
         # Rollen, die den Ticket-Channel sehen dürfen
-        role_ids = get_support_roles(interaction.guild_id)
+        role_ids = get_role_id_list(interaction.guild_id,"supporting_roles")
         
         await helper_cog.logMessage("support.py",f"Guild ID: {interaction.guild_id}")
         await helper_cog.logMessage("support.py",f"Role IDs: {repr(role_ids)}")

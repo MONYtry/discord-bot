@@ -9,7 +9,7 @@ from config import (APPLY_CATEGORIES_OPTIONS,
                     APPLY_QUESTIONS,APPLY_ALLOWED_ROLE_IDS,
                     TICKET_EMBED_DESCRIPTION)
 
-from api.database import open_ticket,close_ticket, get_ticket_setting, get_value_channel
+from api.database import open_ticket,close_ticket, get_ticket_setting, get_value_channel, get_role_id_list
 
 
 class SupportView(discord.ui.View):
@@ -201,9 +201,21 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
 
         # Rollen, die den Ticket-Channel sehen dürfen
         # Geht durch alle Rollen in dem Discord-Server, falls Rollen.id passt <- Hinzufügen
-        team_roles = [
-            role for role in guild.roles
-                if role.id in APPLY_ALLOWED_ROLE_IDS]
+
+         # Setzt Leere Rolle 
+        team_roles = []
+        role_ids = get_role_id_list(interaction.guild_id,"supporting_roles")
+
+        # Geht durch jede Rolle die in Support eingetragen ist 
+        for role_id in role_ids:
+        # Holt sich die Rolle
+            role = guild.get_role(role_id)
+            print(f"Role ID: {role_id} | Role: {role}")
+                    
+            # Falls Rolle exsitiert
+            if role is not None:
+                team_roles.append(role)
+        
         
         if not team_roles:
             await helper_cog.logError("apply.py","roles wasn't found!")

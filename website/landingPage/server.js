@@ -3,8 +3,7 @@ const API = "http://127.0.0.1:8000";
 // Holt sich die ID aus der URL 
 const serverId = new URLSearchParams(window.location.search).get("id");
 
-
-async function loadServer() {
+async function getServer() {
     try {
         // Falls keine Server-ID gefunden wurde
         checkServerID();
@@ -91,16 +90,13 @@ async function getSettings()
 
         // Antwort
         const antwort = await response.json();
-        console.log("Komplette Settings:", antwort);
-
-        console.log("Admin Perm Roles:", antwort.admin_perm_roles);
+        
         // Kleiner Dynamischer String zur Anzeige für Ticket_Status
         var ticket_status = "Stauts: ";
         if (antwort.tickets_enabled == "1")
             ticket_status += "[✅] - Aktiviert !"
         else
             ticket_status += "[💥] - Deaktiviert!"
-
 
         document.getElementById("Input_Ticket_System_Display").textContent = ticket_status;
         document.getElementById("Input_Ticket").value = antwort.tickets_enabled;
@@ -164,7 +160,6 @@ async function saveSettings()
     console.log("Input_Embed_Allowed_Role: " + Input_Embed_Allowed_Role.value);
     console.log("Input_Support_Role: " + Input_Support_Role.value);
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
-
     
     const response = await fetch(
         API + "/servers/" + serverId + "/settings",
@@ -215,4 +210,4 @@ async function saveSettings()
 
 }
 
-loadServer();
+getServer();

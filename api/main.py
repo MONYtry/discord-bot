@@ -22,7 +22,7 @@ from api.database import (
     set_embed_allowed_roles,
     get_support_roles,
     set_support_roles,
-    get_member_history,set_admin_perm_roles,get_admin_perm_roles
+    get_member_history,set_role_id_list,get_role_id_list
 )
 
 
@@ -362,19 +362,7 @@ async def save_settings(guild_id: str, request: Request):
 
     data = await request.json()
 
-    # Support-Rollen: IDs als Strings empfangen, erst in Python konvertieren
-    raw_roles = data.get("support_roles", [])
 
-    if not isinstance(raw_roles, list):
-        raise HTTPException(status_code=400, detail="support_roles muss eine Liste sein")
-
-    try:
-        support_roles = list(dict.fromkeys(
-            int(role_id) for role_id in raw_roles
-            if str(role_id).strip()
-        ))
-    except (ValueError, TypeError):
-        raise HTTPException(status_code=400, detail="Ungültige Rollen-ID")
 
     # Bestehende Einstellungen speichern
     tickets_enabled = data.get("tickets_enabled")
@@ -388,13 +376,14 @@ async def save_settings(guild_id: str, request: Request):
     timeout_channel_id = data.get("timeout_channel_id")
     message_channel_id = data.get("message_channel_id")
     embed_allowed_roles = data.get("embed_allowed_roles", [])
-    admin_perm_roles = data.get("admin_perm_roles")
+    admin_perm_roles = data.get("admin_perm_roles", [])
+    support_perm_roles = data.get("support_perm_roles",[])
 
     save_ticket_setting(guild_id, tickets_enabled, apply_channel_id)
-    set_support_roles(guild_id, support_roles)
 
-    set_admin_perm_roles(guild_id,admin_perm_roles)
-    
+    set_role_id_list(guild_id, admin_perm_roles, "admin_perm_roles")
+    set_role_id_list(guild_id, support_perm_roles, "supporting_roles")
+
     set_value_channel(guild_id, "apply_channel_id", apply_channel_id)
     set_value_channel(guild_id, "BOT_STATUS_CHANNEL_ID", bot_status_channel_id)
     set_value_channel(guild_id, "WELCOME_CHANNEL_ID", welcome_channel_id)
@@ -408,12 +397,12 @@ async def save_settings(guild_id: str, request: Request):
     set_embed_allowed_roles(guild_id, embed_allowed_roles)
 
     # Direkt aus SQLite zurücklesen
-    saved_roles = get_support_roles(guild_id)
-    saved_admin_roles = get_admin_perm_roles(guild_id)
+    admin_perm_role = get_role_id_list(guild_id, "admin_perm_roles")
+    support_perm_role = get_role_id_list(guild_id, "supporting_roles")
 
     print(f"[SAVE] Guild: {guild_id}")
-    print(f"[SAVE] Empfangene Rollen: {support_roles}")
-    print(f"[SAVE] Aus SQLite gelesen: {saved_roles}")
+    print(f"[SAVE] Empfangene Rollen: {support_perm_role}")
+    print(f"[SAVE] Aus SQLite gelesen: {support_perm_role}")
 
     return {
         "tickets_enabled": tickets_enabled,
@@ -427,8 +416,8 @@ async def save_settings(guild_id: str, request: Request):
         "timeout_channel_id": timeout_channel_id,
         "message_channel_id": message_channel_id,
         "embed_allowed_roles": embed_allowed_roles,
-        "support_roles": [str(role_id) for role_id in saved_roles],
-        "admin_perm_roles": [str(role_id) for role_id in saved_admin_roles]
+        "support_roles": [str(role_id) for role_id in support_perm_role],
+        "admin_perm_roles": [str(role_id) for role_id in admin_perm_role]
     }
 
 
@@ -509,8 +498,10 @@ async def getSettings(guild_id: str, request: Request):
     
     ticket_setting = get_ticket_setting(guild_id)
     embed_allowed_roles = get_embed_allowed_roles(guild_id)
-    support_role = get_support_roles(guild_id)
-    admin_perm_role = get_admin_perm_roles(guild_id)
+    
+    admin_perm_role = get_role_id_list(guild_id,"admin_perm_roles")
+    support_role = get_role_id_list(guild_id,"supporting_roles")
+
 
     return {
         "apply_channel_id": to_str(apply_channel_id),
