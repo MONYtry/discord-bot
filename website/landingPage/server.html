@@ -17,94 +17,96 @@
     <button class="btn" onclick="history.back()">Zurück</button>
     <div class="info-cards">
         <div class="stat-card">
-            <h3 style="text-align: center;">⚙️ Bot Einstellungen</h3>
-            <p style="text-align: center;">Aktuell steht es noch unter Wartungsarbeiten.</p>
+            <h3 style="text-align: center;">⚙️ Bot-Einstellungen</h3>
+            <p style="text-align: center;">Die Einstellungen befinden sich derzeit in Wartung und sind vorübergehend nicht
+                verfügbar.</p>
         </div>
-            <button class="btn primary" onclick="saveSettings()"> 💾 Einstellungen speichern</button>
+    
+        <button class="btn primary" onclick="saveSettings()">💾 Einstellungen speichern</button>
+    
         <div class="stat-card">
-            <h3>⚙️ Bot-Einstellungen</h3>
-            <p>Verwalte die wichtigsten Einstellungen deines Discord-Bots an einem Ort.</p>
+            <h3>⚙️ Bot-Konfiguration</h3>
+            <p>Verwalte alle wichtigen Einstellungen deines Discord-Bots zentral und übersichtlich an einem Ort.</p>
         </div>
     </div>
-    
     
     <div class="stat-card-list">
         <div class="stat-card">
             <h3>👋 Welcome-Channel</h3>
-            <p>Lege fest, in welchem Channel neue Mitglieder begrüßt werden.</p>
+            <p>Lege fest, in welchem Channel neue Mitglieder automatisch begrüßt werden.</p>
             <input id="Input_Welcome_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>📋 Join-/Leave-Logs</h3>
-            <p>Wähle den Channel für Protokolle über Beitritte und Austritte.</p>
+            <p>Konfiguriere den Channel, in dem Beitritte und Austritte von Mitgliedern protokolliert werden.</p>
             <input id="Input_Join_Leave_Log_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>🔨 Ban-Logs</h3>
-            <p>Bestimme, wo Informationen über gesperrte Mitglieder protokolliert werden.</p>
+            <p>Bestimme den Channel, in dem Sperrungen von Mitgliedern protokolliert werden.</p>
             <input id="Input_Ban_Log_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>📡 Status-Channel</h3>
-            <p>Lege fest, in welchem Channel der Bot seinen Status veröffentlicht.</p>
+            <p>Lege fest, in welchem Channel der Bot seinen aktuellen Status veröffentlicht.</p>
             <input id="Input_Status_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>📝 Bewerbungs-Channel</h3>
-            <p>Wähle den Channel, in dem Bewerbungen eingehen oder angezeigt werden.</p>
+            <p>Wähle den Channel, in dem Bewerbungen eingereicht und verwaltet werden.</p>
             <input id="Input_Apply_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>⏳ Timeout-Logs</h3>
-            <p>Lege fest, wo Timeout-Aktionen protokolliert werden.</p>
+            <p>Lege fest, in welchem Channel Timeout-Aktionen dokumentiert werden.</p>
             <input id="Input_Timeout_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>💬 Nachrichten-Logs</h3>
-            <p>Wähle den Channel für die Protokollierung von Nachrichtenereignissen.</p>
+            <p>Bestimme den Channel, in dem Nachrichtenereignisse protokolliert werden.</p>
             <input id="Input_Message_Log_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>🎫 Ticket-Logs</h3>
-            <p>Bestimme, in welchem Channel Ticket-Ereignisse protokolliert werden.</p>
+            <p>Wähle den Channel, in dem Ticket-Erstellungen und weitere Ticket-Aktionen protokolliert werden.</p>
             <input id="Input_Ticket_Log_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>🛡️ Embed-Berechtigungen</h3>
-            <p>Lege die Rollen für die entsprechende Embed-Berechtigungsfunktion fest.</p>
+            <p>Lege fest, welche Rollen die Berechtigung haben, die Embed-Funktionen zu nutzen.</p>
             <input id="Input_Embed_Allowed_Roles_ID" placeholder="Rollen-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>🧑‍💻 Support-Rolle</h3>
-            <p>Wähle die Rolle, die für den Support zuständig ist.</p>
+            <p>Wähle die Rolle aus, die für die Bearbeitung von Support-Anfragen zuständig ist.</p>
             <input id="Input_Support_Role" placeholder="Rollen-ID eingeben">
         </div>
     
         <div class="stat-card">
             <h3>🆘 Support-Channel</h3>
-            <p>Lege fest, in welchem Channel Support-Anfragen bearbeitet werden.</p>
+            <p>Lege fest, in welchem Channel Support-Anfragen entgegengenommen und bearbeitet werden.</p>
             <input id="Input_Support_Channel_ID" placeholder="Channel-ID eingeben">
         </div>
-        
+    
         <div class="stat-card">
-            <h3>AdminPerm Rollen</h3>
-            <p>Lege fest, in welchem Channel Support-Anfragen bearbeitet werden.</p>
-            <input id="Input_Admin_Perm_Roles" placeholder="Rollen-ID eingeben">
+            <h3>⚙️ Admin-Berechtigungsrollen</h3>
+            <p>Bestimme, welche Rollen administrative Berechtigungen für den Bot erhalten.</p>
+            <input id="Input_Admin_Perm_Roles" placeholder="Rollen-IDs eingeben">
         </div>
-
+    
         <div class="stat-card">
-            <h3>Trusted URLs</h3>
-            <p>Lege fest, in welchem Channel Support-Anfragen bearbeitet werden.</p>
-            <input id="Input_trusted_urls" placeholder="https://example.com...">
+            <h3>✅ Vertrauenswürdige URLs</h3>
+            <p>Verwalte vertrauenswürdige URLs, die von deinem Bot als sicher eingestuft werden.</p>
+            <input id="Input_trusted_urls" placeholder="https://example.com, ...">
         </div>
     
         <div class="stat-card">
@@ -115,15 +117,12 @@
         </div>
     </div>
     
-
-    
     <div class="chart-card">
         <h3>📊 Server-Statistik</h3>
-        <p>Behalte die Entwicklung deiner Server-Daten im Blick.</p>
+        <p>Verfolge die Entwicklung und wichtige Kennzahlen deines Discord-Servers übersichtlich in einer Statistik.</p>
         <div class="chart-container">
             <canvas id="he"></canvas>
         </div>
-    </div>
     </div>
 
     <div>

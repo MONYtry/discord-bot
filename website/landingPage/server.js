@@ -1,4 +1,5 @@
 const API = "http://127.0.0.1:8000";
+const landingPage = "http://127.0.0.1:5500/website/landingPage/ladingPage.html";
 
 // Holt sich die ID aus der URL 
 const serverId = new URLSearchParams(window.location.search).get("id");
@@ -16,6 +17,8 @@ async function getServer() {
         // Falls Fehler auftrit
         if (!response.ok) {
             document.getElementById("serverName").textContent = "Bitte anmelden!";
+            alert("Deine Session ist abgelaufen. Melde dich erneut an!");
+            window.location.href = landingPage;
             return;
         }
 
