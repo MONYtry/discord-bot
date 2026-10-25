@@ -1,5 +1,11 @@
 .env
+
 pycache/
 *.pyc
 .DS_Store
 etc.
+
+*.db
+*.sqlite
+*.sqlite3
+.database/
