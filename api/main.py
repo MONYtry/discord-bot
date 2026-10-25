@@ -31,6 +31,9 @@ CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
 REDIRECT_URI = os.getenv("DISCORD_REDIRECT_URI")
 SESSION_SECRET = os.getenv("SESSION_SECRET")
 
+FRONTEND_URL = os.getenv("FRONTEND_URL")
+BACKEND_URL = os.getenv("BACKEND_URL")
+
 app = FastAPI()
 
 app.add_middleware(
@@ -43,7 +46,7 @@ app.add_middleware(
 )
 
 app.add_middleware(CORSMiddleware,
-                   allow_origins=["http://127.0.0.1:5500"],
+                   allow_origins=["FRONTEND_URL"],
                    allow_methods=["GET", "POST"],
                    allow_headers=["*"],
                    allow_credentials=True)
@@ -270,7 +273,7 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
             "saved_token": accsess_token
         }
         # Schickt Nutzer zurück auf die Startseite 
-        return RedirectResponse(url="http://127.0.0.1:5500/website/landingPage/ladingPage.html")
+        return RedirectResponse(url=f"{FRONTEND_URL}/website/landingPage/ladingPage.html")
 
 @app.get("/auth/me")
 async def get_current_user(request: Request):
