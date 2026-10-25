@@ -63,9 +63,11 @@ async function createDiagram()
     if (chart) {
         chart.data.labels = labels;
         chart.data.datasets[0].data = memberCounts;
+        chart.options.scales.y.max = Math.max(...memberCounts) + 1;
         chart.update();
         return;
     }
+
     // Erstellung des Charts mit Chart.js :)
     chart = new Chart(ctx, {
         type: "line",
@@ -83,6 +85,9 @@ async function createDiagram()
         options: {
             scales: {
                 y: {
+                    min: 0,
+                    // Spread Operator
+                    max: Math.max(...memberCounts) + 1,
                     ticks: {
                         precision: 0,
                         stepSize: 1
