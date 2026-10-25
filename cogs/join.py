@@ -2,8 +2,7 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 from config import (WELCOME_MESSAGE, 
-                    JOIN_LOG_MESSAGE, 
-                    JOIN_TITEL_LOG_MESSAGE,LEAVE_LOG_MESSAGE, LEAVE_TITEL_LOG_MESSAGE,WELCOME_THUMBNAIL_URL)
+                    LEAVE_LOG_MESSAGE, LEAVE_TITEL_LOG_MESSAGE,WELCOME_THUMBNAIL_URL)
 from api.database import get_value_channel, save_member_count
 
 class Join(commands.Cog):
@@ -27,8 +26,9 @@ class Join(commands.Cog):
             print("Helper_Cog wurde nicht richtig geladen")
             return
         
-        channel_id = get_value_channel(member.guild.id, "WELCOME_CHANNEL_ID")
         save_member_count(member.guild.id, member.guild.member_count)
+        
+        channel_id = get_value_channel(member.guild.id, "WELCOME_CHANNEL_ID")
         if channel_id is None:
             await helper_cog.logError("join.py",f"Fehler:")
             return

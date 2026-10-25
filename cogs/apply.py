@@ -6,7 +6,7 @@ from config import (APPLY_CATEGORIES_OPTIONS,
                     TICKET_PREWVIEW_EMBED_TITEL,
                     TICKET_PREVIEW_MESSAGE,
                     SUPPORT_THUMBNAIL_URL,
-                    APPLY_QUESTIONS,APPLY_ALLOWED_ROLE_IDS,
+                    APPLY_QUESTIONS,
                     TICKET_EMBED_DESCRIPTION)
 
 from api.database import open_ticket,close_ticket, get_ticket_setting, get_value_channel, get_role_id_list

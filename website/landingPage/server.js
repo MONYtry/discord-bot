@@ -99,13 +99,10 @@ async function getSettings()
             ticket_status += "[💥] - Deaktiviert!"
 
         document.getElementById("Input_Ticket_System_Display").textContent = ticket_status;
-        document.getElementById("Input_Ticket").checked =
-            antwort.tickets_enabled === true ||
-            antwort.tickets_enabled === 1 ||
-            antwort.tickets_enabled === "1" ||
-            antwort.tickets_enabled === "true";
-        
-            document.getElementById("Input_Admin_Perm_Roles").value = (antwort.admin_perm_roles || []).join(",");
+        document.getElementById("Input_trusted_urls").value = (antwort.trusted_urls || []).join(",");
+
+        document.getElementById("Input_Ticket").value = Number(antwort.tickets_enabled) === 1 ? "1": "0";
+        document.getElementById("Input_Admin_Perm_Roles").value = (antwort.admin_perm_roles || []).join(",");
 
         // Setzt die Werte
         document.getElementById("Input_Status_Channel_ID").value = antwort.statusInput;
@@ -148,6 +145,7 @@ async function saveSettings()
     const Input_Support_Role = document.getElementById("Input_Support_Role");
     const Input_admin_roles = document.getElementById("Input_Admin_Perm_Roles");
     const use_tickets = document.getElementById("Input_Ticket");
+    const Input_URLs = document.getElementById("Input_trusted_urls")
 
     // Kleine Hilfe zum Debuggen etc.
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
@@ -164,6 +162,8 @@ async function saveSettings()
     console.log("Input_Support_Log_Channel_ID: " + Input_Support_Log_Channel_ID.value);
     console.log("Input_Embed_Allowed_Role: " + Input_Embed_Allowed_Role.value);
     console.log("Input_Support_Role: " + Input_Support_Role.value);
+    console.log("Vertraute Links: " + Input_URLs.value);
+    console.log("Tickets aktiv: " + Number(use_tickets.value) === 1);
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
     
     const response = await fetch(
@@ -180,7 +180,7 @@ async function saveSettings()
             // Kleiner Reminder an mich selbst!!
             // Der erste Parameter muss mit dem Backend übereinstimmen!
             body: JSON.stringify({
-                tickets_enabled: use_tickets.value,
+                tickets_enabled: Number(use_tickets.value) === 1,
                 Input_Status_Channel_ID: Input_Status_Channel_ID.value || null,
                 Input_Welcome_Channel_ID: Input_Welcome_Channel_ID.value || null,
                 Input_Ban_Channel_ID: Input_Ban_Channel_ID.value || null,
@@ -196,6 +196,7 @@ async function saveSettings()
                 embed_allowed_roles: Input_Embed_Allowed_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),
                 support_roles: Input_Support_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),
                 admin_perm_roles: Input_admin_roles.value.split(",").map(id => id.trim()).filter(id => id !== ""),
+                trusted_urls: Input_URLs.value.split(",").map(id => id.trim()).filter(id => id !== "")
             })
         }
     );

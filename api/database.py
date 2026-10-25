@@ -66,7 +66,12 @@ def load_dataBase():
             role_id INTEGER NOT NULL,
             PRIMARY KEY (guild_id, role_id))
         """)
-
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS TRUSTED_URL (
+            guild_id INTEGER NOT NULL, 
+            URL TEXT NOT NULL,
+            PRIMARY KEY (guild_id, URL))
+        """)
         conn.execute("""
             CREATE TABLE IF NOT EXISTS embed_allowed_roles (
             guild_id TEXT NOT NULL,
@@ -190,6 +195,35 @@ def get_role_id_list(guild_id: int, dbName) -> list[int]:
             WHERE guild_id = ?
         """, (str(guild_id), )).fetchall()
         return [row[0] for row in rows]
+    
+def set_trusted_urls(guild_id: int, trusted_urls: list[str]):
+    # Duplikate entfernen
+    trusted_urls = list(dict.fromkeys(url.strip() for url in trusted_urls if url.strip()))
+
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("""
+            DELETE FROM TRUSTED_URL
+            WHERE guild_id = ?
+        """, (str(guild_id),))
+
+        conn.executemany("""
+            INSERT INTO TRUSTED_URL (guild_id, URL)
+            VALUES (?, ?)
+        """, [
+            (str(guild_id), url)
+            for url in trusted_urls
+        ])
+
+def get_trusted_urls(guild_id: int) -> list[str]:
+    with sqlite3.connect(DB_PATH) as conn:
+        rows = conn.execute("""
+            SELECT URL
+            FROM TRUSTED_URL
+            WHERE guild_id = ?
+        """, (str(guild_id),)).fetchall()
+
+    return [row[0] for row in rows]
+
 
 ALLOWED_COLUMNS = {
     "apply_channel_id",
@@ -254,7 +288,7 @@ def save_ticket_setting(guild_id, enabled, apply_channel_id):
             DO UPDATE SET
                 tickets_enabled = excluded.tickets_enabled,
                 apply_channel_id = excluded.apply_channel_id
-        """, (str(guild_id), int(enabled), int(apply_channel_id) if apply_channel_id else None))
+        """, (str(guild_id), int(enabled or 0), int(apply_channel_id) if apply_channel_id else None))
 
 def get_ticket_setting(guild_id):
     with sqlite3.connect(DB_PATH) as con:

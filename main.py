@@ -31,7 +31,7 @@ class MyBot(commands.Bot):
         await self.load_extension("cogs.support")
         await self.load_extension("cogs.apply")
         await self.load_extension("cogs.moderation")
-        await self.load_extension("cogs.reactionroles")
+        #await self.load_extension("cogs.reactionroles")
         await self.load_extension("cogs.automoderation")
 
         # Geht durch jeden Server auf dem der Bot ist

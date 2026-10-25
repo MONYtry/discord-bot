@@ -3,10 +3,9 @@ import discord
 from config import (
                     SUPPORT_THUMBNAIL_URL,
                     FORBIDDEN_WORDS, 
-                    BOT_HAS_NO_RIGHTS,
-                    TRUSTED_URL)
+                    BOT_HAS_NO_RIGHTS)
 from datetime import timedelta
-from api.database import get_value_channel
+from api.database import get_value_channel, get_trusted_urls
 
 class Automod(commands.Cog):
     def __init__(self,bot):
@@ -120,6 +119,10 @@ class Automod(commands.Cog):
             # Hilfs-Variable
             content = message.content.lower()
             # Falls in der URL eine Trusted URL steckt, abbruch
+            TRUSTED_URL = get_trusted_urls(message.guild.id)
+            if TRUSTED_URL is None:
+                print(f"Es gibt keine Vertrauten URLS! {TRUSTED_URL}")
+                
             for url in TRUSTED_URL:
                 if url.lower() in content:
                     return False

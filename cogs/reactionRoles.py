@@ -3,7 +3,6 @@ from discord.ext import commands
 from config import (REACTION_ROLES_IDS, 
                     REMOVED_REACTION_ROLE_MESSAGE, 
                     ADDED_REACTION_ROLE_MESSAGE, 
-                    SEND_DROPDOWN_ROLE_IDS,
                     NO_RIGHTS_MESSAGE, REACTION_ROLE_OPTIONS)
 from api.database import get_role_id_list
 

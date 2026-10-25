@@ -67,18 +67,11 @@ WELCOME_THUMBNAIL_URL = "https://cdn.discordapp.com/attachments/1534607507023069
 
 # ----------- ROLE-IDS ----------- #
 
-APPLY_ALLOWED_ROLE_IDS = [
-    1558241441929760889,  # Owner
-    1559679252503470160
-]
-
 TIMEOUT_ALLOWED_ROLE_IDS = [
     1545449534534979645  # Owner
 ]
 
-SEND_DROPDOWN_ROLE_IDS = [
-    1558241441929760889 # Owner
-]
+
 
 REACTION_ROLES_IDS = {
     "html": 1557488216351969350,
@@ -159,12 +152,7 @@ APPLY_CATEGORIES_OPTIONS = {
     }
 }
 
-
-TRUSTED_URL = [
-    "youtube.com"
-    ]
-
-# Inhalt KI genererriert!
+# Inhalt KI genereriert!
 FORBIDDEN_WORDS = [
     # Beleidigungen
     "idiot", "dummkopf", "depp", "trottel", "vollidiot",
