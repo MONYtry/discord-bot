@@ -240,17 +240,22 @@ async def auth_logging(request: Request):
 @app.get("/auth/callback")
 async def auth_callback(request: Request, code: str | None = None, error: str | None = None):
     if error:
-        print("Fehler", error)
+        raise HTTPException(status_code=400, detail=f"An OAUTH error occurred{error}")
+    if code is None:
+        raise HTTPException(status_code=400, detail=f"An OAUTH error occurred{error}")
 
     # Holt den Wert aus der Antwort von Discord
     incoming_state = request.query_params.get("state")
-    
+
     # Holt sich den gespeichtern State
     saved_state = request.session.get("oauth_state")
-    
+
     # Falls State manipuliert / falsch ist, Abbruch
     if incoming_state != saved_state:
-        raise HTTPException(status_code=400, detail="Invalid OAuth state")
+        raise HTTPException(status_code=400, detail=f"Invalid OAuth state {error}")
+
+    # Löschung des Verifizierungs-States
+    request.session.pop("oauth_state", None)
 
     async with httpx.AsyncClient() as client:
         token_response = await client.post(
@@ -265,11 +270,11 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         )
 
         if token_response.status_code != 200:
-            print("Etwas ist schief gelaufen (token_Response)")
+            raise HTTPException(status_code=400,detail=f"Etwas ist schief gelaufen")
 
         # Macht aus Json -> dictionary
         token_data = token_response.json()
-
+        
         # Holt sich den Accsess Token aus der Antwort
         accsess_token = token_data["access_token"]
         saved_tokens.append(accsess_token)
@@ -280,7 +285,7 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         )
 
         if user_response.status_code != 200:
-             print("Etwas ist schief gelaufen (user_response)")
+            raise HTTPException(status_code=400,detail=f"Etwas ist schief gelaufen")
         
         user_data = user_response.json()
         
