@@ -5,6 +5,7 @@ from config import (REACTION_ROLES_IDS,
                     ADDED_REACTION_ROLE_MESSAGE, 
                     SEND_DROPDOWN_ROLE_IDS,
                     NO_RIGHTS_MESSAGE, REACTION_ROLE_OPTIONS)
+from api.database import get_role_id_list
 
 class RoleView(discord.ui.View):
     def __init__(self):
@@ -29,8 +30,25 @@ class DropDownReactionRoles(commands.Cog):
     @discord.app_commands.command(name="senddropdown", description="Sendet ein Auswahlmenü für Rollen")
     async def senddropdown(self, interaction: discord.Interaction):
 
+        team_roles = []
+        role_ids = get_role_id_list(interaction.guild_id,"supporting_roles")
+        if role_ids is None:
+            print("Es wurden keine Rollen gefunden reactionroles.py")
+        # Geht durch jede Rolle die in Support eingetragen ist 
+        for role_id in role_ids:
+            # Holt sich die Rolle
+            role = interaction.guild.get_role(role_id)
+
+            # Falls Rolle exsitiert
+            if role is not None:
+                team_roles.append(role)
+
+        if not team_roles:
+            await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!", ephemeral=True)
+            return
+        
         # Prüft ob der Nutzer eine Rolle hat welche Rechte dazu hat
-        has_permission = any(role.id in SEND_DROPDOWN_ROLE_IDS for role in interaction.user.roles)
+        has_permission = any(role.id in get_role_id_list(interaction.guild_id,"admin_perm_roles") for role in interaction.user.roles)
                 
         if not has_permission:
             await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)

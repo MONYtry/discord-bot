@@ -9,7 +9,7 @@ from config import (SUPPORT_CATEGORIES_OPTIONS,
                     SUPPORT_PREVIEW_EMBED_TITEL,
                     SUPPORT_THUMBNAIL_URL)
 
-from api.database import get_value_channel, get_role_id_list
+from api.database import get_value_channel, get_role_id_list,get_ticket_setting
 
 class SupportView(discord.ui.View):
     def __init__(self):
@@ -200,6 +200,11 @@ class DropDown(commands.Cog):
         await helper_cog.logSuccess("support.py","Succcsessfully loaded")
    
         for guild in self.bot.guilds:
+            ticket_enabled = get_ticket_setting(guild.id)
+            if not ticket_enabled:
+                #await helper_cog.logError("support.py",f"Auf {guild.name} sind Support-Tickets deaktivert!")
+                continue
+            
             #await helper_cog.logMessage("support.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
             await helper_cog.logMessage("support.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
             

@@ -18,9 +18,8 @@ from api.database import (
     get_ticket_setting,
     get_value_channel,
     set_value_channel,
-    get_embed_allowed_roles,
-    set_embed_allowed_roles,
-    get_member_history,set_role_id_list,get_role_id_list
+    get_member_history,
+    set_role_id_list,get_role_id_list
 )
 
 

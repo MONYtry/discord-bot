@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands
 from config import NO_RIGHTS_MESSAGE
-from api.database import get_value_channel, get_admin_perm_roles
+from api.database import get_value_channel, get_role_id_list
 
 class Admin(commands.Cog):
     # Wird direkt aufgerufen
@@ -24,7 +24,7 @@ class Admin(commands.Cog):
     @discord.app_commands.command(name="shutdown", description="Fährt den Bot herunter")
     async def shutdown(self, interaction: discord.Interaction):    
         # Geht jede Rolle durch 
-        admin_roles = get_admin_perm_roles(interaction.guild.id)
+        admin_roles = get_role_id_list(interaction.guild.id,"admin_perm_roles")
         
         has_permission = False
         for role in interaction.user.roles:

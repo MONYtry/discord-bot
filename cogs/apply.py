@@ -100,6 +100,10 @@ class applyDropDown(commands.Cog):
         await helper_cog.logSuccess("apply.py", "Bewerbung bereit")
 
         for guild in self.bot.guilds:
+            ticket_enabled = get_ticket_setting(guild.id)
+            if not ticket_enabled:
+                #await helper_cog.logSuccess("support.py",f"Auf {guild.name} sind Support-Tickets deaktivert!")
+                continue
             #await helper_cog.logMessage("apply.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
             await helper_cog.logMessage("apply.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
             

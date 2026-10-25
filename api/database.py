@@ -182,7 +182,6 @@ def set_role_id_list(guild_id: int, role_ids: list[int], dbName: str):
             [(str(guild_id), role_id) for role_id in role_ids]
         )
 
-    
 def get_role_id_list(guild_id: int, dbName) -> list[int]:
     with sqlite3.connect(DB_PATH) as conn:
         rows = conn.execute(f"""
@@ -190,61 +189,6 @@ def get_role_id_list(guild_id: int, dbName) -> list[int]:
             FROM {dbName}
             WHERE guild_id = ?
         """, (str(guild_id), )).fetchall()
-        return [row[0] for row in rows]
-
-
-def set_admin_perm_roles(guild_id: int, role_ids: list[int]):
-    role_ids = list(dict.fromkeys(role_ids))
-
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            DELETE FROM admin_perm_roles
-            WHERE guild_id = ?
-        """, (str(guild_id),))
-
-        conn.executemany("""
-            INSERT INTO admin_perm_roles (guild_id, role_id)
-            VALUES (?, ?)
-        """, [
-            (str(guild_id), int(role_id))
-            for role_id in role_ids
-        ])
-
-def get_admin_perm_roles(guild_id: int) -> list[int]:
-     with sqlite3.connect(DB_PATH) as conn:
-            rows = conn.execute("""
-                SELECT role_id
-                FROM admin_perm_roles
-                WHERE guild_id = ?
-            """, (str(guild_id),)).fetchall()
-            return [row[0] for row in rows]
-     
-def set_embed_allowed_roles(guild_id: int, role_ids: list[int]):
-    # Doppelte Rollen-IDs entfernen
-    role_ids = list(dict.fromkeys(role_ids))
-
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            DELETE FROM embed_allowed_roles
-            WHERE guild_id = ?
-        """, (str(guild_id),))
-
-        conn.executemany("""
-            INSERT INTO embed_allowed_roles (guild_id, role_id)
-            VALUES (?, ?)
-        """, [
-            (str(guild_id), int(role_id))
-            for role_id in role_ids
-        ])
-
-        
-def get_embed_allowed_roles(guild_id: int) -> list[int]:
-    with sqlite3.connect(DB_PATH) as conn:
-        rows = conn.execute("""
-            SELECT role_id
-            FROM embed_allowed_roles
-            WHERE guild_id = ?
-        """, (str(guild_id),)).fetchall()
         return [row[0] for row in rows]
 
 ALLOWED_COLUMNS = {
@@ -314,11 +258,11 @@ def save_ticket_setting(guild_id, enabled, apply_channel_id):
 
 def get_ticket_setting(guild_id):
     with sqlite3.connect(DB_PATH) as con:
-        return con.execute("""
+        row = con.execute("""
             SELECT tickets_enabled 
             FROM server_settings 
             WHERE guild_id = ?
-            """, (str(guild_id),)).fetchone()[0]
+            """, (str(guild_id),)).fetchone()
     return bool(row[0]) if row else False
 
 

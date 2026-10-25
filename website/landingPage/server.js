@@ -99,8 +99,13 @@ async function getSettings()
             ticket_status += "[💥] - Deaktiviert!"
 
         document.getElementById("Input_Ticket_System_Display").textContent = ticket_status;
-        document.getElementById("Input_Ticket").value = antwort.tickets_enabled;
-        document.getElementById("Input_Admin_Perm_Roles").value = (antwort.admin_perm_roles || []).join(",");
+        document.getElementById("Input_Ticket").checked =
+            antwort.tickets_enabled === true ||
+            antwort.tickets_enabled === 1 ||
+            antwort.tickets_enabled === "1" ||
+            antwort.tickets_enabled === "true";
+        
+            document.getElementById("Input_Admin_Perm_Roles").value = (antwort.admin_perm_roles || []).join(",");
 
         // Setzt die Werte
         document.getElementById("Input_Status_Channel_ID").value = antwort.statusInput;
