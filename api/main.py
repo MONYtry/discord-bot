@@ -4,6 +4,8 @@ import httpx
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
+import secrets
+from urllib.parse import urlencode
 import os
 import sqlite3
 from dotenv import load_dotenv
@@ -211,7 +213,14 @@ def member_stats(guild_id: str, minutes: int = 5):
     }
 
 @app.get("/auth/login")
-async def auth_logging():
+async def auth_logging(request: Request):
+
+    # Erstellt einen 32-Bit langen sicherheits String
+    state = secrets.token_urlsafe(32)
+
+    # Setzt den Sicherheits-String in die Session
+    request.session["oauth_state"] = state
+    
     # Werte über die Anfrage
     # client_id = Anwendungs ID
     # redirect_uri = Wohin zurück geben
@@ -222,9 +231,9 @@ async def auth_logging():
         "redirect_uri": REDIRECT_URI,
         "response_type": "code",
         "scope": "identify guilds",
+        "state": state
     }
-    from urllib.parse import urlencode
-
+    
     discord_url = "https://discord.com/oauth2/authorize?" + urlencode(parameter)
     return RedirectResponse(discord_url)
 
@@ -232,6 +241,16 @@ async def auth_logging():
 async def auth_callback(request: Request, code: str | None = None, error: str | None = None):
     if error:
         print("Fehler", error)
+
+    # Holt den Wert aus der Antwort von Discord
+    incoming_state = request.query_params.get("state")
+    
+    # Holt sich den gespeichtern State
+    saved_state = request.session.get("oauth_state")
+    
+    # Falls State manipuliert / falsch ist, Abbruch
+    if incoming_state != saved_state:
+        raise HTTPException(status_code=400, detail="Invalid OAuth state")
 
     async with httpx.AsyncClient() as client:
         token_response = await client.post(
@@ -247,7 +266,8 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
 
         if token_response.status_code != 200:
             print("Etwas ist schief gelaufen (token_Response)")
-        # Macht aus Json -> Dicanary
+
+        # Macht aus Json -> dictionary
         token_data = token_response.json()
 
         # Holt sich den Accsess Token aus der Antwort
@@ -263,6 +283,7 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
              print("Etwas ist schief gelaufen (user_response)")
         
         user_data = user_response.json()
+        
         # Erstellt eine Session
         # Name der Session wird in den Klammern Definiert
         # Alles was innerhalb der geschweiften Klammern steht ist verfügbarer Inhalt
