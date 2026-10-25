@@ -95,4 +95,4 @@ async function createDiagram()
 
 
 createDiagram();
-setInterval(createDiagram, 120_000); // jede Minute aktualisieren
+setInterval(createDiagram, 120_000); // jede 2te Minute aktualisieren
