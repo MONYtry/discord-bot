@@ -41,7 +41,13 @@ class MyBot(commands.Bot):
             print(f"✅ {len(synced)} Commands für {guild.name} synchronisiert")
 
 
-bot = MyBot(command_prefix="!", intents=intents)
+bot = MyBot(command_prefix="!", 
+            intents=intents,
+            activity=discord.Activity(
+                type=discord.ActivityType.playing,
+                name="👨‍💻Cozyness and Coding..."
+            ),
+            status=discord.Status.do_not_disturb)
 
 @bot.event
 async def on_ready():

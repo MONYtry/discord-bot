@@ -70,6 +70,7 @@ async function loadGuilds() {
     
     // Geht durch alle Server
     for (const guild of guilds) {
+
         const card = document.createElement("div");
         card.className = "server-card";
 
@@ -83,7 +84,6 @@ async function loadGuilds() {
         card.onclick = () => {
             window.location.href = `server.html?id=${guildId}`;
         };
-
         profile.append(card);
     }
 }
@@ -98,5 +98,12 @@ async function logout() {
 }
 
 
-loadProfile();
-getData();
+async function refreshProfile() {
+    const profile = document.getElementById("profile");
+
+    profile.replaceChildren(); // Alten Inhalt löschen
+
+    await loadProfile(); // Profil + Server laden
+    await getData();     // Statistiken aktualisieren
+}
+refreshProfile();
