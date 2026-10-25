@@ -3,7 +3,7 @@ from discord.ext import commands
 from datetime import datetime
 from config import (WELCOME_MESSAGE, 
                     LEAVE_LOG_MESSAGE, LEAVE_TITEL_LOG_MESSAGE,WELCOME_THUMBNAIL_URL)
-from api.database import get_value_channel, save_member_count
+from api.database import get_value_channel, save_member_count,set_role_id_list,get_role_id_list
 
 class Join(commands.Cog):
     def __init__(self, bot):
@@ -38,7 +38,16 @@ class Join(commands.Cog):
         if channel is None:
             await helper_cog.logError("join.py",f"Fehler, welcome channel wasn't found!")
             return
+        
+        join_roles = get_role_id_list(member.guild.id,"join_roles")
 
+        if join_roles:
+            for role_id in join_roles:
+                role = member.guild.get_role(int(role_id))
+                
+                if role:
+                    await member.add_roles(role)
+        
         await self.send_embed(channel, member)
 
     @commands.Cog.listener()

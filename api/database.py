@@ -72,6 +72,14 @@ def load_dataBase():
             URL TEXT NOT NULL,
             PRIMARY KEY (guild_id, URL))
         """)
+
+        conn.execute("""
+                CREATE TABLE IF NOT EXISTS join_roles (
+                guild_id INTEGER NOT NULL, 
+                role_id TEXT NOT NULL,
+                PRIMARY KEY (guild_id, role_id))
+            """)
+        
         conn.execute("""
             CREATE TABLE IF NOT EXISTS embed_allowed_roles (
             guild_id TEXT NOT NULL,
@@ -152,15 +160,13 @@ def get_total_tickets():
         SELECT total_tickets
         FROM stats
         """).fetchone()[0]
-    
-
 
 ALLOWED_ROLE_TABLES = {
     "supporting_roles",
     "admin_perm_roles",
     "embed_allowed_roles",
+    "join_roles"
 }
-
 
 def set_role_id_list(guild_id: int, role_ids: list[int], dbName: str):
     if dbName not in ALLOWED_ROLE_TABLES:

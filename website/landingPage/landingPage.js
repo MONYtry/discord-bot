@@ -103,7 +103,7 @@ async function refreshProfile() {
 
     profile.replaceChildren(); // Alten Inhalt löschen
 
-    await loadProfile(); // Profil + Server laden
-    await getData();     // Statistiken aktualisieren
+    await loadProfile(); 
+    await getData();     
 }
 refreshProfile();

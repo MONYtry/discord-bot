@@ -120,7 +120,7 @@ async function getSettings()
         document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
         document.getElementById("Input_Embed_Allowed_Roles_ID").value = (antwort.embed_allowed_roles || []).join(",");
         document.getElementById("Input_Support_Role").value = (antwort.support_roles || []).join(",");
-
+        document.getElementById("Input_Join_Roles").value = (antwort.join_roles || []).join(",");
     }
     catch (error)
     {
@@ -148,7 +148,12 @@ async function saveSettings()
     const Input_Support_Role = document.getElementById("Input_Support_Role");
     const Input_admin_roles = document.getElementById("Input_Admin_Perm_Roles");
     const use_tickets = document.getElementById("Input_Ticket");
-    const Input_URLs = document.getElementById("Input_trusted_urls")
+    const Input_URLs = document.getElementById("Input_trusted_urls");
+    const Input_Join_Roles = document.getElementById("Input_Join_Roles");
+
+
+
+    
 
     // Kleine Hilfe zum Debuggen etc.
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
@@ -166,6 +171,8 @@ async function saveSettings()
     console.log("Input_Embed_Allowed_Role: " + Input_Embed_Allowed_Role.value);
     console.log("Input_Support_Role: " + Input_Support_Role.value);
     console.log("Vertraute Links: " + Input_URLs.value);
+    console.log("Rollen beim betreten: " + Input_Join_Roles.value);
+
     console.log("Tickets aktiv: " + Number(use_tickets.value) === 1);
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
     
@@ -199,7 +206,8 @@ async function saveSettings()
                 embed_allowed_roles: Input_Embed_Allowed_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),
                 support_roles: Input_Support_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),
                 admin_perm_roles: Input_admin_roles.value.split(",").map(id => id.trim()).filter(id => id !== ""),
-                trusted_urls: Input_URLs.value.split(",").map(id => id.trim()).filter(id => id !== "")
+                trusted_urls: Input_URLs.value.split(",").map(id => id.trim()).filter(id => id !== ""),
+                join_roles: Input_Join_Roles.value.split(",").map(id => id.trim()).filter(id => id !== "")
             })
         }
     );
