@@ -86,14 +86,12 @@ def getTime():
     return uptime
 
 def getBotOnline():
-    if bot is None or bot.is_ready() is False:
-        helper_cog = bot.get_cog("Helper")
-        if helper_cog:
-            helper_cog.logError("api.main.py", f"Bot ist nicht geladen!")
-        else:
-            print("HelperCog ist nicht geladen un Bot ist nicht geladen api.main.py")
-            
+    if bot is None:
+        #print("Bot wurde nicht geladen!")
         return False
+    if bot.is_ready() is False:
+        #print("Bot wurde nicht geladen!")     
+        return False       
     return True
 
 def getMembersCount():
