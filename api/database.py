@@ -127,7 +127,7 @@ def close_ticket(channel_id,status):
             UPDATE tickets
             SET status = ?
             WHERE channel_id = ?
-        """, (channel_id,status))
+        """, (status,channel_id))
 
 def get_open_tickets():
     with sqlite3.connect(DB_PATH) as conn:
