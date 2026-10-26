@@ -11,6 +11,9 @@ from api.tracking import start_tracking
 # Läd geheimnisse
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
+IP = os.getenv("IP")
+PORT = os.getenv("PORT")
+
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -34,9 +37,6 @@ class MyBot(commands.Bot):
         #await self.load_extension("cogs.reactionroles")
         await self.load_extension("cogs.automoderation")
 
-        # Geht durch jeden Server auf dem der Bot ist
-
-
 
 bot = MyBot(command_prefix="!", 
             intents=intents,
@@ -54,6 +54,7 @@ async def on_ready():
         f"{placeholder}\n"
         f"Bot went online: {bot.user} \n"
         f"{placeholder}\n")
+    
     for guild in bot.guilds:
         bot.tree.copy_global_to(guild=guild)
         synced = await bot.tree.sync(guild=guild)
@@ -69,11 +70,14 @@ async def start_service():
     set_bot(bot)
     start_tracking(bot)
     # Konfiguriert Server 
+    if IP is None or PORT is None:
+        print("[ERROR] main.py Line 75 | Bot couldn't boot because IP is None OR PORT is NONE")
+        return
     
     config = uvicorn.Config(
         app,
-        host="127.0.0.1",
-        port=8000
+        host=IP,
+        port=int(PORT)
     )
 
     # Server wird an uvicorn übergeben

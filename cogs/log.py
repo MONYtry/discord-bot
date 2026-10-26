@@ -27,7 +27,6 @@ class Log(commands.Cog):
                 "Member was banned",
                 f"🔨 **User gebannt!**\n"
                 f"👤 User: {user.mention} (`{user.id}`)", None)
-            print(f"Log: Member was banned, 👤 User: {user}")
 
 async def setup(bot):
     await bot.add_cog(Log(bot))

@@ -30,7 +30,7 @@ class Automod(commands.Cog):
         # Holt sich die Module anhand der Class-Namen
         helper_cog = self.bot.get_cog("Helper")
         channel_id = get_value_channel(message.guild.id, "MESSAGE_LOG_CHANNEL")
-        print(f"Automoderation: {channel_id}")
+
         log_channel = self.bot.get_channel(channel_id)
         if log_channel is not None:
             await helper_cog.send_embed(log_channel,"Message deleted",
@@ -49,7 +49,6 @@ class Automod(commands.Cog):
         # Holt sich die Module anhand der Class-Namen
         helper_cog = self.bot.get_cog("Helper")
         channel_id = get_value_channel(message.guild.id, "MESSAGE_LOG_CHANNEL")
-        print(f"Automoderation: {channel_id}")
         log_channel = self.bot.get_channel(channel_id)
         
         if log_channel is not None:
@@ -86,14 +85,10 @@ class Automod(commands.Cog):
         for word in FORBIDDEN_WORDS:
             if word.lower() in content:
                 found_words.append(word)
+
         # Falls Wort gefunden wird
         if found_words:
-            await helper_cog.logMessage("automod.py",
-                        f"⚠️ Blacklist-Wörter erkannt: {found_words}\n"
-                        f"👤 User: {message.author} ({message.author.id})\n"
-                        f"📍 Channel: #{message.channel}\n"
-                        f"💬 Nachricht: {message.content}")
-            
+
             # Löscht Nachricht
             await message.delete()
             
@@ -115,7 +110,7 @@ class Automod(commands.Cog):
     
     
 
-    async def checkForbiddenLinks(self, message, helper_cog, channel):
+    async def checkForbiddenLinks(self, message, helper_cog):
             # Hilfs-Variable
             content = message.content.lower()
             # Falls in der URL eine Trusted URL steckt, abbruch
