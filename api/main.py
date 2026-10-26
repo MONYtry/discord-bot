@@ -1,12 +1,15 @@
+import os
 import time
+
 from fastapi.middleware.cors import CORSMiddleware
-import httpx
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import RedirectResponse
+
+import httpx
+from urllib.parse import urlencode
 from starlette.middleware.sessions import SessionMiddleware
 import secrets
-from urllib.parse import urlencode
-import os
+
 import sqlite3
 from dotenv import load_dotenv
 

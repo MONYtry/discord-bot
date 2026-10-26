@@ -7,23 +7,55 @@
 <body>
     <main class="container">
         <h1 class="title">MONY <span>Discord Bot</span></h1>
+        
+        <section class="stats-section">
+        <h2>Trusted by over</h2>
+            <div class="stats-card-list">
+                <div class="stat-card">
+                    <div class="stat-icon">🌐</div>
+                    <h2>Servers</h2>
+                    <p id="used_by_servers">No data fetched...</p>
+                </div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-icon">🌐</div>
-                <h2>Servers</h2>
-                <p id="used_by_servers">No data fetched...</p>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <h2>Users</h2>
+                    <p id="used_by_users">No data fetched...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-images">
+
+            <div class="image-row">
+                <img src="/website/Images/Screenshot 2026-10-25 023716.png" alt="MONY Screenshot 1" onclick="onImageClick(this)">
+
+                <div class="image-info">
+                    <h2>⚡ Web-based Managment</h2>
+                    <p>
+                        Use the Configuration on MONY-Bot to help
+                        managing your Discord server easier.
+                    </p>
+                </div>
             </div>
 
-            <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <h2>Users</h2>
-                <p id="used_by_users">No data fetched...</p>
+            <div class="image-row reverse">
+                <img src="/website/Images/Screenshot 2026-10-25 233434.png" alt="MONY Screenshot 2" onclick="onImageClick(this)">
+
+                <div class="image-info">
+                    <h2>💜 Built for Your Community</h2>
+                    <p>
+                        A clean experience designed to make your
+                        Discord community even better.
+                    </p>
+                </div>
             </div>
+        </section>
+        <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+            <img id="lightbox-img" src="" alt="Große Bildansicht">
         </div>
 
         <div id="guilds"></div>
-
         <p id="loginState"></p>
         <div id="profile"></div>
 
@@ -41,5 +73,8 @@
         <a href="https://github.com/monytry">MONY</a>
     </footer>
 
-    <script src="landingPage.js" defer></script>
+    <script src="landingPageUI.js" defer></script>
+    <script src="landingPageUser.js" defer></script>
+
+    
 </body>

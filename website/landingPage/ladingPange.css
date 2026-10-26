@@ -13,6 +13,106 @@ body {
         radial-gradient(ellipse at bottom right, #172554 0%, transparent 45%),
         #0b0b14;
 }
+.stats-card-list{
+    display: flex;
+    justify-content: center;
+    gap:20px;
+}
+
+.stats-section{
+    margin-top: 50px;
+}
+
+.section-images {
+    margin-top: 50px;
+    padding: 25px;
+    background-color: #0b0b14;
+    border-radius: 15px;
+    border: 2px solid #6366f1;
+}
+
+.image-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 35px;
+    padding: 25px 0;
+    text-align: left;
+}
+
+.image-row+.image-row {
+    border-top: 1px solid #272438;
+}
+
+.image-row img {
+    width: 55%;
+    max-width: 450px;
+    height: auto;
+    display: block;
+    flex-shrink: 0;
+    border-radius: 12px;
+    border: 1px solid #3f3f55;
+}
+
+.image-row.reverse {
+    flex-direction: row-reverse;
+}
+
+.image-info {
+    flex: 1;
+}
+
+.image-info h2 {
+    color: #c4b5fd;
+    font-size: 1.5rem;
+    margin: 0 0 15px;
+}
+
+.image-info p {
+    color: #a1a1aa;
+    font-size: 1rem;
+    line-height: 1.8;
+    margin: 0;
+}
+
+
+
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.9);
+    padding: 25px;
+
+    justify-content: center;
+    align-items: center;
+    
+    cursor: zoom-out;
+}
+
+.lightbox img {
+    max-width: 95%;
+    max-height: 90vh;
+
+    width: auto;
+    height: auto;
+    
+    object-fit: contain;
+    border-radius: 12px;
+    border: 1px solid #6366f1;
+}
+
+.image-row img {
+    cursor: zoom-in;
+    transition: transform 0.2s;
+}
+
+.image-row img:hover {
+    transform: scale(1.02);
+}
+
 
 .server-card {
     background-color: #373737;
@@ -22,12 +122,14 @@ body {
     border-color: #434343;
     transition: 0.2s ease;
 }
+
 .server-card:hover {
     background-color: #818cf8;
     text-decoration: underline;
     cursor: pointer;
     transform: scale(1.05);
 }
+
 #serverAvatar {
     display: block;
     margin: 0 auto;
@@ -76,19 +178,23 @@ body {
     margin: 18px 0 45px;
 }
 
-.stat-card-list {
-    display: grid;
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 20px;
-}
 
 .stat-card {
     padding: 32px 20px;
+    
+    width: 70%;
+    max-width: 70%;
+
+    height: 50%;
+    max-height: 50%;
+    
     border: 1px solid rgba(192, 132, 252, 0.2);
     border-radius: 22px;
+
     background: rgba(255, 255, 255, 0.045);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(12px);
+    
     transition: transform 0.25s, border-color 0.25s;
 }
 

@@ -53,7 +53,6 @@ async function loadProfile() {
     }
 }
 
-
 async function loadGuilds() {
     const response = await fetch(API + "/auth/guilds", {
         credentials: "include"
@@ -87,8 +86,6 @@ async function loadGuilds() {
         profile.append(card);
     }
 }
-
-
 
 async function logout() {
     await fetch(API + "/auth/logout", { method: "POST", credentials: "include" });
