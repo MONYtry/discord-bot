@@ -1,17 +1,20 @@
-const statsURL = "http://127.0.0.1:8000/stats";
-const statusURL = "http://127.0.0.1:8000/status";
-const guildsURL = "http://127.0.0.1:8000/guilds";
-const commandsURL = "http://127.0.0.1:8000/commands";
+const apiBase = "http://127.0.0.1:8000"
+const statsURL = apiBase + "/stats";
+const statusURL = apiBase + "/status";
+const guildsURL = apiBase + "/guilds";
+const commandsURL = apiBase + "/commands";
 
 async function getStatsData() {
 
     try {
         // Holt sich die URL
         const response = await fetch(statsURL);
+
         // Falls Fehler auftritt
         if (!response.ok) {
             throw new Error("Response Status: " + response.status);
         }
+        
         // Mach aus der Antwort eine JSON-Formatierten Antwort
         const result = await response.json();
 
@@ -68,7 +71,6 @@ async function getStatusData() {
 
         const display_api = document.getElementById("api_status");
         display_api.textContent = "API-STATUS: " + result.api_status;
-
     }
     catch (error) {
         console.log(error);
@@ -95,7 +97,6 @@ async function getGuildsData() {
         {
             display_guilds.textContent += result.guilds[i].name + ",";
         }
-
     }
     catch (error) {
         console.log(error);
@@ -152,7 +153,6 @@ async function getCommandsData() {
         console.log(error);
     }
 }
-
 
 getGuildsData();
 getStatsData();

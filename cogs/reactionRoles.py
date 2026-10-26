@@ -52,7 +52,6 @@ class DropDownReactionRoles(commands.Cog):
         if not has_permission:
             await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
             return
-        
         await interaction.response.send_message(view=RoleView())
 
     
@@ -83,13 +82,13 @@ class Reactionroles(discord.ui.Select):
         role_id = roles.get(self.values[0])
 
         if role_id is None:
-            print(f"Keine Rollen-ID für diese Auswahl gefunden! [#{role_id}]")
+            await interaction.response.send_message(f"Keine Rollen-ID für diese Auswahl gefunden! [#{role_id}]", ephemeral=True)
             return
 
         role = interaction.guild.get_role(int(role_id))
 
         if role is None:
-            print(f"Rolle existiert nicht auf diesem Server! [#{role}]")
+            await interaction.response.send_message(f"Rolle existiert nicht auf diesem Server! [#{role}]", ephemeral=True)
             return
         
         # Formatiert den Inhalt der Variable
@@ -98,7 +97,6 @@ class Reactionroles(discord.ui.Select):
         
         # Prüft ob Nutzer die Rolle bereits hat
         if interaction.user.get_role(roles[self.values[0]]):
-            print("Nutzer hat die Rolle bereits! <- Rolle wird entfernt")
             await interaction.user.remove_roles(role)
             await interaction.response.send_message(removed_message, ephemeral=True)
             return

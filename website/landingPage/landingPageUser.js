@@ -3,7 +3,7 @@ const auth = "/auth"
 const apiBase = "http://127.0.0.1:8000";
 
 async function getData(){
-    try{
+    try {
         const response = await fetch(apiBase + stats);
         if (!response.ok)
         {
@@ -19,7 +19,7 @@ async function getData(){
     }
     catch (error)
     {
-        console.log("Error: " + error);
+        console.log("Error:", error);
     }
 }
 
