@@ -1,9 +1,10 @@
-const statsURL = "http://127.0.0.1:8000/stats";
-const API = "http://127.0.0.1:8000";
+const stats = "/stats";
+const auth = "/auth"
+const apiBase = "http://127.0.0.1:8000";
 
 async function getData(){
     try{
-        const response = await fetch(statsURL);
+        const response = await fetch(apiBase + stats);
         if (!response.ok)
         {
             console.log("Error");
@@ -23,7 +24,7 @@ async function getData(){
 }
 
 async function loadProfile() {
-    const response = await fetch(API + "/auth/me", {
+    const response = await fetch(apiBase + auth + "/me", {
         credentials: "include"
     });
     
@@ -54,7 +55,7 @@ async function loadProfile() {
 }
 
 async function loadGuilds() {
-    const response = await fetch(API + "/auth/guilds", {
+    const response = await fetch(apiBase + auth + "/guilds", {
         credentials: "include"
     });
 
@@ -88,7 +89,7 @@ async function loadGuilds() {
 }
 
 async function logout() {
-    await fetch(API + "/auth/logout", { method: "POST", credentials: "include" });
+    await fetch(apiBase + auth + "/logout", { method: "POST", credentials: "include" });
     
     console.log("Erfolgreich abgemeldet!");
     document.getElementById("profile").replaceChildren();

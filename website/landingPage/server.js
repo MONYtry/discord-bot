@@ -1,5 +1,7 @@
-const API = "http://127.0.0.1:8000";
-const landingPage = "http://127.0.0.1:5500/website/landingPage/ladingPage.html";
+const apiBaseBackend = "http://127.0.0.1:8000";
+const apiBaseFrontend = "http://127.0.0.1:5500";
+
+const redirectPage = apiBaseFrontend + "/website/landingPage/ladingPage.html";
 
 // Holt sich die ID aus der URL 
 const serverId = new URLSearchParams(window.location.search).get("id");
@@ -10,7 +12,7 @@ async function getServer() {
         checkServerID();
 
         // Holt sich eine Antwort
-        const response = await fetch(API + "/auth/guilds", {
+        const response = await fetch(apiBaseBackend + "/auth/guilds", {
             credentials: "include"
         });
 
@@ -18,7 +20,7 @@ async function getServer() {
         if (!response.ok) {
             document.getElementById("serverName").textContent = "Bitte anmelden!";
             alert("Deine Session ist abgelaufen. Melde dich erneut an!");
-            window.location.href = landingPage;
+            window.location.href = redirectPage;
             return;
         }
 
@@ -57,7 +59,6 @@ async function getServer() {
         
         // Läd Settings
         getSettings();
-
     } 
     catch (error) 
     {
@@ -76,12 +77,11 @@ async function checkServerID()
 
 async function getSettings()
 {
-    try
-    {    
+    try { 
         checkServerID();
      
         // Sendet Anfrage
-        const response = await fetch(API + "/servers/" + serverId + "/settings",
+        const response = await fetch(apiBaseBackend + "/servers/" + serverId + "/settings",
             {
                 // Methode = Get <= (Holen von Infomationen)
                 method: "GET",
@@ -124,7 +124,7 @@ async function getSettings()
     }
     catch (error)
     {
-        console.log("Es ist ein Fehler aufgetreten!" , error)
+        console.log("Es ist ein Fehler aufgetreten!", error)
     }
 }
 
@@ -151,10 +151,6 @@ async function saveSettings()
     const Input_URLs = document.getElementById("Input_trusted_urls");
     const Input_Join_Roles = document.getElementById("Input_Join_Roles");
 
-
-
-    
-
     // Kleine Hilfe zum Debuggen etc.
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
     console.log("Admin-Roles: " + Input_admin_roles.value);
@@ -172,12 +168,11 @@ async function saveSettings()
     console.log("Input_Support_Role: " + Input_Support_Role.value);
     console.log("Vertraute Links: " + Input_URLs.value);
     console.log("Rollen beim betreten: " + Input_Join_Roles.value);
-
     console.log("Tickets aktiv: " + Number(use_tickets.value) === 1);
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
     
     const response = await fetch(
-        API + "/servers/" + serverId + "/settings",
+        apiBaseBackend + "/servers/" + serverId + "/settings",
         {
             // Method POST = (Senden von Infomationen)
             method: "POST",
@@ -212,7 +207,6 @@ async function saveSettings()
         }
     );
 
-
     const result = await response.json();
 
     console.log("=== SERVER ANTWORT NACH DEM SPEICHERN ===");
@@ -224,7 +218,5 @@ async function saveSettings()
         console.error("Speicherfehler:", result);
         alert("Speichern fehlgeschlagen: " + response.status);
     }
-
 }
-
 getServer();

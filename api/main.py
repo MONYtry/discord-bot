@@ -38,7 +38,7 @@ REDIRECT_URI = os.getenv("DISCORD_REDIRECT_URI")
 SESSION_SECRET = os.getenv("SESSION_SECRET")
 
 FRONTEND_URL = os.getenv("FRONTEND_URL")
-BACKEND_URL = os.getenv("BACKEND_URL")
+BACKEND_URL = os.getenv("BACKEND_URL","http://127.0.0.1:8000")
 
 app = FastAPI()
 
@@ -138,6 +138,12 @@ def status():
             "api_status": "online",
             "message": "Bot ist online"
         }
+
+@app.get("/config")
+def config():
+    return {
+        "apiBase": BACKEND_URL
+    }
 
 @app.get("/stats")
 def stats():
@@ -248,6 +254,11 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
     if code is None:
         raise HTTPException(status_code=400, detail=f"An OAUTH error occurred{error}")
 
+    # Nullpointer Vermeiden
+    if FRONTEND_URL is None:
+        print("Critical error! main.py line 306 NO FRONTEND_URL was found!")
+        raise HTTPException(status_code=500, detail="An internal error occurred, please contact an admin!")
+            
     # Holt den Wert aus der Antwort von Discord
     incoming_state = request.query_params.get("state")
 
@@ -302,6 +313,7 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
             "avatar": user_data.get("avatar"),
             "saved_token": accsess_token
         }
+
         # Schickt Nutzer zurück auf die Startseite 
         return RedirectResponse(url=f"{FRONTEND_URL}/website/landingPage/ladingPage.html")
 
