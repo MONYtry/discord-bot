@@ -1,7 +1,7 @@
 const apiBaseBackend = "http://127.0.0.1:8000";
 const apiBaseFrontend = "http://127.0.0.1:5500";
 
-const redirectPage = apiBaseFrontend + "/website/landingPage/ladingPage.html";
+const redirectPage = apiBaseFrontend + "/website/userServer/landingPage/ladingPage.html";
 
 // Holt sich die ID aus der URL 
 const serverId = new URLSearchParams(window.location.search).get("id");

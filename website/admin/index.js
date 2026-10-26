@@ -102,8 +102,6 @@ async function getGuildsData() {
     }
 }
 
-
-
 async function getCommandsData() {
     const container = document.getElementById("commands-container");
     

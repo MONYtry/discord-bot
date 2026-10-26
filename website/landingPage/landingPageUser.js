@@ -82,7 +82,7 @@ async function loadGuilds() {
         const guildId = guild.id;
         
         card.onclick = () => {
-            window.location.href = `server.html?id=${guildId}`;
+            window.location.href = `../userServer/server.html?id=${guildId}`;
         };
         profile.append(card);
     }
