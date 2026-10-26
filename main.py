@@ -35,10 +35,7 @@ class MyBot(commands.Bot):
         await self.load_extension("cogs.automoderation")
 
         # Geht durch jeden Server auf dem der Bot ist
-        for guild in self.guilds:
-            self.tree.copy_global_to(guild=guild)
-            synced = await self.tree.sync(guild=guild)
-            print(f"✅ {len(synced)} Commands für {guild.name} synchronisiert")
+
 
 
 bot = MyBot(command_prefix="!", 
@@ -57,6 +54,10 @@ async def on_ready():
         f"{placeholder}\n"
         f"Bot went online: {bot.user} \n"
         f"{placeholder}\n")
+    for guild in bot.guilds:
+        bot.tree.copy_global_to(guild=guild)
+        synced = await bot.tree.sync(guild=guild)
+        print(f"✅ {len(synced)} Commands für {guild.name} synchronisiert")
 
 # Falls Token nicht gefunden wird
 if not TOKEN:

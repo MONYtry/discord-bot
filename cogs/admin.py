@@ -21,6 +21,59 @@ class Admin(commands.Cog):
         await helper_cog.logSuccess("Admin.py","Succcsessfully loaded")
 
     # Regisiterung von Command
+    @discord.app_commands.command(name="banlist", description="Gibt Liste von gebannten Nutzern")
+    async def banlist(self, interaction: discord.Interaction):  
+        guild = interaction.guild
+        if guild is None:
+            return
+        
+        bans = []
+        text = ""
+
+        async for i in guild.bans(limit=None):
+            bans.append(i)
+            text += f"• {i.user} (ID: {i.user.id})\n"
+
+        if not bans:
+            await interaction.response.send_message("Keine gebanntent Nutzer", ephemeral=True)
+
+        # text[:1800] <- ersten 1800 Zeichen des Strings
+        await interaction.response.send_message(
+            f"🔨 **Gebannte Nutzer ({len(bans)}):**\n"
+            f"```text\n{text[:1800]}\n```",
+            ephemeral=True)
+        
+    @discord.app_commands.command(name="unbanall", description="Entbannt alle Nutzer")
+    async def unban(self, interaction: discord.Interaction):
+        guild = interaction.guild
+        if guild is None:
+            return
+
+        await interaction.response.defer(ephemeral=True)
+
+        member_id_bans = []
+
+        async for i in guild.bans():
+            user_id = i.user.id
+            member_id_bans.append(user_id)
+
+            user = await self.bot.fetch_user(int(user_id))
+            await guild.unban(user)
+
+        if member_id_bans:
+            await interaction.followup.send(
+                f"✅ Erfolgreich {len(member_id_bans)} entbannt!",
+                ephemeral=True
+            )
+            member_id_bans.clear()
+        else:
+            await interaction.followup.send(
+                "Es wurden keine Mitglieder entbannt!",
+                ephemeral=True
+            )
+
+        
+    # Regisiterung von Command
     @discord.app_commands.command(name="shutdown", description="Fährt den Bot herunter")
     async def shutdown(self, interaction: discord.Interaction):    
         # Geht jede Rolle durch 
@@ -31,7 +84,6 @@ class Admin(commands.Cog):
             if role.id in admin_roles:
                 has_permission = True
                 break
-        
         
         # Wenn der Nutzer keine Rechte hat
         if not has_permission:
