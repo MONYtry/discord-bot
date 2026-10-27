@@ -315,7 +315,7 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         }
 
         # Schickt Nutzer zurück auf die Startseite 
-        return RedirectResponse(url=f"{FRONTEND_URL}/website/landingPage/ladingPage.html")
+        return RedirectResponse(url=f"{FRONTEND_URL}/website/dashboard/dashboard.html")
 
 @app.get("/auth/me")
 async def get_current_user(request: Request):

@@ -34,16 +34,9 @@ async function loadProfile() {
         return;
     }
     const user = await response.json();
+    
     loadGuilds();
     
-    const name = document.createElement("p");
-    name.textContent = "Name: " + user.username;
-
-    const id = document.createElement("p");
-    id.textContent = "Discord-ID: #" + user.id;
-
-    document.getElementById("profile").append(name, id);
-
     if (user.avatar) {
         const avatar = document.createElement("img");
         avatar.className = "avatar-img"
@@ -52,6 +45,16 @@ async function loadProfile() {
         avatar.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
         document.getElementById("profile").append(avatar);
     }
+
+    const name = document.createElement("p");
+    name.textContent = "Name: " + user.username;
+
+    const id = document.createElement("p");
+    id.textContent = "Discord-ID: #" + user.id;
+
+    document.getElementById("profile").append(name, id);
+
+    
 }
 
 async function loadGuilds() {
@@ -66,7 +69,7 @@ async function loadGuilds() {
 
     const guilds = await response.json();
 
-    const profile = document.getElementById("profile");
+    const profile = document.getElementById("guildsElement");
     
     // Geht durch alle Server
     for (const guild of guilds) {

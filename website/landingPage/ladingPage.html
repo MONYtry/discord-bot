@@ -5,9 +5,32 @@
 </head>
 
 <body>
-    <main class="container">
-        <h1 class="title">MONY <span>Discord Bot</span></h1>
+    <!-- Navigationsbar -->
+    <nav class="navbar">
+        <a href="#" class="nav-logo">💜 MONY</a>
         
+        <!-- Navigations-Links -->
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#stats">Statistics</a>
+            <a href="http://127.0.0.1:5500/website/dashboard/dashboard.html">Dashboard</a>
+            <a href="https://discord.com/oauth2/authorize?client_id=1540396012085190836" class="nav-cta">Invite Bot ↗</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        
+        <h1 class="title">MONY <span>Discord Bot</span></h1>
+        <div class="hero-badge">
+            <span class="online-dot"></span>
+            Your Discord experience, upgraded
+        </div>
+        
+        <div class="hero-buttons">
+            <a href="https://discord.com/oauth2/authorize?client_id=1540396012085190836" class="btn primary">🚀 Get Started</a>
+            <a href="#features" class="btn">Explore Features ↓</a>
+        </div>
+
         <section class="stats-section">
         <h2>Trusted by over</h2>
             <div class="stats-card-list">
@@ -51,20 +74,37 @@
                 </div>
             </div>
         </section>
+        
+        <section class="features-section" id="features">
+            <h2>Everything your server needs.</h2>
+            <p class="features-subtitle">
+                Powerful features. Simple experience.
+            </p>
+        
+            <div class="features-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Easy Configuration</h3>
+                    <p>Configure your bot through a clean and intuitive web dashboard.</p>
+                </article>
+        
+                <article class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Server Management</h3>
+                    <p>Keep your community organized with convenient management tools.</p>
+                </article>
+        
+                <article class="feature-card">
+                    <div class="feature-icon">💜</div>
+                    <h3>Built for Communities</h3>
+                    <p>A modern experience designed around your Discord community.</p>
+                </article>
+            </div>
+        </section>
+
+
         <div class="lightbox" id="lightbox" onclick="closeLightbox()">
             <img id="lightbox-img" src="" alt="Große Bildansicht">
-        </div>
-
-        <div id="guilds"></div>
-        <p id="loginState"></p>
-        <div id="profile"></div>
-
-        <div class="actions">
-            <a class="btn primary" href="http://127.0.0.1:8000/auth/login">Login</a>
-            <a class="btn primary" href="https://discord.com/oauth2/authorize?client_id=1540396012085190836">Add Bot</a>
-            
-            <button class="btn" onclick="logout()">Logout</button>
-            <button class="btn" onclick="refreshProfile()">Refresh</button>
         </div>
     </main>
 
@@ -74,7 +114,4 @@
     </footer>
 
     <script src="landingPageUI.js" defer></script>
-    <script src="landingPageUser.js" defer></script>
-
-    
 </body>
