@@ -2,26 +2,6 @@ const stats = "/stats";
 const auth = "/auth"
 const apiBase = "http://127.0.0.1:8000";
 
-async function getData(){
-    try {
-        const response = await fetch(apiBase + stats);
-        if (!response.ok)
-        {
-            console.log("Error");
-        }
-        const result = await response.json();
-
-        const display_server = document.getElementById("used_by_servers");
-        display_server.textContent = result.guild_count;
-
-        const display_userCount = document.getElementById("used_by_users");
-        display_userCount.textContent = result.user_count;
-    }
-    catch (error)
-    {
-        console.log("Error:", error);
-    }
-}
 
 async function loadProfile() {
     const response = await fetch(apiBase + auth + "/me", {
@@ -33,10 +13,12 @@ async function loadProfile() {
         console.log("Du bist nicht Angemeldet, bitte melde dich zuerst an!");
         return;
     }
+
     const user = await response.json();
-    
     loadGuilds();
     
+    console.log(user);
+
     if (user.avatar) {
         const avatar = document.createElement("img");
         avatar.className = "avatar-img"
@@ -53,9 +35,8 @@ async function loadProfile() {
     id.textContent = "Discord-ID: #" + user.id;
 
     document.getElementById("profile").append(name, id);
-
-    
 }
+
 
 async function loadGuilds() {
     const response = await fetch(apiBase + auth + "/guilds", {
@@ -98,13 +79,12 @@ async function logout() {
     document.getElementById("profile").replaceChildren();
 }
 
-
 async function refreshProfile() {
     const profile = document.getElementById("profile");
 
     profile.replaceChildren(); // Alten Inhalt löschen
 
     await loadProfile(); 
-    await getData();     
 }
+
 refreshProfile();

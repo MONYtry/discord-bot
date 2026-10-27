@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     background: #11111b;
@@ -5,7 +9,14 @@ body {
     margin: 0;
     padding: 20px;
 }
-
+.avatar-img{
+    margin-top: 20px;
+    background-color: #11111b;
+    border-radius: 15px;
+    border-style: solid;
+    border-color: #6366f1;
+    border-width: 2px;
+}
 .actions {
     display: flex;
     justify-content: center;
@@ -65,13 +76,25 @@ body {
     color: #a5b4fc;
 }
 
-#profile {
-    background-color: #9333ea;
+#profile {    
+    width: 20%;
+    height: 20%;
+
+    /* Eine Zeile die mich nerven gekostet hat haha */
+    /* Durch margin: 0 auto; wird Zentriert */
+    margin: 0 auto;
+
+    background-color: #1a192b;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #9d9ef9;
+    border-width: 2px;
+    
 }
 
 .guildsElement{

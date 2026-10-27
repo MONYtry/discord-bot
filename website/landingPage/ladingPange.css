@@ -135,7 +135,6 @@ body {
     margin: 0 auto;
 }
 
-
 .avatar-img{
     background-color: #192e75;
     
@@ -177,7 +176,6 @@ body {
     color: #a1a1aa;
     margin: 18px 0 45px;
 }
-
 
 .stat-card {
     padding: 32px 20px;
@@ -221,13 +219,38 @@ body {
     overflow-wrap: anywhere;
 }
 
-
 .server-card {
     margin: 25px 0;
     background-color: #0b0b14;
 }
 
+.btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border: 1px solid #383850;
+    border-radius: 10px;
+    background: #202033;
+    color: white;
+    font-size: 15px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
 
+.btn:hover {
+    background: #343450;
+    transform: scale(1.04);
+}
+
+.btn.primary {
+    border: none;
+    background: linear-gradient(135deg, #9333ea, #6366f1);
+}
+
+.btn.primary:hover {
+    box-shadow: 0 4px 18px #8b5cf655;
+    transform: translateY(-2px);
+}
 
 footer {
     margin-top: 30px;
@@ -242,7 +265,6 @@ footer a {
     text-decoration: none;
     font-weight: bold;
 }
-
 
 html {
     scroll-behavior: smooth;
