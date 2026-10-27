@@ -48,10 +48,11 @@ For example you could change:
 # 🖼️ Showcase
 
 <div align="center">
-  <img src="/website/Images/Dashboard1" width="49%" alt="Landing Page">
-  <img src="https://via.placeholder.com/900x500?text=Dashboard" width="49%" alt="Dashboard">
-  <br><br>
-  <img src="https://via.placeholder.com/1200x600?text=Ticket+System" width="80%" alt="Ticket System">
+    <img src="/website/Images/TicketEmbed.png" width="49%" height="500" alt="Ticket System">
+    <img src="/website/Images/LandingPageUp.png" width="49%" alt="Dashboard">
+<br><br>
+    <img src="/website/Images/Dashboard1" width="49%" alt="Landing Page">
+   <img src="/website/Images/Dashboard1" width="49%" alt="Landing Page">
 </div>
 
 
