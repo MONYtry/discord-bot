@@ -9,11 +9,11 @@
 
 
 # Overview
-I've spent the last 3 Weeks to learn how to create a Discord bot. 
+I've spent the last three Weeks to learn how to create a Discord bot. 
 Only because i am sick of being restricted or having to pay just to use some small features and thats why I share it here!
 
 # Project
-This project is based on Python3. It has an Python3 based Backend (Database, API) other then the front end because it is written in Vanilla Web-Languages (HTML, CSS and JS)
+This project is based on Python3. It has a Python-based Backend (Database, API) other then the front end because it is written in Vanilla Web-Languages (HTML, CSS and JS)
 For security reasons I'v had to learn OAUTH and I integrated it in this project.
 You can take a look at it in /api/main.py
 
@@ -35,7 +35,7 @@ You can take a look at it in /api/main.py
 ```
 # ⚙️ Configuration
 You can change the settings of the bot through the Frontend.
-But you can only do that if you'r the owner of the Server.
+But you can only do that if you're the owner of the Server.
 
 For example you could change:
 - Welcome Channel
@@ -44,15 +44,30 @@ For example you could change:
 - Enable / Disable Ticketsystem
 - and so much more!
 
+# 🛡️OAuth2 Login
+Security is important, so I learned how to implement OAuth2 authentication with Discord.
+Basically, the process works as follows:
+- We redirect the user to Discord's authorization page.
+- The user logs in and authorizes the requested permissions.
+- Discord redirects the user back to our application with an authorization code.
+- Our backend exchanges this code for an access token.
+- We use the token to verify the user's identity and retrieve their Discord information.
+- This allows us to authenticate users securely without handling their Discord passwords ourselves.
 
 # 🖼️ Showcase
-
 <div align="center">
-    <img src="/website/Images/TicketEmbed.png" width="49%" height="500" alt="Ticket System">
+    <h1>Ticket</h1>
+    <img src="/website/Images/TicketEmbed.png" width="49%" height="500" alt="Ticket System">#
+    <h1>Landingpage</h1>
     <img src="/website/Images/LandingPageUp.png" width="49%" alt="Dashboard">
 <br><br>
-    <img src="/website/Images/Dashboard1" width="49%" alt="Landing Page">
-   <img src="/website/Images/Dashboard1" width="49%" alt="Landing Page">
+    <h1>Dashboard</h1>
+    <img src="/website/Images/Dashboard1.png" width="49%" alt="Landing Page">
+    <img src="/website/Images/Dashboard2.png" width="49%" alt="Landing Page">
+<br><br>
+    <h1>Member Count (Chart.js)</h1>
+    <img src="/website/Images/ChartOnly.png" width="49%" alt="Landing Page">
+   <img src="/website/Images/ConfigMitChart.png" width="49%" alt="Landing Page">
 </div>
 
 
@@ -87,8 +102,12 @@ git clone https://github.com/MONYtry/discord-bot.git
 
 🏗️ 2. Create an .env File
 ```
-Create an file (.env) and paste in placeholder variables after that change the Values to your needs!
+Create an file (.env) and paste in placeholder variables after that change the Values to you're needs!
+Example: DISCORD_TOKEN=your_token_here
 ```
+> [!CAUTION]
+> Do never share the .env file, your data will be stolen
+
 🛜 3. Download the requirements
 ```
 pip install -r requirements.txt
@@ -123,8 +142,8 @@ pip install -r requirements.txt
 # 👨‍💻 About-me
 As I'm writing this I'm 15 yrs old and this is my first time building an project with an Frontend and Backend.
 I know some parts of the Code aren't perfect to the last bit, but I think it is good to make mistakes because it is an part of learning and growing.
-I did spent 3 Weeks learning all of this (API, SQLLITE3 Databases and so much more) and I'm pretty proud.
-If you run into any bugs or you just have an oppinion what to add, i would be happy to help :)
+I spent 3 Weeks learning all of this (API, SQLLITE3 Databases and so much more) and I'm pretty proud.
+If you run into any bugs or you just have an opinion what to add, i would be happy to help :)
 
 
 ---
