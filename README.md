@@ -1,163 +1,133 @@
-# 🤖 Discord Bot
+# Discordbot
 
-<p align="center">
-  A powerful Discord management platform with moderation, support tickets, and a web dashboard.
-</p>
+![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white) 
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-563d7c?&style=flat&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat&logo=sqlite&logoColor=white)
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Discord.py](https://img.shields.io/badge/Discord.py-5865F2?style=for-the-badge&logo=discord&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![License](https://img.shields.io/badge/License-FREE-gray?style=for-the-badge)
----
 
-## ✨ Overview
+# Overview
+I've spent the last 3 Weeks to learn how to create a Discord bot. 
+Only because i am sick of being restricted or having to pay just to use some small features and thats why I share it here!
 
-This project contains a **Python-based Discord bot** combined with a **FastAPI backend** and a web-based dashboard.
+# Project
+This project is based on Python3. It has an Python3 based Backend (Database, API) other then the front end because it is written in Vanilla Web-Languages (HTML, CSS and JS)
+For security reasons I'v had to learn OAUTH and I integrated it in this project.
+You can take a look at it in /api/main.py
 
-The platform allows server administrators to manage moderation, support tickets, community features, and guild-specific settings through Discord commands and a browser-based interface.
+# ℹ️ Built-in Features:
+```
+- 👋 Welcome-Messages
+- ✅ Reactionroles
+- 🎫 Ticket-System
+- ♨️ Apply-Ticket-System
+- 💥 Timeout-Command
+- 🍻 Unban-All-Command
+- ℹ️ Ban-List-Command
+- 🌐 Custom-Embed-Command
+- 🧹 Clear-Messages-Command
+- 🛡️ Automoderation
+- 📝 Clean Logging
+- 🔧 Join-roles
 
-## 🚀 Features
+```
+# ⚙️ Configuration
+You can change the settings of the bot through the Frontend.
+But you can only do that if you'r the owner of the Server.
 
-- 🛡️ **Moderation** — Administrative tools and moderation commands.
-- 🤖 **Automoderation** — Automated server management and moderation features.
-- 🎫 **Ticket System** — Support tickets and application workflows.
-- 👋 **Welcome & Leave** — Member join and leave handling.
-- 🎭 **Reaction Roles** — Role assignment through reactions.
-- 📋 **Logging** — Configurable server event and moderation logs.
-- 📊 **Bot Statistics** — Status information and server statistics.
-- 🌐 **Web Dashboard** — Manage server settings through a web interface.
-- 🔐 **Discord OAuth2** — Secure Discord-based authentication flow.
-- 💾 **Database** — Persistent guild settings and ticket-related data.
+For example you could change:
+- Welcome Channel
+- Join-Roles
+- Support-Roles
+- Enable / Disable Ticketsystem
+- and so much more!
 
-## 🏗️ Architecture
 
-```text
-Discord Management Platform
-│
-├── main.py              # Bot entry point and local API server
-├── api/
-│   ├── main.py           # FastAPI routes and OAuth integration
-│   └── database.py       # Database operations
-├── cogs/
-│   ├── admin              # Administration commands
-│   ├── moderation         # Moderation features
-│   ├── automoderation     # Automated moderation
-│   ├── support            # Support and ticket workflows
-│   └── ...                # Additional bot modules
-└── website/
-    ├── HTML               # Website structure
-    ├── CSS                # Styling
-    └── JavaScript         # Dashboard and authentication UI
+# 🖼️ Showcase
+
+<div align="center">
+  <img src="/website/Images/test" width="49%" alt="Landing Page">
+  <img src="https://via.placeholder.com/900x500?text=Dashboard" width="49%" alt="Dashboard">
+  <br><br>
+  <img src="https://via.placeholder.com/1200x600?text=Ticket+System" width="80%" alt="Ticket System">
+</div>
+
+
+# 📖Libraries
+The Project uses Libraries as:
+- ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat&logo=sqlite&logoColor=white) | Database 
+- **CHART.JS** | The Graph (Chart) in the Dashboard
+- ![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white)  | The main functions (Discordbot)
+- **FASTAPI** | API that gets used across Backend & Frontend
+
+# 📘Techstack
+
+Stack | Usage 
+--- | --- |
+`FASTAPI` | API
+`SQLITE` | Database
+`CHART.JS` | Chart in Dashboard
+`DISCORD` | Discord Function
+`JS` | Frontend
+`PYTHON3`  | Backend
+
+> [!NOTE]
+> I went with this specific Tech-Stack because i already had some experience with Python3 and Vanilla-Web (HTML, CSS and JS)
+
+# Setup
+It isn't complicated to setup the Discordbot and it only takes 3 steps!
+
+⏬ 1.Clone the Repository
+```
+git clone https://github.com/MONYtry/discord-bot.git
 ```
 
-## 🛠️ Tech Stack
-
-| Technology | Purpose |
-|---|---|
-| 🐍 Python | Core application and bot logic |
-| 💬 Discord API | Server interaction and commands |
-| ⚡ FastAPI | Backend API |
-| 🗄️ SQLite | Persistent data storage |
-| 🌐 HTML, CSS & JavaScript | Web dashboard and frontend |
-| 🔐 Discord OAuth2 | User authentication |
-
-## 📦 Installation
-
-### 1. Clone the repository
-
-```bash
-git clone <discord-bot>
-cd <discord-bot>
+🏗️ 2. Create an .env File
 ```
-
-### 2. Create a virtual environment
-
-```bash
-python -m venv .venv
+Create an file (.env) and paste in placeholder variables after that change the Values to your needs!
 ```
-
-Activate it:
-
-**Windows**
-```bash
-.venv\Scripts\activate
+🛜 3. Download the requirements
 ```
-
-### 3. Install dependencies
-
-Use the `requirements.txt` file:
-
-```bash
 pip install -r requirements.txt
 ```
 
-Otherwise, it wont work without a bunch of errors 
-
-### 4. Configure environment variables
-
-Create a `.env` file in the project root and configure the credentials required by your bot and web backend.
-
-Example:
-
-```env
-DISCORD_TOKEN=your_discord_bot_token
-DISCORD_CLIENT_ID=your_discord_client_id
-DISCORD_CLIENT_SECRET=your_discord_client_secret
-DISCORD_REDIRECT_URI=http://localhost:8000/auth/callback
+🍻 Have fun!
+```
+🚩 If you run into any bugs consider creating an issue so i can fix them 
 ```
 
-> ⚠️ The variable names and redirect URI must match your actual implementation. Never commit your `.env` file or expose your bot token. (Consider using an .gitignore to prevent problems)
-
-### 5. Start the application
-
-```bash
-python main.py
+# 🏗️ Structure
+```
+├──  website
+│   ├── admin
+│   ├── dashboard
+│   ├── landingPage
+│   └── userServer
+├──  cogs
+│   ├── support.py
+│   ├── automoderation.py
+│   ├── join.py
+│   └── and more..
+├──  api
+│  ├── database.py
+│  ├── main.py
+│  └── tracking.py
+├──  config.py
+├──  main.py
+└──  requirements.txt
 ```
 
-The bot and local FastAPI server are started through the main entry point.
+# 👨‍💻 About-me
+As I'm writing this I'm 15 yrs old and this is my first time building an project with an Frontend and Backend.
+I know some parts of the Code aren't perfect to the last bit, but I think it is good to make mistakes because it is an part of learning and growing.
+I did spent 3 Weeks learning all of this (API, SQLLITE3 Databases and so much more) and I'm pretty proud.
+If you run into any bugs or you just have an oppinion what to add, i would be happy to help :)
 
-> 💡 Check your configuration and project dependencies before launching the application.
 
-## ⚙️ Configuration
-
-The platform supports configurable guild settings, including:
-
-- 🎫 Support and ticket channels
-- 📢 Status channels
-- 📝 Logging channels
-- 🛠️ Ticket options
-- 🏠 Guild-specific settings
-
-OAuth credentials, API configuration, and Discord permissions must be configured correctly for all features to work.
-
-## 🔐 Security
-
-- 🔒 Keep bot tokens and OAuth secrets private.
-- 🚫 Never commit `.env` files or other sensitive credentials.
-- 🛡️ Validate permissions before allowing administrative actions.
-- 🌐 Configure OAuth redirect URLs correctly.
-- 📁 Exclude local databases and sensitive configuration files from version control when appropriate.
-
-## 🗺️ Roadmap
-
-- [ ] 📊 Expand dashboard statistics
-- [ ] 🎨 Improve dashboard UI and user experience
-- [ ] 🛡️ Extend moderation configuration
-- [ ] 📋 Add more logging options
-- [ ] ⚡ Improve API performance and reliability
-
-## 🤝 Contributing
-
-Contributions, bug reports, and feature suggestions are welcome.
-
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit your changes.
-4. Open a pull request.
-
+---
 
 <p align="center">
-  💜 Built with Python, Discord, FastAPI and alot of Hearth by <a href="https://github.com/Monytry"><b>MONYtry</b></a>
+  Made with ❤️ by <a href="https://github.com/MONYtry">MONY</a>
 </p>
