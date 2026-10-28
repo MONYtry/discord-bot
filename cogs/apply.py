@@ -41,11 +41,13 @@ class TicketView(discord.ui.View):
         if member:
             print(f"Ticket erstellt von: {member.name}")
 
-        channel_id = get_value_channel(interaction.guild_id, "SUPPORT_CHANNEL_LOG_ID")
-        log_channel = interaction.client.get_channel(channel_id)
+        log_channel_id = get_value_channel(interaction.guild_id, "SUPPORT_CHANNEL_LOG_ID")
+        log_channel = interaction.client.get_channel(log_channel_id)
+
         if log_channel is None:
             await helper_cog.logError("apply.py", "Support-Log-Channel nicht gefunden!")
             return
+        
         await helper_cog.send_embed(log_channel,"TICKET CLOSED",
                             f"User: {member.mention} \n"
                             f"Datum: {datetime.datetime.now()} \n"
@@ -55,9 +57,11 @@ class TicketView(discord.ui.View):
         await helper_cog.logMessage("apply.py",
                                     f"Ticket was closed \n" 
                                     f"(Ticket creator:{member} | Close command sender: {interaction.user})")
+        
         # Wartet 3 Sekunden
         await asyncio.sleep(3)
         close_ticket(interaction.channel.id,0)
+        
         # Löscht den Channel
         await interaction.channel.delete()
 
@@ -101,24 +105,19 @@ class applyDropDown(commands.Cog):
 
         for guild in self.bot.guilds:
             ticket_enabled = get_ticket_setting(guild.id)
+
             if not ticket_enabled:
-                #await helper_cog.logSuccess("support.py",f"Auf {guild.name} sind Support-Tickets deaktivert!")
                 continue
-            #await helper_cog.logMessage("apply.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
-            await helper_cog.logMessage("apply.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
             
             channel_id = get_value_channel(guild.id, "apply_channel_id")
             if not channel_id:
-                await helper_cog.logError("apply.py", f"{guild.name}: No Apply-Channel-ID was found!")
                 continue
             
             channel = self.bot.get_channel(channel_id)
             if not channel:
                 await helper_cog.logError("apply.py", f"{guild.name}: No Apply-Channel was found!")
                 continue
-            
-            await helper_cog.logMessage("apply.py", f"{guild.name}: {channel}")
-            
+                        
             embed = discord.Embed(
                 title=TICKET_PREWVIEW_EMBED_TITEL,
                 description=TICKET_PREVIEW_MESSAGE,
@@ -214,7 +213,6 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
         for role_id in role_ids:
         # Holt sich die Rolle
             role = guild.get_role(role_id)
-            print(f"Role ID: {role_id} | Role: {role}")
                     
             # Falls Rolle exsitiert
             if role is not None:

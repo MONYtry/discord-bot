@@ -28,29 +28,12 @@ class DropDownReactionRoles(commands.Cog):
     # Erstellt Command
     @discord.app_commands.command(name="senddropdown", description="Sendet ein Auswahlmenü für Rollen")
     async def senddropdown(self, interaction: discord.Interaction):
-
-        team_roles = []
-        role_ids = get_role_id_list(interaction.guild_id,"supporting_roles")
-        if role_ids is None:
-            print("Es wurden keine Rollen gefunden reactionroles.py")
-        # Geht durch jede Rolle die in Support eingetragen ist 
-        for role_id in role_ids:
-            # Holt sich die Rolle
-            role = interaction.guild.get_role(role_id)
-
-            # Falls Rolle exsitiert
-            if role is not None:
-                team_roles.append(role)
-
-        if not team_roles:
-            await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!", ephemeral=True)
+        helper_cog = self.bot.get_cog("Helper")
+        if helper_cog is None:
+            await interaction.response.send_message("Etwas ist schief gelaufen, bitte versuche es in kürze erneut!", ephemeral=True)
             return
         
-        # Prüft ob der Nutzer eine Rolle hat welche Rechte dazu hat
-        has_permission = any(role.id in get_role_id_list(interaction.guild_id,"admin_perm_roles") for role in interaction.user.roles)
-                
-        if not has_permission:
-            await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
+        if not await helper_cog.get_permission(interaction, "admin_perm_roles"):
             return
         await interaction.response.send_message(view=RoleView())
 
@@ -88,7 +71,7 @@ class Reactionroles(discord.ui.Select):
         role = interaction.guild.get_role(int(role_id))
 
         if role is None:
-            await interaction.response.send_message(f"Rolle existiert nicht auf diesem Server! [#{role}]", ephemeral=True)
+            await interaction.response.send_message(f"Rolle existiert nicht auf diesem Server! [#{role_id}]", ephemeral=True)
             return
         
         # Formatiert den Inhalt der Variable

@@ -23,6 +23,15 @@ class Admin(commands.Cog):
     # Regisiterung von Command
     @discord.app_commands.command(name="banlist", description="Gibt Liste von gebannten Nutzern")
     async def banlist(self, interaction: discord.Interaction):  
+        helper_cog = self.bot.get_cog("Helper")
+        if helper_cog is None:
+            await interaction.response.send_message("Etwas ist schief gelaufen, bitte versuche es in kürze erneut!", ephemeral=True)
+            return
+        
+        if not await helper_cog.get_permission(interaction, "admin_perm_roles"):
+            return
+
+        
         guild = interaction.guild
         if guild is None:
             return
@@ -44,6 +53,14 @@ class Admin(commands.Cog):
 
     @discord.app_commands.command(name="unbanall", description="Entbannt alle Nutzer")
     async def unban(self, interaction: discord.Interaction):
+        helper_cog = self.bot.get_cog("Helper")
+        if helper_cog is None:
+            await interaction.response.send_message("Etwas ist schief gelaufen, bitte versuche es in kürze erneut!", ephemeral=True)
+            return
+        
+        if not await helper_cog.get_permission(interaction, "admin_perm_roles"):
+            return
+        
         guild = interaction.guild
         if guild is None:
             return
@@ -68,26 +85,19 @@ class Admin(commands.Cog):
     # Regisiterung von Command
     @discord.app_commands.command(name="shutdown", description="Fährt den Bot herunter")
     async def shutdown(self, interaction: discord.Interaction):    
-        # Geht jede Rolle durch 
-        admin_roles = get_role_id_list(interaction.guild.id,"admin_perm_roles")
-
-        has_permission = False
-        for role in interaction.user.roles:
-            if role.id in admin_roles:
-                has_permission = True
-                break
-
-        # Wenn der Nutzer keine Rechte hat
-        if not has_permission:
-            await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
+        helper_cog = self.bot.get_cog("Helper")
+        if helper_cog is None:
+            await interaction.response.send_message("Etwas ist schief gelaufen, bitte versuche es in kürze erneut!", ephemeral=True)
+            return
+        
+        if not await helper_cog.get_permission(interaction, "admin_perm_roles"):
             return
 
         # Holt sich die Module anhand der Class-Namen
         status_cog = self.bot.get_cog("Status")
         clear_cog = self.bot.get_cog("Clear")
-        helper_cog = self.bot.get_cog("Helper")
 
-        if status_cog is None or clear_cog is None or helper_cog is None:
+        if status_cog is None or clear_cog is None:
             await helper_cog.logMessage("admin.py","Es ist ein Fehler bei dem Laden der Hilfs-Modulen aufgetreten")
             await interaction.response.send_message("Es ist ein interner Fehler aufgetreten (Kontaktiere einen Admin)")
             return
@@ -97,12 +107,10 @@ class Admin(commands.Cog):
 
         channel_id = get_value_channel(interaction.guild.id, "BOT_STATUS_CHANNEL_ID")
         if channel_id is None:
-            print("Keine Id gefunden zum shutdownen!")
             return
 
         channel = self.bot.get_channel(channel_id)
         if channel is None:
-            print(f"Fehler Channel: {channel} wurde nicht gefunden (None)")
             return        
 
         # Räumt den Channel auf danach kommt der Embed

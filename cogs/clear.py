@@ -1,7 +1,6 @@
 
 import discord
 from discord.ext import commands
-from config import NO_RIGHTS_MESSAGE
 
 class Clear(commands.Cog):
     def __init__(self, bot):
@@ -24,11 +23,13 @@ class Clear(commands.Cog):
     # Fügt den Amount Platzhalter hinzu & auch Beschreibung
     @discord.app_commands.describe(amount="Anzahl der Nachrichten (1–100)")
     async def clear(self, interaction: discord.Interaction, amount: discord.app_commands.Range[int, 1, 100]):
-        # Prüft ob der Nutzer eine Rolle hat welche Rechte dazu hat
-        #has_permission = any(role.id in EMBED_ALLOWED_ROLE_IDS for role in interaction.user.roles)
-        #if not has_permission:
-         #   await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
-          #  return
+        helper_cog = self.bot.get_cog("Helper")
+        if helper_cog is None:
+            await interaction.response.send_message("Etwas ist schief gelaufen, bitte versuche es in kürze erneut!", ephemeral=True)
+            return
+                
+        if not await helper_cog.get_permission(interaction, "admin_perm_roles"):
+            return
 
         # Sagt das eine Aufgabe gestartet wurde
         await interaction.response.defer(ephemeral=True)
@@ -38,14 +39,6 @@ class Clear(commands.Cog):
         
         # Sobald Aufgabe erledigt ist <- Nachricht senden
         await interaction.followup.send(f"🗑️ {len(deleted)} Nachrichten gelöscht!", ephemeral=True)
-
-    async def clear_channel(self,channel, amount):
-        if channel is not None:
-            try:
-                deleted = await channel.purge(limit=amount)
-                print(f"Es wurden {len(deleted)}-Nachrichten gelöscht!")
-            except:
-                print("Fehler")
             
 async def setup(bot):
     await bot.add_cog(Clear(bot))

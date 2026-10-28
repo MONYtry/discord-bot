@@ -1,6 +1,8 @@
 from discord.ext import commands
 import discord
 import datetime
+from api.main import get_role_id_list
+from config import NO_RIGHTS_MESSAGE
 
 class Helper(commands.Cog):
     def __init__(self, bot):
@@ -27,7 +29,20 @@ class Helper(commands.Cog):
         # Sends the Embed in the Channel
         await channel.send(embed=embed)
 
-    
+    async def get_permission(self,interaction, role_perm):
+        # Geht jede Rolle durch 
+        admin_roles = get_role_id_list(interaction.guild.id,role_perm)
+        
+        if admin_roles is None:
+            return False
+        
+        for role in interaction.user.roles:
+            if role.id in admin_roles:
+                return True
+
+        # Wenn der Nutzer keine Rechte hat
+        await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
+        return False
 
     async def logError(self,fileName,message):
         RED = "\033[91m"

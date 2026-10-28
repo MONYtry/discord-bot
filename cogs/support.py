@@ -79,7 +79,10 @@ class SupportCategories(discord.ui.Select):
         guild = interaction.guild
         member = interaction.user
         helper_cog = interaction.client.get_cog("Helper")
-
+        
+        if helper_cog is None:
+            return
+        
         # Rollen, die den Ticket-Channel sehen dürfen
         role_ids = get_role_id_list(interaction.guild_id,"supporting_roles")
         

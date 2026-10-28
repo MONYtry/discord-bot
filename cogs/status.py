@@ -19,6 +19,10 @@ class Status(commands.Cog):
                 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
+        
+        if helper_cog is None:
+            return
+        
         await helper_cog.logSuccess("status.py","Succcsessfully loaded")
 
         self.is_online = True

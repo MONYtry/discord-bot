@@ -4,7 +4,6 @@ import asyncio
 import discord
 from discord.ext import commands
 
-
 class Timer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -24,9 +23,9 @@ class Timer(commands.Cog):
         duration: int,
         reason: str,
     ):
+        
         helper_cog = self.bot.get_cog("Helper")
-        if helper_cog is None:
-            print("Helper_Cog wurde nicht richtig geladen")
+        if not await helper_cog.get_permission(interaction, "admin_perm_roles"):
             return
         
         time_units = {
@@ -50,7 +49,16 @@ class Timer(commands.Cog):
         await asyncio.sleep(dauer_zeit.total_seconds())
 
         # Nachricht an den User 
-        await interaction.followup.send(await helper_cog.send_embed(interaction.channel,"Timer abgelaufen",f"🔔 Hey {interaction.user.mention},\n dein Timer ist abgelaufen! \n Grund: {reason}", discord.Color.blue()))
+        await interaction.followup.send(
+            await helper_cog.send_embed(
+                interaction.channel,
+                "⏰ Timer abgelaufen!",
+                f"🔔 Hey {interaction.user.mention}!\n\n"
+                f"Dein Timer ist abgelaufen.\n\n"
+                f"📝 **Grund:** {reason}",
+                discord.Color.blue()
+            )
+        )
 
 async def setup(bot):
     await bot.add_cog(Timer(bot))
