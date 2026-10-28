@@ -49,7 +49,6 @@ async function loadGuilds() {
     }
 
     const guilds = await response.json();
-
     const profile = document.getElementById("guildsElement");
     
     // Geht durch alle Server
@@ -81,8 +80,11 @@ async function logout() {
 
 async function refreshProfile() {
     const profile = document.getElementById("profile");
-
-    profile.replaceChildren(); // Alten Inhalt löschen
+    const guilds = document.getElementById("guildsElement");
+    
+    // Cleart den gesamten Inhalt
+    guilds.replaceChildren();
+    profile.replaceChildren();
 
     await loadProfile(); 
 }
