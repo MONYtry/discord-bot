@@ -68,39 +68,23 @@ class Embed(commands.Cog):
 
         self.already_logged = True
         helper_cog = self.bot.get_cog("Helper")
-        await helper_cog.logSuccess("embed.py","Succcsessfully loaded") 
+        
+        if helper_cog is not None:
+            await helper_cog.logSuccess("embed.py","Succcsessfully loaded") 
 
     # Erstellt Command 
     @discord.app_commands.command(name="sendembed", description="Öffnet ein Formular zum Erstellen eines Embeds")
     async def sendembed(self, interaction: discord.Interaction):
         helper_cog = self.bot.get_cog("Helper")
         if helper_cog is None:
-            print("Helpercog wasn't found embed.py")
-
-        # Setzt Leere Rolle 
-        team_roles = []
-        role_ids = get_role_id_list(interaction.guild_id,"supporting_roles")
-
-        # Geht durch jede Rolle die in Support eingetragen ist 
-        for role_id in role_ids:
-            # Holt sich die Rolle
-            role = interaction.guild.get_role(role_id)
-            await helper_cog.logMessage("embed.py",f"{interaction.guild.name} Role ID: {role_id} | Role: {role}")
-                    
-            # Falls Rolle exsitiert
-            if role is not None:
-                team_roles.append(role)
-
-        if not team_roles:
-            await helper_cog.logError("support.py","roles wasn't found!")
-            await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!", ephemeral=True)
+            await interaction.response.send_message("Etwas ist schief gelaufen, bitte versuche es in kürze erneut!", ephemeral=True)
             return
         
-        # Prüft ob der Nutzer eine Rolle hat welche Rechte dazu hat
-        has_permission = any(role.id in get_role_id_list(interaction.guild_id,"embed_allowed_roles") for role in interaction.user.roles)
-        if not has_permission:
-            await interaction.response.send_message(NO_RIGHTS_MESSAGE, ephemeral=True)
+        helper_cog = self.bot.get_cog("Helper")
+            
+        if not await helper_cog.get_permission(interaction, "embed_allowed_roles"):
             return
+    
         # Sendet den PopUp
         await interaction.response.send_modal(EmbedModal())
 

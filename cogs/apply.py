@@ -68,11 +68,11 @@ class TicketView(discord.ui.View):
 class ApplyCategories(discord.ui.Select):
     def __init__(self):
         # Setzt Options
-        options = [
-            discord.SelectOption(label=data["label"], emoji=data["emoji"], value=key)
-            # Geht durch alle SUPPORT_CATEGORIES_OPTIONS  
-            for key, data in APPLY_CATEGORIES_OPTIONS.items()
-        ]
+        options = []
+        
+        for key, data in APPLY_CATEGORIES_OPTIONS.items():
+            options.append( discord.SelectOption(label=data["label"], emoji=data["emoji"], value=key))
+
         # Setzt applyDropDown Settings
         super().__init__(
             placeholder="Wähle ein Ticket aus!",
@@ -217,8 +217,7 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
             # Falls Rolle exsitiert
             if role is not None:
                 team_roles.append(role)
-        
-        
+
         if not team_roles:
             await helper_cog.logError("apply.py","roles wasn't found!")
             await interaction.response.send_message("Es ist ein Fehler beim erstellen des Tickets aufgetreten!")
@@ -267,6 +266,7 @@ class Formular(discord.ui.Modal, title="Bewerbung"):
 
         channel_id = get_value_channel(interaction.guild_id, "SUPPORT_CHANNEL_LOG_ID")
         log_channel = interaction.client.get_channel(channel_id)
+
         if log_channel is None:
             await helper_cog.logError("apply.py", "Support-Log-Channel nicht gefunden!")
             return

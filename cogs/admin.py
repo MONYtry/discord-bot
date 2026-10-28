@@ -1,8 +1,7 @@
 
 import discord
 from discord.ext import commands
-from config import NO_RIGHTS_MESSAGE
-from api.database import get_value_channel, get_role_id_list
+from api.database import get_value_channel
 
 class Admin(commands.Cog):
     # Wird direkt aufgerufen
@@ -98,7 +97,6 @@ class Admin(commands.Cog):
         clear_cog = self.bot.get_cog("Clear")
 
         if status_cog is None or clear_cog is None:
-            await helper_cog.logMessage("admin.py","Es ist ein Fehler bei dem Laden der Hilfs-Modulen aufgetreten")
             await interaction.response.send_message("Es ist ein interner Fehler aufgetreten (Kontaktiere einen Admin)")
             return
 

@@ -38,8 +38,6 @@ class MyBot(commands.Bot):
         await self.load_extension("cogs.automoderation")
         await self.load_extension("cogs.timer")
 
-
-
 bot = MyBot(command_prefix="!", 
             intents=intents,
             activity=discord.Activity(

@@ -86,9 +86,6 @@ class SupportCategories(discord.ui.Select):
         # Rollen, die den Ticket-Channel sehen dürfen
         role_ids = get_role_id_list(interaction.guild_id,"supporting_roles")
         
-        await helper_cog.logMessage("support.py",f"Guild ID: {interaction.guild_id}")
-        await helper_cog.logMessage("support.py",f"Role IDs: {repr(role_ids)}")
-        
         # Setzt Leere Rolle 
         team_roles = []
 
@@ -96,7 +93,6 @@ class SupportCategories(discord.ui.Select):
         for role_id in role_ids:
             # Holt sich die Rolle
             role = guild.get_role(role_id)
-            print(f"Role ID: {role_id} | Role: {role}")
             
             # Falls Rolle exsitiert
             if role is not None:
@@ -119,7 +115,6 @@ class SupportCategories(discord.ui.Select):
         
         # Falls Kategorie nicht gefunden wurde
         if category is None:
-            await helper_cog.logError("support.py","Category wasn't found!")
             await interaction.response.send_message("Kategorie nicht gefunden!", ephemeral=True)
             return
         
@@ -134,8 +129,7 @@ class SupportCategories(discord.ui.Select):
         log_channel = interaction.client.get_channel(log_channel_id)
         
         if log_channel is None:
-            await helper_cog.logError("support.py", f"Log Channel wurde nicht gefunden")
-            await interaction.response.send_message("Es ist ein Fehler aufgetreten! (Kontaktiere einen Administrator)",ephemeral=True)
+            await interaction.response.send_message("Es wurde kein Log-Channel gefunden! (Kontaktiere einen Administrator)",ephemeral=True)
             return
         
         # Rechte für den Ticket-Channel
@@ -169,7 +163,6 @@ class SupportCategories(discord.ui.Select):
 
         # Antwort in dem Ticket-Channel
         await interaction.response.send_message(f"Ticket erstellt: {channel.mention}", ephemeral=True)        
-        await helper_cog.logMessage("support.py",f"New Ticket (Server-Name: {interaction.guild.name} | User:{member.name})")
 
         # Sendet einen Ping an die Ticket-Rollen
         if team_roles:
@@ -205,10 +198,8 @@ class DropDown(commands.Cog):
         for guild in self.bot.guilds:
             ticket_enabled = get_ticket_setting(guild.id)
             if not ticket_enabled:
-                #await helper_cog.logError("support.py",f"Auf {guild.name} sind Support-Tickets deaktivert!")
                 continue
             
-            #await helper_cog.logMessage("support.py", f"[DEBUG] Schleife erreicht: {guild.name} | {guild.id}")
             await helper_cog.logMessage("support.py", f"Server: {guild.name} | Guild-ID: {guild.id}")
             
             channel_id = get_value_channel(guild.id, "SUPPORT_CHANNEL_ID")
