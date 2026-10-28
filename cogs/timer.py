@@ -22,8 +22,13 @@ class Timer(commands.Cog):
         interaction: discord.Interaction,
         timetype: app_commands.Choice[str],
         duration: int,
-        note: str,
+        reason: str,
     ):
+        helper_cog = self.bot.get_cog("Helper")
+        if helper_cog is None:
+            print("Helper_Cog wurde nicht richtig geladen")
+            return
+        
         time_units = {
             "minuten": timedelta(minutes=1),
             "stunden": timedelta(hours=1),
@@ -38,12 +43,14 @@ class Timer(commands.Cog):
         # Zeit berechnung
         # Holt sich den Zeit-Typen und multipliziert ihn mal die Dauer
         dauer_zeit = time_units[timetype.value] * duration
-        
+        # Start Message an den User        
         await interaction.response.send_message(f"⏱️ Timer gestartet für **{duration} {timetype.name}**!",ephemeral=True)
+
         # Wartet für die angebene Zeit
         await asyncio.sleep(dauer_zeit.total_seconds())
 
-        await interaction.followup.send(f"🔔 {interaction.user.mention}, dein Timer ist abgelaufen! {note}")
+        # Nachricht an den User 
+        await interaction.followup.send(await helper_cog.send_embed(interaction.channel,"Timer abgelaufen",f"🔔 Hey {interaction.user.mention},\n dein Timer ist abgelaufen! \n Grund: {reason}", discord.Color.blue()))
 
 async def setup(bot):
     await bot.add_cog(Timer(bot))
