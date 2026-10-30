@@ -95,7 +95,7 @@ Stack | Usage
 # Setup
 It isn't complicated to setup the Discordbot and it only takes 3 steps!
 
-⏬ 1.Clone the Repository
+⏬ 1. Clone the Repository
 ```
 git clone https://github.com/MONYtry/discord-bot.git
 ```
