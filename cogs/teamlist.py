@@ -17,7 +17,7 @@ class Teamlist(commands.Cog):
         await helper_cog.logSuccess("Teamlist.py","Succcsessfully loaded")
         
         for guild in self.bot.guilds:
-            pingRoles = get_role_id_list(guild.id, "supporting_roles")
+            pingRoles = get_role_id_list(guild.id, "team_roles")
 
             if not pingRoles:
                 continue

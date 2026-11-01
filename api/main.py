@@ -422,11 +422,14 @@ async def save_settings(guild_id: str, request: Request):
     support_perm_roles = data.get("support_roles",[])
     trusted_urls = data.get("trusted_urls", [])
     join_roles = data.get("join_roles", [])
+    team_roles = data.get("team_roles", [])
+
     TEAMLIST_CHANNEL_ID = data.get("TEAMLIST_CHANNEL_ID")
 
     save_ticket_setting(guild_id, tickets_enabled, apply_channel_id)
 
     set_role_id_list(guild_id, admin_perm_roles, "admin_perm_roles")
+    set_role_id_list(guild_id, team_roles, "team_roles")
     set_role_id_list(guild_id, support_perm_roles, "supporting_roles")
     set_role_id_list(guild_id, embed_allowed_roles, "embed_allowed_roles")
     set_role_id_list(guild_id, join_roles, "join_roles")
@@ -447,6 +450,7 @@ async def save_settings(guild_id: str, request: Request):
 
     # Direkt aus SQLite zurücklesen
     admin_perm_role = get_role_id_list(guild_id, "admin_perm_roles")
+    team_role = get_role_id_list(guild_id, "team_roles")
     support_perm_role = get_role_id_list(guild_id, "supporting_roles")
     embed_role = get_role_id_list(guild_id, "embed_allowed_roles")
     final_join_roles = get_role_id_list(guild_id, "join_roles")
@@ -475,7 +479,8 @@ async def save_settings(guild_id: str, request: Request):
         "support_roles": [str(role_id) for role_id in support_perm_role],
         "admin_perm_roles": [str(role_id) for role_id in admin_perm_role],
         "trusted_urls": [str(url) for url in trusted_url],
-        "join_roles": [str(joinRole) for joinRole in final_join_roles]
+        "join_roles": [str(joinRole) for joinRole in final_join_roles],
+        "team_roles": [str(teamRole) for teamRole in team_role]
     }
 
 
@@ -539,6 +544,8 @@ async def getSettings(guild_id: str, request: Request):
     support_role = get_role_id_list(guild_id,"supporting_roles")
     trusted_url = get_trusted_urls(guild_id)
     join_roles = get_role_id_list(guild_id, "join_roles")
+    team_roles = get_role_id_list(guild_id, "team_roles")
+
 
     return {
         "apply_channel_id": to_str(apply_channel_id),
@@ -556,5 +563,6 @@ async def getSettings(guild_id: str, request: Request):
         "support_roles": to_str_list(support_role),
         "admin_perm_roles": to_str_list(admin_perm_role),
         "trusted_urls": to_str_list(trusted_url),
-        "join_roles": to_str_list(join_roles)
+        "join_roles": to_str_list(join_roles),
+        "team_roles": to_str_list(team_roles)
     }

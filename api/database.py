@@ -67,6 +67,7 @@ def load_dataBase():
             role_id INTEGER NOT NULL,
             PRIMARY KEY (guild_id, role_id))
         """)
+
         conn.execute("""
             CREATE TABLE IF NOT EXISTS TRUSTED_URL (
             guild_id INTEGER NOT NULL, 
@@ -87,6 +88,13 @@ def load_dataBase():
             role_id INTEGER NOT NULL,
             PRIMARY KEY (guild_id, role_id))
         """)
+
+        conn.execute("""
+                    CREATE TABLE IF NOT EXISTS team_roles (
+                    guild_id TEXT NOT NULL,
+                    role_id INTEGER NOT NULL,
+                    PRIMARY KEY (guild_id, role_id))
+                """)
 
         conn.execute("""
             CREATE TABLE IF NOT EXISTS admin_perm_roles (
@@ -166,7 +174,8 @@ ALLOWED_ROLE_TABLES = {
     "supporting_roles",
     "admin_perm_roles",
     "embed_allowed_roles",
-    "join_roles"
+    "join_roles",
+    "team_roles"
 }
 
 def set_role_id_list(guild_id: int, role_ids: list[int], dbName: str):

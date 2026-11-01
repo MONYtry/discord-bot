@@ -120,6 +120,7 @@ async function getSettings()
         document.getElementById("Input_Teamlist_Channel_ID").value = antwort.TEAMLIST_CHANNEL_ID;
         document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
 
+        document.getElementById("Input_TeamRoles_List").value = (antwort.team_roles || []).join(",");
         document.getElementById("Input_Embed_Allowed_Roles_ID").value = (antwort.embed_allowed_roles || []).join(",");
         document.getElementById("Input_Support_Role").value = (antwort.support_roles || []).join(",");
         document.getElementById("Input_Join_Roles").value = (antwort.join_roles || []).join(",");
@@ -148,6 +149,7 @@ async function saveSettings()
     const Input_Message_Log_Channel_ID = document.getElementById("Input_Message_Log_Channel_ID");
     const Input_Teamlist_Channel_ID = document.getElementById("Input_Teamlist_Channel_ID");
     
+    const Input_TeamRole = document.getElementById("Input_TeamRoles_List");
     const Input_Embed_Allowed_Role = document.getElementById("Input_Embed_Allowed_Roles_ID");
     const Input_Support_Role = document.getElementById("Input_Support_Role");
     const Input_admin_roles = document.getElementById("Input_Admin_Perm_Roles");
@@ -173,6 +175,7 @@ async function saveSettings()
     console.log("Vertraute Links: " + Input_URLs.value);
     console.log("Rollen beim betreten: " + Input_Join_Roles.value);
     console.log("Teamlist Channel: " +Input_Teamlist_Channel_ID.value);
+    console.log("TeamRollen Channel: " + Input_TeamRole.value);
     console.log("Tickets aktiv: " + Number(use_tickets.value) === 1);
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
     
@@ -208,7 +211,8 @@ async function saveSettings()
                 support_roles: Input_Support_Role.value.split(",").map(id => id.trim()).filter(id => id !== ""),
                 admin_perm_roles: Input_admin_roles.value.split(",").map(id => id.trim()).filter(id => id !== ""),
                 trusted_urls: Input_URLs.value.split(",").map(id => id.trim()).filter(id => id !== ""),
-                join_roles: Input_Join_Roles.value.split(",").map(id => id.trim()).filter(id => id !== "")
+                join_roles: Input_Join_Roles.value.split(",").map(id => id.trim()).filter(id => id !== ""),
+                team_roles: Input_TeamRole.value.split(",").map(id => id.trim()).filter(id => id !== "")
             })
         }
     );
