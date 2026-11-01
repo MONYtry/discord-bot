@@ -71,11 +71,14 @@ body {
     overflow-wrap: anywhere;
 }
 
-.btn {
-    display: inline-block;
+.main-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
 
-    display: block;
-    margin: 0 auto;
+.btn {
     margin-top: 20px;
     margin-bottom: 20px;
     padding: 12px 20px;
@@ -161,6 +164,7 @@ input::selection {
     grid-template-columns: repeat(1, minmax(0, 1fr));
     gap: 22px;
 }
+
 .stat-card {
     width: 100%;
     min-width: 0;

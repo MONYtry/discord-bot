@@ -72,7 +72,8 @@ const translations = {
         rolesPlaceholder: "Rollen-IDs eingeben (mit Komma trennen)",
         joinRolesPlaceholder: "Rollen-IDs eingeben (mit Komma trennen)",
         urlsPlaceholder: "https://example.com, ...",
-        ticketPlaceholder: "1 = Aktiviert, 0 = Deaktiviert"
+        ticketPlaceholder: "1 = Aktiviert, 0 = Deaktiviert",
+        langDisplay: "Deutsch"
     },
 
     EN: {
@@ -145,7 +146,8 @@ const translations = {
         rolesPlaceholder: "Enter Role IDs",
         joinRolesPlaceholder: "Enter Role IDs (separated by commas)",
         urlsPlaceholder: "https://example.com, ...",
-        ticketPlaceholder: "1 = Enabled, 0 = Disabled"
+        ticketPlaceholder: "1 = Enabled, 0 = Disabled",
+        langDisplay: "English"
     }
 };
 
@@ -168,7 +170,7 @@ function applyLanguage() {
     // Buttons
     document.getElementById("backButton").textContent = translations[lang].back;
     document.getElementById("saveButton").textContent = translations[lang].save;
-    document.getElementById("translateButton").textContent = lang;
+    document.getElementById("translateButton").textContent = translations[lang].langDisplay;
 
     // Info Cards
     document.getElementById("settingsTitle").textContent = translations[lang].settings;
