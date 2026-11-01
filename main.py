@@ -37,6 +37,8 @@ class MyBot(commands.Bot):
         await self.load_extension("cogs.reactionroles")
         await self.load_extension("cogs.automoderation")
         await self.load_extension("cogs.timer")
+        await self.load_extension("cogs.teamlist")
+
 
 bot = MyBot(command_prefix="!", 
             intents=intents,
