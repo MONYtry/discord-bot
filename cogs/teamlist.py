@@ -17,18 +17,10 @@ class Teamlist(commands.Cog):
         await helper_cog.logSuccess("Teamlist.py","Succcsessfully loaded")
         
         for guild in self.bot.guilds:
-            print(f"Guild: {guild.name} | ID: {guild.id}")
-
             pingRoles = get_role_id_list(guild.id, "supporting_roles")
 
-            print(f"PingRoles: {pingRoles}")
-
             if not pingRoles:
-                print("Es wurden keine Team-Rollen gefunden!")
                 continue
-
-            for role in pingRoles:
-                print(f"Role: {role}")
 
             channel_id = get_value_channel(guild.id,"TEAMLIST_CHANNEL_ID")
             if channel_id is None:
@@ -37,7 +29,7 @@ class Teamlist(commands.Cog):
             channel = self.bot.get_channel(channel_id)    
             if channel is None:
                 continue
-                    
+
             text = []
 
             # Geht durch alle Rollen
@@ -52,6 +44,7 @@ class Teamlist(commands.Cog):
                 # Geht durch alle Nutzer der aktuellen Rolle
                 for user in role.members:
                     users.append(user.mention)
+
                 # Falls die Rolle keine Nutzer hat
                 if not users:
                     users.append("*Keine Mitglieder*")
