@@ -12,7 +12,7 @@ const translations = {
         config: "⚙️ Bot-Konfiguration",
         configDescription: "Verwalte alle wichtigen Einstellungen deines Discord-Bots zentral und übersichtlich an einem Ort.",
 
-        welcome: "👋 Welcome-Channel",
+        welcome: "👋 Willkommens Kanal",
         welcomeDescription: "Lege fest, in welchem Channel neue Mitglieder automatisch begrüßt werden.",
 
         joinLeave: "📋 Join-/Leave-Logs",
@@ -24,7 +24,7 @@ const translations = {
         teamRoles: "🔨 Team-Rollen",
         teamRolesDescription: "Lege fest, welche Rollen zu deinem Server-Team gehören.",
 
-        teamList: "🔨 TEAM-LIST",
+        teamList: "🔨 Team-Liste",
         teamListDescription: "Lege fest, in welchem Channel deine Team-Liste angezeigt wird.",
 
         status: "📡 Status-Channel",
@@ -68,8 +68,8 @@ const translations = {
         statisticsDescription: "Verfolge die Entwicklung und wichtige Kennzahlen deines Discord-Servers übersichtlich in einer Statistik.",
 
         channelPlaceholder: "Channel-ID eingeben",
-        rolePlaceholder: "Rollen-ID eingeben",
-        rolesPlaceholder: "Rollen-IDs eingeben",
+        rolePlaceholder: "Rollen-ID eingeben ",
+        rolesPlaceholder: "Rollen-IDs eingeben (mit Komma trennen)",
         joinRolesPlaceholder: "Rollen-IDs eingeben (mit Komma trennen)",
         urlsPlaceholder: "https://example.com, ...",
         ticketPlaceholder: "1 = Aktiviert, 0 = Deaktiviert"
