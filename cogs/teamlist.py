@@ -49,7 +49,7 @@ class Teamlist(commands.Cog):
         channel = self.bot.get_channel(channel_id)
         if channel is None:
             return
-
+        await channel.purge(limit=10)
         text = await self.create_teamList(interaction.guild)
 
         await helper_cog.send_embed(channel, "Team-Liste", text, discord.Color.red())
