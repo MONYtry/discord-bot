@@ -117,7 +117,9 @@ async function getSettings()
         document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
         document.getElementById("Input_Timeout_Channel_ID").value = antwort.timeout_channel_id;
         document.getElementById("Input_Message_Log_Channel_ID").value = antwort.message_channel_id;
+        document.getElementById("Input_Teamlist_Channel_ID").value = antwort.TEAMLIST_CHANNEL_ID;
         document.getElementById("Input_Ticket_Log_Channel_ID").value = antwort.support_log_channel_id;
+
         document.getElementById("Input_Embed_Allowed_Roles_ID").value = (antwort.embed_allowed_roles || []).join(",");
         document.getElementById("Input_Support_Role").value = (antwort.support_roles || []).join(",");
         document.getElementById("Input_Join_Roles").value = (antwort.join_roles || []).join(",");
@@ -144,6 +146,8 @@ async function saveSettings()
     const Input_Support_Log_Channel_ID = document.getElementById("Input_Ticket_Log_Channel_ID");
     const Input_Timeout_Channel_ID = document.getElementById("Input_Timeout_Channel_ID");
     const Input_Message_Log_Channel_ID = document.getElementById("Input_Message_Log_Channel_ID");
+    const Input_Teamlist_Channel_ID = document.getElementById("Input_Teamlist_Channel_ID");
+    
     const Input_Embed_Allowed_Role = document.getElementById("Input_Embed_Allowed_Roles_ID");
     const Input_Support_Role = document.getElementById("Input_Support_Role");
     const Input_admin_roles = document.getElementById("Input_Admin_Perm_Roles");
@@ -168,6 +172,7 @@ async function saveSettings()
     console.log("Input_Support_Role: " + Input_Support_Role.value);
     console.log("Vertraute Links: " + Input_URLs.value);
     console.log("Rollen beim betreten: " + Input_Join_Roles.value);
+    console.log("Teamlist Channel: " +Input_Teamlist_Channel_ID.value);
     console.log("Tickets aktiv: " + Number(use_tickets.value) === 1);
     console.log("----- DEVELOPMENT-INFOMATION'S -----");
     
@@ -195,6 +200,7 @@ async function saveSettings()
                 message_channel_id: Input_Message_Log_Channel_ID.value || null,
                 support_log_channel_id: Input_Support_Log_Channel_ID.value || null,
                 Input_Join_Leave_Log_Channel_ID: Input_Join_Leave_Log_Channel_ID.value || null,
+                TEAMLIST_CHANNEL_ID: Input_Teamlist_Channel_ID.value || null,
                 
                 // map = Entfernt Leerzeichen am Anfang und Ende
                 // Filter = Entfernt Leere Array Einträge

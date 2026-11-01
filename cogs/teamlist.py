@@ -30,26 +30,38 @@ class Teamlist(commands.Cog):
             for role in pingRoles:
                 print(f"Role: {role}")
 
-            channel_id = get_value_channel(guild.id,"apply_channel_id")
+            channel_id = get_value_channel(guild.id,"TEAMLIST_CHANNEL_ID")
             if channel_id is None:
                 continue
 
             channel = self.bot.get_channel(channel_id)    
             if channel is None:
                 continue
-            
+                    
             text = []
-            for role_id in pingRoles:
-                role = guild.get_role(role_id)
-                if role is not None:
-                    text.append(role.mention)
 
-            # Fügt einen Zeilenumbruch hinzu
-            # .join macht aus einer Liste einen Vanilla String
-            text = "\n".join(text)
-            
-            await helper_cog.send_embed(channel,"Team-Liste",text,discord.Color.red())
+            # Geht durch alle Rollen
+            for role_id in pingRoles:
                 
+                role = guild.get_role(role_id)
+                # Falls die Rolle nicht exisitiert
+                if role is None:
+                    continue
+
+                users = []
+                # Geht durch alle Nutzer der aktuellen Rolle
+                for user in role.members:
+                    users.append(user.mention)
+                # Falls die Rolle keine Nutzer hat
+                if not users:
+                    users.append("*Keine Mitglieder*")
+                
+                # Fügt dem Array ein String hinzu
+                text.append(f"# {role.mention} \n" + "\n".join(users))
+
+            final_text = "\n\n".join(text)
+
+            await helper_cog.send_embed(channel, "Team-Liste", final_text, discord.Color.red())
 
 async def setup(bot):
     await bot.add_cog(Teamlist(bot))

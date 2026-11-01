@@ -49,15 +49,16 @@ def load_dataBase():
             CREATE TABLE IF NOT EXISTS server_settings (
             guild_id TEXT PRIMARY KEY,
             tickets_enabled INTEGER NOT NULL DEFAULT 0,
-            apply_channel_id INTEGER,
-            BOT_STATUS_CHANNEL_ID INTEGER,
-            WELCOME_CHANNEL_ID INTEGER,
-            JOIN_LEAVE_LOG_CHANNEL_ID INTEGER,
-            BAN_CHANNEL_ID INTEGER,
-            SUPPORT_CHANNEL_ID INTEGER, 
-            TIMEOUT_LOG_CHANNEL INTEGER,
-            MESSAGE_LOG_CHANNEL INTEGER,
-            SUPPORT_CHANNEL_LOG_ID INTEGER)
+            apply_channel_id TEXT,
+            BOT_STATUS_CHANNEL_ID TEXT,
+            WELCOME_CHANNEL_ID TEXT,
+            JOIN_LEAVE_LOG_CHANNEL_ID TEXT,
+            BAN_CHANNEL_ID TEXT,
+            SUPPORT_CHANNEL_ID TEXT, 
+            TIMEOUT_LOG_CHANNEL TEXT,
+            MESSAGE_LOG_CHANNEL TEXT,
+            TEAMLIST_CHANNEL_ID TEXT,
+            SUPPORT_CHANNEL_LOG_ID TEXT)
         """)
 
         conn.execute("""
@@ -240,6 +241,7 @@ ALLOWED_COLUMNS = {
     "SUPPORT_CHANNEL_ID",
     "TIMEOUT_LOG_CHANNEL",
     "MESSAGE_LOG_CHANNEL",
+    "TEAMLIST_CHANNEL_ID",
     "SUPPORT_CHANNEL_LOG_ID",
 }
 
@@ -249,9 +251,10 @@ def check_column(column_name):
 
 def set_value_channel(guild_id, column_name, value):
     check_column(column_name)
+
     # Leere Eingabe -> NULL, sonst als Zahl speichern
     if value:
-        value = int(value)
+        value = str(value)
     else:
         value = None
 

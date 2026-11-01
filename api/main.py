@@ -422,6 +422,7 @@ async def save_settings(guild_id: str, request: Request):
     support_perm_roles = data.get("support_roles",[])
     trusted_urls = data.get("trusted_urls", [])
     join_roles = data.get("join_roles", [])
+    TEAMLIST_CHANNEL_ID = data.get("TEAMLIST_CHANNEL_ID")
 
     save_ticket_setting(guild_id, tickets_enabled, apply_channel_id)
 
@@ -432,6 +433,7 @@ async def save_settings(guild_id: str, request: Request):
 
     set_trusted_urls(guild_id, trusted_urls)
 
+    set_value_channel(guild_id,"TEAMLIST_CHANNEL_ID",TEAMLIST_CHANNEL_ID)
     set_value_channel(guild_id, "apply_channel_id", apply_channel_id)
     set_value_channel(guild_id, "BOT_STATUS_CHANNEL_ID", bot_status_channel_id)
     set_value_channel(guild_id, "WELCOME_CHANNEL_ID", welcome_channel_id)
@@ -468,6 +470,7 @@ async def save_settings(guild_id: str, request: Request):
         "support_log_channel_id": support_log_channel_id,
         "timeout_channel_id": timeout_channel_id,
         "message_channel_id": message_channel_id,
+        "TEAMLIST_CHANNEL_ID": TEAMLIST_CHANNEL_ID,
         "embed_allowed_roles": [str(role_id) for role_id in embed_role],
         "support_roles": [str(role_id) for role_id in support_perm_role],
         "admin_perm_roles": [str(role_id) for role_id in admin_perm_role],
@@ -510,30 +513,7 @@ def to_str_list(values):
     # Gibt Final Value zurück
     return final_value
 
-def save_setting(guild_id, setting, value):
-    allowed = {
-        "tickets_enabled",
-        "apply_channel_id",
-        "BOT_STATUS_CHANNEL_ID",
-        "welcome_channel_id"
-    }
 
-    if setting not in allowed:
-        raise ValueError("Ungültige Einstellung")
-    
-    if setting == "tickets_enabled":
-        value = int(value)
-
-    with sqlite3.connect(DB_PATH) as conn:
-            conn.execute(
-            f"""
-            INSERT INTO server_settings (guild_id, {setting})
-            VALUES (?, ?)
-            ON CONFLICT(guild_id)
-            DO UPDATE SET {setting} = excluded.{setting}
-            """,
-            (str(guild_id), value)
-        )
 
 
 @app.get("/servers/{guild_id}/settings")
@@ -550,9 +530,10 @@ async def getSettings(guild_id: str, request: Request):
     timeout_channel_id = get_value_channel(guild_id, "TIMEOUT_LOG_CHANNEL")
     message_channel_id = get_value_channel(guild_id, "MESSAGE_LOG_CHANNEL")
     support_channel_id_log = get_value_channel(guild_id, "SUPPORT_CHANNEL_LOG_ID")
-    
-    ticket_setting = get_ticket_setting(guild_id)
+    TEAMLIST_CHANNEL_ID = get_value_channel(guild_id, "TEAMLIST_CHANNEL_ID")
 
+    ticket_setting = get_ticket_setting(guild_id)
+    
     embed_allowed_roles = get_role_id_list(guild_id, "embed_allowed_roles")
     admin_perm_role = get_role_id_list(guild_id,"admin_perm_roles")
     support_role = get_role_id_list(guild_id,"supporting_roles")
@@ -561,6 +542,7 @@ async def getSettings(guild_id: str, request: Request):
 
     return {
         "apply_channel_id": to_str(apply_channel_id),
+        "TEAMLIST_CHANNEL_ID": to_str(TEAMLIST_CHANNEL_ID),
         "statusInput": to_str(status_channel_id),
         "welcomeChannelInput": to_str(welcome_channel_id),
         "join_leave_log_channel_id": to_str(join_leave_channel_id),
